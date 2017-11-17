@@ -36,10 +36,10 @@ signingConfigs {
         storeFile file("hm_wcpc_user.jks")
     }
 }
-//lintOptions {
-//    checkReleaseBuilds false
-//    abortOnError false
-//}
+lintOptions {
+    checkReleaseBuilds false
+    abortOnError false
+}
 dexOptions {
     javaMaxHeapSize "4g"
 }
@@ -53,13 +53,13 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.hemaapp:hm_framework:1.0.7'
+    //compile 'com.hemaapp:hm_framework:1.0.7'
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.android.support:design:25.0.0'
     compile 'com.android.support:multidex:1.0.0'
     compile project(':onekeyshare')
     compile project(':pickerview')
-    //compile project(':hm_framework_my')
+    compile project(':hm_framework')
     compile 'com.gyf.barlibrary:barlibrary:2.3.0'
 }
