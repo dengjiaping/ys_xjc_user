@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <include layout="@layout/title_noline" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@id/edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/transparent"
+                        android:inputType="numberDecimal"
+                        android:gravity="center"
+                        android:text=""
+                        android:hint="@string/hint_charge_money"
+                        android:textColorHint="@color/cl_a0a0a0"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textSize="14sp"/>
+
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:src="@color/xian"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@color/xian"/>
+
+                <RelativeLayout
+                    android:id="@id/layout_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingBottom="15dp"
+                    android:background="@drawable/bg_weixin">
+
+                    <TextView
+                        android:id="@+id/tv_topay_by_weixin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/tv_topay_by_weixin"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"/>
+
+                    <ImageView
+                        android:id="@+id/img_topay_by_weixin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_below="@+id/tv_topay_by_weixin"
+                        android:src="@mipmap/img_logo_weixin"/>
+
+                    <CheckBox
+                        android:id="@id/checkbox_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/tv_topay_by_weixin"
+                        android:layout_marginRight="@dimen/margin_20"
+                        android:button="@drawable/radiobutton_select"
+                        android:paddingRight="10dp"
+                        android:visibility="invisible"
+                        android:checked="false" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@id/layout_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingBottom="15dp"
+                    android:background="@drawable/bg_alipay">
+
+                    <TextView
+                        android:id="@+id/tv_topay_by_alipay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/tv_topay_by_alipay"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"/>
+
+                    <ImageView
+                        android:id="@+id/img_topay_by_alipay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_below="@+id/tv_topay_by_alipay"
+                        android:src="@mipmap/img_logo_alipay"/>
+
+                    <CheckBox
+                        android:id="@id/checkbox_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/tv_topay_by_alipay"
+                        android:layout_marginRight="@dimen/margin_20"
+                        android:button="@drawable/radiobutton_select"
+                        android:paddingRight="10dp"
+                        android:visibility="invisible"
+                        android:checked="false" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@id/layout_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingBottom="15dp"
+                    android:background="@drawable/bg_unionpay">
+
+                    <TextView
+                        android:id="@+id/tv_topay_by_unionpay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/tv_topay_by_unionpay"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"/>
+
+                    <ImageView
+                        android:id="@+id/img_topay_by_unionpay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_below="@+id/tv_topay_by_unionpay"
+                        android:src="@mipmap/img_logo_unipay"/>
+
+                    <CheckBox
+                        android:id="@id/checkbox_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/tv_topay_by_unionpay"
+                        android:layout_marginRight="@dimen/margin_20"
+                        android:button="@drawable/radiobutton_select"
+                        android:paddingRight="10dp"
+                        android:visibility="invisible"
+                        android:checked="false" />
+
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:src="@drawable/line_shadow" />
+    </FrameLayout>
+</LinearLayout>

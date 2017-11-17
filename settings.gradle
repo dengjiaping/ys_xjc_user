@@ -1,0 +1,2 @@
+include ':app', ':pickerview', ':sharesdk', ':onekeyshare', ':hm_framework_my'
+project(':hm_framework_my').projectDir = new File('hm_framework')

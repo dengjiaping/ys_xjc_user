@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+    defaultConfig {
+        applicationId "com.hemaapp.wcpc_user"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 104
+        versionName "1.0.4"
+        multiDexEnabled true
+        manifestPlaceholders = [
+                GETUI_APP_ID    : "3f3iFCbmVu8PI7VMth7tQ1",
+                GETUI_APP_KEY   : "UQQ0aO133Q9KUbNMNkV3n",
+                GETUI_APP_SECRET: "f8oSTkU2Qx5w2dP5hZUXB2",
+        ]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+signingConfigs {
+    // your debug keystore
+    debug {
+        keyAlias 'hm_wcpc_user'
+        keyPassword '123456Aa'
+        storePassword '123456Aa'
+        storeFile file("hm_wcpc_user.jks")
+    }
+}
+lintOptions {
+    checkReleaseBuilds false
+    abortOnError false
+}
+dexOptions {
+    javaMaxHeapSize "4g"
+}
+sourceSets {
+    main {
+        jniLibs.srcDirs = ['libs']
+    }
+}
+}
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.hemaapp:hm_framework:1.0.7'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:multidex:1.0.0'
+    compile project(':onekeyshare')
+    compile project(':pickerview')
+    //compile project(':hm_framework_my')
+    compile 'com.gyf.barlibrary:barlibrary:2.3.0'
+}

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <include layout="@layout/title" />
+
+    <com.hemaapp.hm_FrameWork.view.RoundedImageView
+        android:id="@id/imageview"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/bg_avatar"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/img_addavatar"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_upload_image"
+        android:textColor="@color/cl_37393b"
+        android:gravity="center_horizontal"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="25dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_login">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center_vertical"
+                android:text="@string/tv_nickname"
+                android:textColor="#3f3f3f"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*"
+                android:textColor="@color/cl_fca03d"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:id="@+id/edittext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:background="@color/transparent"
+                android:paddingRight="15dp"
+                android:maxLines="1"
+                android:hint="@string/hint_nickname"
+                android:textColorHint="@color/cl_9c9c9c"
+                android:textColor="@color/cl_5e5e5e"
+                android:textSize="15sp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:src="@color/xian"/>
+
+        <LinearLayout
+            android:id="@id/layout_0"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:gravity="center_vertical"
+                android:text="@string/tv_sex"
+                android:textColor="#3f3f3f"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*"
+                android:textColor="@color/cl_fca03d"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@id/textview_0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:drawableRight="@mipmap/triangle"
+                android:layout_marginRight="15dp"
+                android:gravity="center_vertical"
+                android:text="@string/hint_sex"
+                android:textColor="@color/cl_9c9c9c"
+                android:textSize="15sp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_login"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/lv_myorder"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:text="我的邀请码: "
+                android:textColor="@color/cl_525158"
+                android:textSize="15sp"/>
+
+            <com.hemaapp.hm_FrameWork.view.CopyTextView
+                android:id="@+id/tv_invit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textColor="@color/cl_525158"
+                android:textSize="15sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
