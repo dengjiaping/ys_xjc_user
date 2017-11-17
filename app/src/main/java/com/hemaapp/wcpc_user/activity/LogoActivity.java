@@ -208,7 +208,7 @@ public class LogoActivity extends BaseActivity implements AMapLocationListener {
     }
 
     private void toMain() {
-        Intent it = new Intent(mContext, MainNewActivity.class);
+        Intent it = new Intent(mContext, MainNewMapActivity.class);
         startActivity(it);
         finish();
         stopLocation();

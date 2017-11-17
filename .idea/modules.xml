@@ -3,17 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hm_framework/hm_framework.iml" filepath="$PROJECT_DIR$/hm_framework/hm_framework.iml" />
       <module fileurl="file://$PROJECT_DIR$/hm_framework/hm_framework_my.iml" filepath="$PROJECT_DIR$/hm_framework/hm_framework_my.iml" />
       <module fileurl="file://$PROJECT_DIR$/onekeyshare/onekeyshare.iml" filepath="$PROJECT_DIR$/onekeyshare/onekeyshare.iml" />
-      <module fileurl="file://$PROJECT_DIR$/onekeyshare/onekeyshare.iml" filepath="$PROJECT_DIR$/onekeyshare/onekeyshare.iml" />
       <module fileurl="file://$PROJECT_DIR$/pickerview/pickerview.iml" filepath="$PROJECT_DIR$/pickerview/pickerview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pickerview/pickerview.iml" filepath="$PROJECT_DIR$/pickerview/pickerview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sharesdk/sharesdk.iml" filepath="$PROJECT_DIR$/sharesdk/sharesdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/sharesdk/sharesdk.iml" filepath="$PROJECT_DIR$/sharesdk/sharesdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/xtomframework/xtomframework.iml" filepath="$PROJECT_DIR$/xtomframework/xtomframework.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ys_xjc_user.iml" filepath="$PROJECT_DIR$/ys_xjc_user.iml" />
       <module fileurl="file://$PROJECT_DIR$/ys_xjc_user.iml" filepath="$PROJECT_DIR$/ys_xjc_user.iml" />
     </modules>
   </component>

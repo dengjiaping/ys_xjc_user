@@ -165,7 +165,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 XtomSharedPreferencesUtil.save(mContext, "password", password);
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
 
-                Intent it = new Intent(this, MainNewActivity.class);
+                Intent it = new Intent(this, MainNewMapActivity.class);
                 startActivity(it);
                 finish();
                 break;
@@ -190,7 +190,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (user1.getIs_reg().equals("1")) {
                     showCouponWindow();
                 } else {
-                    Intent it1 = new Intent(this, MainNewActivity.class);
+                    Intent it1 = new Intent(this, MainNewMapActivity.class);
                     startActivity(it1);
                     finish();
                 }
@@ -564,7 +564,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onClick(View v) {
                 mWindow.dismiss();
-                Intent it1 = new Intent(mContext, MainNewActivity.class);
+                Intent it1 = new Intent(mContext, MainNewMapActivity.class);
                 startActivity(it1);
                 finish();
             }
