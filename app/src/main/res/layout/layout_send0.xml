@@ -25,7 +25,7 @@
                 android:background="@drawable/bg_yuyue"
                 android:gravity="center"
                 android:text="预约"
-                android:textColor="@color/word_black"
+                android:textColor="@color/yellow"
                 android:textSize="@dimen/textsize_7" />
 
 
@@ -36,7 +36,7 @@
                 android:background="@drawable/bg_shishi"
                 android:gravity="center"
                 android:text="实时"
-                android:textColor="@color/yellow"
+                android:textColor="@color/word_black"
                 android:textSize="@dimen/textsize_7" />
         </LinearLayout>
 
@@ -100,7 +100,7 @@
 
         <FrameLayout
             android:id="@+id/leftlin"
-            android:layout_width="32dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:gravity="center_horizontal"
@@ -144,8 +144,10 @@
                 android:gravity="center_vertical"
                 android:hint="从哪儿出发"
                 android:maxLines="1"
-                android:paddingRight="15dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="5dp"
                 android:text=""
+                android:background="#70e5e5e5"
                 android:textColor="@color/cl_3f3f3f"
                 android:textColorHint="@color/cl_a0a0a0"
                 android:textSize="@dimen/textsize_7" />
@@ -153,6 +155,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
+                android:visibility="gone"
                 android:src="@color/xian" />
 
             <TextView
@@ -162,8 +165,9 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:hint="您要去哪儿"
+                android:paddingLeft="2dp"
                 android:maxLines="1"
-                android:paddingRight="15dp"
+                android:paddingRight="5dp"
                 android:text=""
                 android:textColor="@color/cl_3f3f3f"
                 android:textColorHint="@color/cl_a0a0a0"

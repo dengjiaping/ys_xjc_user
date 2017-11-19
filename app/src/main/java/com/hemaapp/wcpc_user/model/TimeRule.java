@@ -18,7 +18,7 @@ public class TimeRule extends XtomObject implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private String   current_time;//		经度
+    private String   current_time;//
     private String  time1_begin;//		可下单开始时间（下单时间）
     private String  time1_end;//		可下单结束时间（下单时间）
     private String  time2_begin	;//	可拼车的开始时间（出发时间）

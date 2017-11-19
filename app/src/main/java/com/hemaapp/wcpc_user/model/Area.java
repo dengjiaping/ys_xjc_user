@@ -22,10 +22,12 @@ public class Area extends XtomObject implements Serializable {
     private String  addprice;//	加减价格	正为加，负为减
     private String name	;//区域名称	如：济南机场
     private String lnglat;//	范围经纬度串	格式：lng,lat;lng1,lat1;lng2,lat2
+    private String city_id;//
     public Area(JSONObject jsonObject) throws DataParseException {
         if (jsonObject != null) {
             try {
                 id = get(jsonObject, "id");
+                city_id = get(jsonObject, "city_id");
                 name = get(jsonObject, "name");
                 addprice = get(jsonObject, "addprice");
                 lnglat = get(jsonObject, "lnglat");
@@ -43,6 +45,7 @@ public class Area extends XtomObject implements Serializable {
                 ", addprice='" + addprice + '\'' +
                 ", name='" + name + '\'' +
                 ", lnglat='" + lnglat + '\'' +
+                ", city_id='" + city_id + '\'' +
                 '}';
     }
 
@@ -66,6 +69,10 @@ public class Area extends XtomObject implements Serializable {
 
     public String getAddprice() {
         return addprice;
+    }
+
+    public String getCity_id() {
+        return city_id;
     }
 
     public String getLnglat() {

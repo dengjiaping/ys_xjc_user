@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +14,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Interpolator;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,20 +62,31 @@ import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.CircularAnim;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
+import com.hemaapp.wcpc_user.RecycleUtils;
 import com.hemaapp.wcpc_user.ToLogin;
 import com.hemaapp.wcpc_user.UpGrade;
+import com.hemaapp.wcpc_user.adapter.PersonCountAdapter;
+import com.hemaapp.wcpc_user.adapter.PopTimeAdapter;
 import com.hemaapp.wcpc_user.model.Area;
+import com.hemaapp.wcpc_user.model.CouponListInfor;
 import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.DistrictInfor;
 import com.hemaapp.wcpc_user.model.ID;
+import com.hemaapp.wcpc_user.model.PersonCountInfor;
 import com.hemaapp.wcpc_user.model.TimeRule;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
+import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
+import com.hemaapp.wcpc_user.view.wheelview.WheelView;
+import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -122,8 +139,38 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvOneNext;
     @BindView(R.id.lv_send0)
     LinearLayout lvSend0;//下单第一步
+    @BindView(R.id.tv_sendtwo_cancel)
+    TextView tvSendtwoCancel;
+    @BindView(R.id.ev_send_bang_name)
+    EditText evSendBangName;
+    @BindView(R.id.ev_send_bang_tel)
+    EditText evSendBangTel;
+    @BindView(R.id.lv_bang_infor)
+    LinearLayout lvBangInfor;
+    @BindView(R.id.tv_send_pin)
+    TextView tvSendPin;
+    @BindView(R.id.tv_send_bao)
+    TextView tvSendBao;
+    @BindView(R.id.tv_send_time)
+    TextView tvSendTime;
+    @BindView(R.id.tv_send_count)
+    TextView tvSendCount;
+    @BindView(R.id.lv_send_otherinfor)
+    LinearLayout lvSendOtherinfor;
+    @BindView(R.id.tv_send_coupon)
+    TextView tvSendCoupon;
+    @BindView(R.id.tv_send_content)
+    TextView tvSendContent;
+    @BindView(R.id.tv_price)
+    TextView tvPrice;
+    @BindView(R.id.tv_send_feeinfor)
+    TextView tvSendFeeinfor;
+    @BindView(R.id.tv_send_button)
+    TextView tvSendButton;
+    @BindView(R.id.lv_send1)
+    LinearLayout lvSend1;//发单第二步
     private User user;
-    private int count;
+    private int msgcount;
     private long time;// 用于判断二次点击返回键的时间间隔
     private static MainNewMapActivity activity;
     public ArrayList<DistrictInfor> allDistricts = new ArrayList<>();
@@ -138,19 +185,36 @@ public class MainNewMapActivity extends BaseActivity implements
     private UpGrade upGrade;
     private AMap aMap;
     Marker screenMarker = null;
-    private Marker marker;
+    private Marker sendStartMarker = null, sendEndMarker = null;
     private ArrayList<Polygon> polygons = new ArrayList<>();
     private ArrayList<String> prices = new ArrayList<>();
-    private boolean inArea = false, isFirstLoc = true, hasCircle = false;
+    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false;
     private GeocodeSearch geocoderSearch;
-    private LatLng latlng;
+    private LatLng latlng, loclatlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
-    private String move_lat, move_lng, addPrice, myAddress, lng, lat, selectAddress = "0";
+    private String move_lat, move_lng, myAddress, lng, lat, loc_lng, loc_lat, selectAddress = "0";
     MyLocationStyle myLocationStyle;
     private CurrentTripsInfor infor;//当前行程信息
     AlphaAnimation appearAnimation, disappearAnimation;
     private DistrictInfor startCity, endCity, myCity;
-    private String start_address = "", end_address, start_lng, start_lat, end_lat, end_lng, begintime, coupon_vavle, coupon_id;
+    private String start_address = "", end_address, start_lng, start_lat, end_lat, end_lng, begintime, coupon_vavle, coupon_id, bangFlag, pinFlag = "1";
+    private String begin, pin_start, pin_end, order_start, order_end;//后台定义可拼车时间段和可下单时间段
+    private int count = 1, coupon = 0;
+    private float totleFee = 0, price = 0, addstart = 0, addend = 0;
+    private PopupWindow mWindow_exit;
+    private ViewGroup mViewGroup_exit;
+    private ArrayList<PersonCountInfor> counts = new ArrayList<>();//人数
+    private int timeflag = 0;
+    private PopupWindow timePop;
+    private ViewGroup timeViewGroup;
+    private WheelView dayListView;
+    private WheelView timeListView;
+    private WheelView secondListView;
+    private ArrayList<String> days = new ArrayList<>();
+    private ArrayList<String> days1 = new ArrayList<>();
+    private ArrayList<String> times = new ArrayList<>();
+    private ArrayList<String> seconds = new ArrayList<>();
+    private PopTimeAdapter time_adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +256,9 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         }, 800);
         init();
+        for (int i = 0; i < 4; i++) {//
+            counts.add(i, new PersonCountInfor(String.valueOf(i + 1), false));
+        }
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -285,7 +352,7 @@ public class MainNewMapActivity extends BaseActivity implements
             }
             Polygon polygon = aMap.addPolygon(pOption.strokeWidth(4)
                     .strokeColor(Color.argb(50, 1, 1, 1))
-                    .fillColor(0x20F8F64C));
+                    .fillColor(0x70e5e5e5));
             polygons.add(polygon);
             prices.add(area.getAddprice());
             if (isNull(move_lat)) {
@@ -295,12 +362,14 @@ public class MainNewMapActivity extends BaseActivity implements
         }
         hasCircle = true;//已经画圈
         selectAddress = "1";//选择出发地
+        tvStart.setBackgroundColor(0x70e5e5e5);
+        tvEnd.setBackgroundColor(0xffffffff);
         if (!isNull(myCity.getCenter_lnglat1())) {
             String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
             if (locCity.equals(startCity.getName())) {
-                move_lat = lat;
-                move_lng = lng;
-                CameraPosition cameraPosition = new CameraPosition(latlng, 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
+                move_lat = loc_lat;
+                move_lng = loc_lng;
+                CameraPosition cameraPosition = new CameraPosition(loclatlng, 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
                 onCameraChangeFinish(cameraPosition);
             } else {
                 move_lat = myCity.getCenter_lnglat1().split(",")[1];
@@ -365,9 +434,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case NOTICE_UNREAD:
                 break;
-            case CAN_TRIPS:
-                showProgressDialog("请稍后...");
-                break;
+//            case CAN_TRIPS:
+//                showProgressDialog("请稍后...");
+//                break;
         }
     }
 
@@ -390,8 +459,8 @@ public class MainNewMapActivity extends BaseActivity implements
         switch (information) {
             case NOTICE_UNREAD:
                 HemaArrayParse<ID> cResult = (HemaArrayParse<ID>) baseResult;
-                count = Integer.parseInt(isNull(cResult.getObjects().get(0).getCount()) ? "0" : cResult.getObjects().get(0).getCount());
-                if (count == 0)
+                msgcount = Integer.parseInt(isNull(cResult.getObjects().get(0).getCount()) ? "0" : cResult.getObjects().get(0).getCount());
+                if (msgcount == 0)
                     titlePoint.setVisibility(View.INVISIBLE);
                 else
                     titlePoint.setVisibility(View.VISIBLE);
@@ -401,11 +470,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 HemaArrayParse<ID> sResult = (HemaArrayParse<ID>) baseResult;
                 String keytype = sResult.getObjects().get(0).getKeytype();
                 if ("1".equals(keytype)) {
-                    Intent it = new Intent(mContext, SendActivity.class);
-                    startActivity(it);
+                    getNetWorker().couponsList(user.getToken(), "2", 0);
                 } else if ("2".equals(keytype)) {
                     CanNotTip();
-                    return;
                 } else {
                     String start = BaseUtil.TransTimeHour(XtomSharedPreferencesUtil.get(mContext, "order_start"), "HH:mm");
                     String end = BaseUtil.TransTimeHour(XtomSharedPreferencesUtil.get(mContext, "order_end"), "HH:mm");
@@ -413,6 +480,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         start = "5:00";
                         end = "20:00";
                     }
+                    lvSend0.setVisibility(View.GONE);
                     TimeTip(start, end);
                 }
                 break;
@@ -437,6 +505,10 @@ public class MainNewMapActivity extends BaseActivity implements
                 XtomSharedPreferencesUtil.save(mContext, "order_end", rule.getTime1_end());
                 XtomSharedPreferencesUtil.save(mContext, "pin_end", rule.getTime2_end());
                 XtomSharedPreferencesUtil.save(mContext, "pin_start", rule.getTime2_begin());
+                pin_start = rule.getTime2_begin();
+                pin_end = rule.getTime2_end();
+                order_start = rule.getTime1_begin();
+                order_end = rule.getTime1_end();
                 break;
             case CLIENT_GET:
                 HemaArrayParse<User> uResult = (HemaArrayParse<User>) baseResult;
@@ -451,8 +523,19 @@ public class MainNewMapActivity extends BaseActivity implements
                     infor = null;
                 }
                 if (infor == null) {
+                    getNetWorker().canTrips(user.getToken());
                     lvSend0.startAnimation(appearAnimation);
                     lvSend0.setVisibility(View.VISIBLE);
+                }
+                break;
+            case COUPONS_LIST:
+                HemaArrayParse<CouponListInfor> couResult = (HemaArrayParse<CouponListInfor>) baseResult;
+                ArrayList<CouponListInfor> cs = couResult.getObjects();
+                if (cs != null && cs.size() > 0) {
+                    coupon_id = cs.get(0).getId();
+                    coupon_vavle = cs.get(0).getValue();
+                    tvSendCoupon.setText(coupon_vavle + "元");
+                    coupon = Integer.parseInt(coupon_vavle);
                 }
                 break;
         }
@@ -682,7 +765,9 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @OnClick({R.id.title_btn_left, R.id.title_btn_right_image, R.id.title_point, R.id.lv_search,
             R.id.tv_now, R.id.tv_appointment, R.id.tv_often, R.id.tv_start_city, R.id.iv_change,
-            R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next})
+            R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next,
+            R.id.tv_sendtwo_cancel, R.id.tv_send_pin, R.id.tv_send_bao, R.id.tv_send_time,
+            R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button})
     public void onClick(View view) {
         user = BaseApplication.getInstance().getUser();
         Intent it;
@@ -749,10 +834,15 @@ public class MainNewMapActivity extends BaseActivity implements
                 tvStart.setText(start_address);
                 tvEnd.setText(end_address);
                 if (hasCircle) {
-                    if (selectAddress.equals("1"))
+                    if (selectAddress.equals("1")) {
                         selectAddress = "2";
-                    else if (selectAddress.equals("2"))
+                        tvStart.setBackgroundColor(0xffffffff);
+                        tvEnd.setBackgroundColor(0x70e5e5e5);
+                    } else if (selectAddress.equals("2")) {
                         selectAddress = "1";
+                        tvStart.setBackgroundColor(0x70e5e5e5);
+                        tvEnd.setBackgroundColor(0xffffffff);
+                    }
                 }
                 break;
             case R.id.tv_end_city:
@@ -767,6 +857,8 @@ public class MainNewMapActivity extends BaseActivity implements
             case R.id.tv_start:
                 if (hasCircle && !selectAddress.equals("1")) {
                     selectAddress = "1";
+                    tvStart.setBackgroundColor(0x70e5e5e5);
+                    tvEnd.setBackgroundColor(0xffffffff);
                     String centerLatlng = "";
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
                         centerLatlng = myCity.getCenter_lnglat2();
@@ -774,25 +866,15 @@ public class MainNewMapActivity extends BaseActivity implements
                         centerLatlng = myCity.getCenter_lnglat1();
                     }
                     if (!isNull(centerLatlng)) {
-//                        String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
-//                        if (locCity.equals(startCity.getName())) {
-//                            move_lat = start_lat;
-//                            move_lng = start_lng;
-//                            CameraPosition cameraPosition = new CameraPosition(latlng, 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
-//                            onCameraChangeFinish(cameraPosition);
-//                        } else {
-//                            move_lat = centerLatlng.split(",")[1];
-//                            move_lng = centerLatlng.split(",")[0];
-//                        }
-                        if (isNull(start_lat)){
+                        if (isNull(start_lat)) {
                             move_lat = centerLatlng.split(",")[1];
                             move_lng = centerLatlng.split(",")[0];
-                        }else {
+                        } else {
                             move_lat = start_lat;
                             move_lng = start_lng;
                         }
 
-                        CameraPosition cameraPosition = new CameraPosition(new LatLng(Double.parseDouble(move_lat),Double.parseDouble(move_lng)), 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
+                        CameraPosition cameraPosition = new CameraPosition(new LatLng(Double.parseDouble(move_lat), Double.parseDouble(move_lng)), 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
                         onCameraChangeFinish(cameraPosition);
                         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(move_lat),
                                 Double.parseDouble(move_lng)), 15));
@@ -802,6 +884,8 @@ public class MainNewMapActivity extends BaseActivity implements
             case R.id.tv_end:
                 if (hasCircle && !selectAddress.equals("2")) {
                     selectAddress = "2";
+                    tvStart.setBackgroundColor(0xffffffff);
+                    tvEnd.setBackgroundColor(0x70e5e5e5);
                     String centerLatlng = "";
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
                         centerLatlng = myCity.getCenter_lnglat1();
@@ -809,38 +893,148 @@ public class MainNewMapActivity extends BaseActivity implements
                         centerLatlng = myCity.getCenter_lnglat2();
                     }
                     if (!isNull(centerLatlng)) {
-//                        String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
-//                        if (locCity.equals(endCity.getName())) {
-//                            move_lat = end_lat;
-//                            move_lng = end_lng;
-//                            CameraPosition cameraPosition = new CameraPosition(latlng, 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
-//                            onCameraChangeFinish(cameraPosition);
-//                        } else {
-//                            move_lat = centerLatlng.split(",")[1];
-//                            move_lng = centerLatlng.split(",")[0];
-//                        }
-                        if (isNull(end_lat)){
+                        if (isNull(end_lat)) {
                             log_e("isnull-----------------------------------------------");
                             move_lat = centerLatlng.split(",")[1];
                             move_lng = centerLatlng.split(",")[0];
-                        }else {
+                        } else {
                             log_e("isnull2222-----------------------------------------------");
                             move_lat = end_lat;
                             move_lng = end_lng;
                         }
-
-                        CameraPosition cameraPosition = new CameraPosition(new LatLng(Double.parseDouble(move_lat),Double.parseDouble(move_lng)), 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
+                        CameraPosition cameraPosition = new CameraPosition(new LatLng(Double.parseDouble(move_lat), Double.parseDouble(move_lng)), 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
                         onCameraChangeFinish(cameraPosition);
                         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(move_lat),
                                 Double.parseDouble(move_lng)), 15));
                     }
                 }
                 break;
-            case R.id.lv_bang:
+            case R.id.lv_bang://帮人下单
+                bangFlag = "1";
+                sendNext();
                 break;
             case R.id.lv_one_next:
+                bangFlag = "2";
+                sendNext();
+                break;
+            case R.id.tv_sendtwo_cancel://取消，回上一步
+                isSend2 = false;
+                sendEndMarker.setVisible(false);
+                sendStartMarker.setVisible(false);
+                screenMarker.setVisible(true);
+                lvSend1.setVisibility(View.GONE);
+                lvSend0.startAnimation(appearAnimation);
+                lvSend0.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tv_send_pin://拼车
+                if (count == 4) {
+                    return;
+                }
+                if (!isNull(begin) && (BaseUtil.compareTime(begin, pin_start) == -1 || BaseUtil.compareTime(pin_end, begin) == -1)) {//选择的出发时间不在可拼单时间内
+                    String start = BaseUtil.TransTimeHour(pin_start, "HH:mm");
+                    String end = BaseUtil.TransTimeHour(pin_end, "HH:mm");
+                    showTextDialog("出发时间在" + start + "至" + end + "期间提供拼车服务");
+                } else {
+                    pinFlag = "1";
+                    tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.mipmap.img_agree_s, 0);
+                    tvSendBao.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.mipmap.img_agree_n, 0);
+                    resetPrice();
+                }
+                break;
+            case R.id.tv_send_bao://包车
+                pinFlag = "0";
+                tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.mipmap.img_agree_n, 0);
+                tvSendBao.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.mipmap.img_agree_s, 0);
+                //count = 4;//包车默认4人
+//                tvSendCount.setText("4人");
+                resetPrice();
+                break;
+            case R.id.tv_send_time:
+                initHour(0);
+                initMinute(0);
+                initDay();
+                showTimePopWindow();
+                break;
+            case R.id.tv_send_count:
+                countDialog();
+                break;
+            case R.id.tv_send_coupon:
+                it = new Intent(mContext, MyCouponListActivity.class);
+                it.putExtra("keytype", "2");
+                startActivityForResult(it, 5);
+                break;
+            case R.id.tv_send_content:
+                it = new Intent(mContext, EditContentActivity.class);
+                it.putExtra("content", tvSendContent.getText().toString());
+                startActivityForResult(it, 6);
+                break;
+            case R.id.tv_send_feeinfor:
+                it = new Intent(mContext, FeeInforActivity.class);
+                it.putExtra("start", startCity.getName());
+                it.putExtra("end", endCity.getName());
+                it.putExtra("price", myCity.getPrice());
+                if (pinFlag.equals("0")) {
+                    it.putExtra("count", "4");
+                } else {
+                    it.putExtra("count", count + "");
+                }
+                it.putExtra("addstart", addstart + "");
+                it.putExtra("addend", addend + "");
+                it.putExtra("couple", coupon_vavle);
+                it.putExtra("all", totleFee + "");
+                startActivity(it);
+                break;
+            case R.id.tv_send_button:
                 break;
         }
+    }
+
+    private void sendNext() {//发布第二步
+        if (startCity == null) {
+            showTextDialog("请选择出发城市");
+            return;
+        }
+        if (endCity == null) {
+            showTextDialog("请选择到达城市");
+            return;
+        }
+        String startAdd = tvStart.getText().toString();
+        String endAdd = tvEnd.getText().toString();
+        if (isNull(startAdd)) {
+            showTextDialog("请选择出发地点");
+            return;
+        }
+        if (isNull(endAdd)) {
+            showTextDialog("请选择目的地点");
+            return;
+        }
+        isSend2 = true;
+        screenMarker.setVisible(false);
+        sendStartMarker = aMap.addMarker(new MarkerOptions()
+                .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
+                .icon(BitmapDescriptorFactory
+                        .fromBitmap(BitmapFactory.
+                                decodeResource(getResources(), R.mipmap.marker_send))));
+        sendStartMarker.setVisible(true);
+        sendEndMarker = aMap.addMarker(new MarkerOptions()
+                .position(new LatLng(Double.parseDouble(end_lat), Double.parseDouble(end_lng)))
+                .icon(BitmapDescriptorFactory
+                        .fromBitmap(BitmapFactory.
+                                decodeResource(getResources(), R.mipmap.marker_send))));
+        sendEndMarker.setVisible(true);
+        lvSend0.setVisibility(View.GONE);
+        lvSend1.startAnimation(appearAnimation);
+        lvSend1.setVisibility(View.VISIBLE);
+        if (bangFlag.equals("1")) {
+            lvBangInfor.setVisibility(View.VISIBLE);
+        } else {
+            lvBangInfor.setVisibility(View.GONE);
+        }
+        resetPrice();
     }
 
     @Override
@@ -858,19 +1052,34 @@ public class MainNewMapActivity extends BaseActivity implements
                 end_address = "";
                 tvStart.setText("");
                 tvEnd.setText("");
+                price = 0;
+                addend = 0;
+                addstart = 0;
+                resetPrice();
+                //如果之前画过圈，清一下
+                hasCircle = false;
+                for (Polygon p : polygons) {
+                    p.remove();
+                }
+                mapView.invalidate();//刷新地图
+                polygons.clear();
+                prices.clear();
                 break;
             case 2:
                 endCity = (DistrictInfor) data.getSerializableExtra("infor");
                 myCity = (DistrictInfor) data.getSerializableExtra("infor");
+                price = Float.parseFloat(myCity.getPrice());
                 tvEndCity.setText(endCity.getName());
                 start_address = "";
                 end_address = "";
                 tvStart.setText("");
                 tvEnd.setText("");
+                end_lat = "";
+                end_lng = "";
                 areas.clear();
                 areas.addAll(myCity.getAreas());
                 setUpMap();
-
+                resetPrice();
                 break;
             case 3:
                 break;
@@ -879,8 +1088,13 @@ public class MainNewMapActivity extends BaseActivity implements
             case 5:
                 coupon_id = data.getStringExtra("id");
                 coupon_vavle = data.getStringExtra("money");
-//                tvCoupon.setText(coupon_vavle + "元");
-//                coupon = Integer.parseInt(coupon_vavle);
+                tvSendCoupon.setText(coupon_vavle + "元");
+                coupon = Integer.parseInt(coupon_vavle);
+                resetPrice();
+                break;
+            case 6:
+                String content = data.getStringExtra("content");
+                tvSendContent.setText(content);
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -888,11 +1102,17 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
+        if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
+            return;
+        }
         log_e("onCameraChange-------------------------------------------------------------");
     }
 
     @Override
     public void onCameraChangeFinish(CameraPosition cameraPosition) {
+        if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
+            return;
+        }
         log_e("onCameraChangeFinish-------------------------------------------------------------");
         tvSearch.setText("");
         myAddress = "";
@@ -904,9 +1124,17 @@ public class MainNewMapActivity extends BaseActivity implements
         if (hasCircle) {//已经画圈
             boolean b1 = false;
             for (int i = 0; i < polygons.size(); i++) {
-                if (polygons.get(i).contains(latLng)) {
-                    b1 = true;
-                    addPrice = prices.get(i);
+                if (selectAddress.equals("1")) {//出发地
+                    if (polygons.get(i).contains(latLng) && startCity.getCity_id().equals(areas.get(i).getCity_id())) {//选择地点是出发城市
+                        b1 = true;
+                        addstart = Float.parseFloat(prices.get(i));
+                    }
+                }
+                if (selectAddress.equals("2")) {//目的地
+                    if (polygons.get(i).contains(latLng) && endCity.getCity_id().equals(areas.get(i).getCity_id())) {//选择地点是到达城市
+                        b1 = true;
+                        addend = Float.parseFloat(prices.get(i));
+                    }
                 }
             }
             inArea = b1;
@@ -929,6 +1157,9 @@ public class MainNewMapActivity extends BaseActivity implements
             latlng = latLng;
             lat = latLng.latitude + "";
             lng = latLng.longitude + "";
+            loclatlng = latLng;
+            loc_lat = latLng.latitude + "";
+            loc_lng = latLng.longitude + "";
             LatLonPoint latLonPoint = new LatLonPoint(latLng.latitude, latLng.longitude);
             RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
                     GeocodeSearch.AMAP);// 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
@@ -1036,6 +1267,9 @@ public class MainNewMapActivity extends BaseActivity implements
             XtomSharedPreferencesUtil.save(mContext, "city", c);
             mapView.setVisibility(View.VISIBLE);
             LatLng latlng0 = new LatLng(location.getLatitude(), location.getLongitude());
+            loclatlng = latlng0;
+            loc_lng = String.valueOf(location.getLongitude());
+            loc_lat = String.valueOf(location.getLatitude());
             if (isFirstLoc) {
                 latlng = latlng0;
                 lng = String.valueOf(location.getLongitude());
@@ -1044,6 +1278,319 @@ public class MainNewMapActivity extends BaseActivity implements
             }
             isFirstLoc = false;
         }
+    }
+
+    private void countDialog() {
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(mContext);
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_count, null);
+        TextView bt_ok = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
+        TextView bt_cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
+        RecyclerView recyclerView = (RecyclerView) mViewGroup_exit.findViewById(R.id.recyclerView);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+            }
+        });
+        bt_ok.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+                for (PersonCountInfor infor : counts) {
+                    if (infor.isChecked()) {
+                        count = Integer.parseInt(infor.getCount());
+                        resetPrice();
+                        tvSendCount.setText(count + "人");
+                        if (count == 4) {
+                            pinFlag = "0";
+                            tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                                    R.mipmap.img_agree_n, 0);
+                            tvSendBao.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                                    R.mipmap.img_agree_s, 0);
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+        final PersonCountAdapter adapter = new PersonCountAdapter(mContext, counts);
+        RecycleUtils.initHorizontalRecyle(recyclerView);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void resetPrice() {
+        if (pinFlag.equals("0")) {//包车
+            totleFee = price * 4 - coupon + addend + addstart;
+        } else
+            totleFee = price * count - coupon + addend + addstart;
+        tvPrice.setText(totleFee + "元");
+    }
+
+    private void showTimePopWindow() {
+        if (timePop != null) {
+            timePop.dismiss();
+        }
+        timePop = new PopupWindow(mContext);
+        timePop.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        timePop.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+        timePop.setBackgroundDrawable(new BitmapDrawable());
+        timePop.setFocusable(true);
+        timePop.setAnimationStyle(R.style.PopupAnimation);
+        timeViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_time3, null);
+        dayListView = (WheelView) timeViewGroup
+                .findViewById(R.id.listview0);
+        timeListView = (WheelView) timeViewGroup
+                .findViewById(R.id.listview1);
+        secondListView = (WheelView) timeViewGroup
+                .findViewById(R.id.listview2);
+        TextView time_clear = (TextView) timeViewGroup
+                .findViewById(R.id.clear);
+        TextView time_ok = (TextView) timeViewGroup.findViewById(R.id.ok);
+        timePop.setContentView(timeViewGroup);
+        timePop.showAtLocation(timeViewGroup, Gravity.CENTER, 0, 0);
+
+        dayListView.setVisibleItems(4);
+        dayListView.setViewAdapter(new PopTimeAdapter(mContext, days));
+        dayListView.setCurrentItem(0);
+        dayListView.addScrollingListener(scrollListener);
+
+        timeListView.setVisibleItems(4);
+        timeListView.setViewAdapter(new PopTimeAdapter(mContext, times));
+        timeListView.setCurrentItem(0);
+        timeListView.addScrollingListener(scrollListener);
+
+        secondListView.setVisibleItems(4);
+        secondListView.setViewAdapter(new PopTimeAdapter(mContext, seconds));
+        secondListView.setCurrentItem(0);
+        secondListView.addScrollingListener(scrollListener);
+
+        time_clear.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                timePop.dismiss();
+            }
+        });
+        time_ok.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                timePop.dismiss();
+                String t1;
+                int d = dayListView.getCurrentItem();
+                int t = timeListView.getCurrentItem();
+                int s = secondListView.getCurrentItem();
+
+                String time = times.get(t).substring(0, times.get(t).length() - 1);
+                if (time.length() == 1)
+                    time = "0" + time;
+                String second = seconds.get(s).substring(0, seconds.get(s).length() - 1);
+                if (second.length() == 1)
+                    second = "0" + second;
+                if (timeflag == 0) {
+                    if (d == 0) {
+                        t1 = "今天 " + time + ":" + second + "出发";
+                    } else if (d == 1) {
+                        t1 = "明天" + time + ":" + second + "出发";
+                    } else if (d == 2) {
+                        t1 = "后天" + time + ":" + second + "出发";
+                    } else {
+                        t1 = days.get(d) + time + ":" + second + "出发";
+                    }
+                } else {
+                    if (d == 0) {
+                        t1 = "明天 " + time + ":" + second + "出发";
+                    } else if (d == 1) {
+                        t1 = "后天" + time + ":" + second + "出发";
+                    } else if (d == 2) {
+                        t1 = "大后天" + time + ":" + second + "出发";
+                    } else {
+                        t1 = days.get(d) + time + ":" + second + "出发";
+                    }
+                }
+
+                SpannableString str = new SpannableString(t1);
+                str.setSpan(new ForegroundColorSpan(0xff414141), 0,
+                        t1.length() - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                begintime = days1.get(d) + " " + time + ":"
+                        + second + ":00";
+                tvSendTime.setText(str);
+                begin = time + ":" + second + ":00";
+                if (BaseUtil.compareTime(begin, pin_start) == 1 && BaseUtil.compareTime(pin_end, begin) == 1) {//在可拼单时间内
+                } else {
+                    pinFlag = "0";
+                    tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.mipmap.img_agree_n, 0);
+                    tvSendBao.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.mipmap.img_agree_s, 0);
+                    resetPrice();
+                }
+            }
+        });
+    }
+
+    private OnWheelScrollListener scrollListener = new OnWheelScrollListener() {
+
+        @Override
+        public void onScrollingStarted(WheelView wheel) {
+        }
+
+        @Override
+        public void onScrollingFinished(WheelView wheel) {
+            int current = wheel.getCurrentItem();
+            if (wheel == dayListView) {
+                if (current == 0) {
+                    initHour(0);
+                    initMinute(0);
+                } else {
+                    initHour(1);
+                    initMinute(1);
+                }
+            } else if (wheel == timeListView) {
+                if (dayListView.getCurrentItem() == 0) {
+                    if (current == 0)
+                        initMinute(0);
+                    else if (current == times.size() - 1) {
+                        initMinute(2);
+                    } else
+                        initMinute(1);
+                } else {
+                    if (current == 0)
+                        initMinute(1);
+                    else if (current == times.size() - 1) {
+                        initMinute(2);
+                    } else
+                        initMinute(1);
+                }
+            }
+        }
+    };
+
+    private void initHour(int type) {
+        times.clear();
+        Calendar calendar = Calendar.getInstance();
+        int min = calendar.get(Calendar.MINUTE);
+        if (min > 30)
+            calendar.add(Calendar.MINUTE, 180);
+        else
+            calendar.add(Calendar.MINUTE, 120); //将当前时间向后移动
+        if (type == 0) {
+            int hour = calendar.get(Calendar.HOUR_OF_DAY); //新的小时
+            for (int i = hour; i < 24; i++) {
+                times.add(i - hour, i + "点");
+            }
+        } else {
+            int hour = calendar.get(Calendar.HOUR_OF_DAY); //新的小时
+            if (hour < 3)
+                hour = 2;
+            for (int i = 0; i < hour - 1; i++) {
+                times.add(i, i + "点");
+            }
+        }
+
+        if (timeListView != null) {
+            timeListView.setVisibleItems(4);
+            time_adapter = new PopTimeAdapter(mContext, times);
+            timeListView.setViewAdapter(time_adapter);
+            timeListView.setCurrentItem(0);
+            timeListView.addScrollingListener(scrollListener);
+        }
+    }
+
+    private void initMinute(int type) {
+        seconds.clear();
+        Calendar calendar = Calendar.getInstance();
+        if (type == 0) {
+            int min = calendar.get(Calendar.MINUTE); //
+            if (min > 0 && min <= 30)
+                seconds.add(0, "30分");
+            else {
+                seconds.add(0, "00分");
+                seconds.add(1, "30分");
+            }
+        } else if (type == 1) {
+            seconds.add(0, "00分");
+            seconds.add(1, "30分");
+        } else {
+            int min = calendar.get(Calendar.MINUTE); //
+            seconds.add(0, "00分");
+            seconds.add(1, "30分");
+        }
+        if (secondListView != null) {
+            secondListView.setVisibleItems(4);
+            secondListView.setViewAdapter(new PopTimeAdapter(mContext, seconds));
+            secondListView.setCurrentItem(0);
+            secondListView.addScrollingListener(scrollListener);
+        }
+    }
+
+    //初始化当前日期范围
+    private void initDay() {
+        days.clear();
+        days1.clear();
+        Calendar calendar = Calendar.getInstance();
+        int min = calendar.get(Calendar.MINUTE);
+        if (min > 30)
+            calendar.add(Calendar.MINUTE, 180);
+        else
+            calendar.add(Calendar.MINUTE, 120); //将当前时间向后移动
+        int hour = calendar.get(Calendar.HOUR_OF_DAY); //新的小时
+        if (hour < 3) {
+            timeflag = 1;
+            for (int i = 1; i < 3; i++) {
+                getNextDay2(i);
+            }
+        } else {
+            timeflag = 0;
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
+            String day1 = sdf.format(new Date());
+            days.add(0, day1);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            days1.add(0, sdf1.format(new Date()));
+            for (int i = 1; i < 2; i++) {
+                getNextDay(i);
+            }
+        }
+    }
+
+    private void getNextDay(int day) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
+        Date dt = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dt);
+        calendar.add(Calendar.DAY_OF_YEAR, day);// 日期加day天
+        Date dt1 = calendar.getTime();
+        String day1 = sdf.format(dt1);
+        days.add(day, day1);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        days1.add(day, sdf1.format(dt1));
+    }
+
+    private void getNextDay2(int day) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
+        Date dt = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dt);
+        calendar.add(Calendar.DAY_OF_YEAR, day);// 日期加day天
+        Date dt1 = calendar.getTime();
+        String day1 = sdf.format(dt1);
+        days.add(day - 1, day1);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        days1.add(day - 1, sdf1.format(dt1));
     }
 
     private void NotifiTip() {
