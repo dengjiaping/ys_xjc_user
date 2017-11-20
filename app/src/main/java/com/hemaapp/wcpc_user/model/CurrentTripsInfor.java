@@ -51,9 +51,19 @@ public class CurrentTripsInfor extends XtomObject {
     private String remarks;
     private String driver_sex;
     private ArrayList<Client> clients=new ArrayList<>();
+    private String  timetype; //	预约or实时	1：预约，2：实时
+    private String is_helpcall; //	是否代人叫车	1：是，0：否
+    private String  helpcallname; //	代人叫车	姓名，默认空字符串
+    private String  helpcallmobile; //	代人叫车	电话，默认空字符串
+
     public CurrentTripsInfor(JSONObject jsonObject) throws DataParseException {
         if(jsonObject != null){
             try {
+                timetype = get(jsonObject, "timetype");
+                is_helpcall = get(jsonObject, "is_helpcall");
+                helpcallname = get(jsonObject, "helpcallname");
+                helpcallmobile = get(jsonObject, "helpcallmobile");
+
                 driver_sex = get(jsonObject, "driver_sex");
                 remarks = get(jsonObject, "remarks");
                 replyflag1 = get(jsonObject, "replyflag1");
@@ -142,7 +152,13 @@ public class CurrentTripsInfor extends XtomObject {
                 ", allfee='" + allfee + '\'' +
                 ", together_client_arr='" + together_client_arr + '\'' +
                 ", replyflag1='" + replyflag1 + '\'' +
+                ", remarks='" + remarks + '\'' +
+                ", driver_sex='" + driver_sex + '\'' +
                 ", clients=" + clients +
+                ", timetype='" + timetype + '\'' +
+                ", is_helpcall='" + is_helpcall + '\'' +
+                ", helpcallname='" + helpcallname + '\'' +
+                ", helpcallmobile='" + helpcallmobile + '\'' +
                 '}';
     }
 
@@ -171,6 +187,22 @@ public class CurrentTripsInfor extends XtomObject {
 
     public String getRemarks() {
         return remarks;
+    }
+
+    public String getTimetype() {
+        return timetype;
+    }
+
+    public String getIs_helpcall() {
+        return is_helpcall;
+    }
+
+    public String getHelpcallname() {
+        return helpcallname;
+    }
+
+    public String getHelpcallmobile() {
+        return helpcallmobile;
     }
 
     public String getReplyflag1() {

@@ -238,6 +238,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:hint="乘车人数"
+                    android:text="1人"
                     android:textColor="@color/cl_3f3f3f"
                     android:textColorHint="@color/cl_a0a0a0"
                     android:textSize="@dimen/textsize_7" />

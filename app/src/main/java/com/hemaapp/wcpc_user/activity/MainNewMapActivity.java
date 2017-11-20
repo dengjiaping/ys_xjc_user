@@ -55,6 +55,7 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
+import com.hemaapp.hm_FrameWork.view.RoundedImageView;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
@@ -73,13 +74,12 @@ import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.DistrictInfor;
 import com.hemaapp.wcpc_user.model.ID;
 import com.hemaapp.wcpc_user.model.PersonCountInfor;
-import com.hemaapp.wcpc_user.model.TimeRule;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
+import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
-import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 
@@ -95,6 +95,7 @@ import de.greenrobot.event.EventBus;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.util.XtomDeviceUuidFactory;
 import xtom.frame.util.XtomSharedPreferencesUtil;
+import xtom.frame.util.XtomTimeUtil;
 import xtom.frame.util.XtomToastUtil;
 
 /**
@@ -116,7 +117,6 @@ public class MainNewMapActivity extends BaseActivity implements
     TextView tvSearch;
     @BindView(R.id.lv_search)
     LinearLayout lvSearch;
-
     @BindView(R.id.tv_now)
     TextView tvNow;
     @BindView(R.id.tv_appointment)
@@ -169,6 +169,70 @@ public class MainNewMapActivity extends BaseActivity implements
     TextView tvSendButton;
     @BindView(R.id.lv_send1)
     LinearLayout lvSend1;//发单第二步
+    @BindView(R.id.tv_cur_tip)
+    TextView tvCurTip;
+    @BindView(R.id.iv_daohang)
+    ImageView ivDaohang;
+    @BindView(R.id.fv_current_top)
+    FrameLayout fvCurrentTop;
+    @BindView(R.id.iv_cur_avatar)
+    RoundedImageView ivCurAvatar;
+    @BindView(R.id.tv_cur_start)
+    TextView tvCurStart;
+    @BindView(R.id.tv_cur_end)
+    TextView tvCurEnd;
+    @BindView(R.id.lv_cur_rout)
+    LinearLayout lvCurRout;
+    @BindView(R.id.tv_cur_name)
+    TextView tvCurName;
+    @BindView(R.id.iv_cur_sex)
+    ImageView ivCurSex;
+    @BindView(R.id.tv_cur_distance)
+    TextView tvCurDistance;
+    @BindView(R.id.tv_cur_car)
+    TextView tvCurCar;
+    @BindView(R.id.lv_cur_driver)
+    LinearLayout lvCurDriver;
+    @BindView(R.id.iv_cur_tel)
+    ImageView ivCurTel;
+    @BindView(R.id.tv_cur_bang_name)
+    TextView tvCurBangName;
+    @BindView(R.id.tv_cur_bang_tel)
+    TextView tvCurBangTel;
+    @BindView(R.id.lv_cur_bang)
+    LinearLayout lvCurBang;
+    @BindView(R.id.tv_cur_num)
+    TextView tvCurNum;
+    @BindView(R.id.tv_cur_time)
+    TextView tvCurTime;
+    @BindView(R.id.tv_cur_price)
+    TextView tvCurPrice;
+    @BindView(R.id.tv_cur_couple)
+    TextView tvCurCouple;
+    @BindView(R.id.tv_cur_together)
+    TextView tvCurTogether;
+    @BindView(R.id.rv_cur_list)
+    RecyclerView rvCurList;
+    @BindView(R.id.lv_cur_together)
+    LinearLayout lvCurTogether;
+    @BindView(R.id.tv_cur_button0)
+    TextView tvCurButton0;
+    @BindView(R.id.tv_cur_button1)
+    TextView tvCurButton1;
+    @BindView(R.id.lv_current_bottom)
+    LinearLayout lvCurrentBottom;
+    @BindView(R.id.lv_current0)
+    LinearLayout lvCurrent0;
+    @BindView(R.id.iv_current_top)
+    ImageView ivCurrentTop;
+    @BindView(R.id.tv_cur_price2)
+    TextView tvCurPrice2;
+    @BindView(R.id.tv_cur_couple2)
+    TextView tvCurCouple2;
+    @BindView(R.id.lv_price2)
+    LinearLayout lvPrice2;
+    @BindView(R.id.lv_cur_price1)
+    LinearLayout lvCurPrice1;
     private User user;
     private int msgcount;
     private long time;// 用于判断二次点击返回键的时间间隔
@@ -197,8 +261,9 @@ public class MainNewMapActivity extends BaseActivity implements
     private CurrentTripsInfor infor;//当前行程信息
     AlphaAnimation appearAnimation, disappearAnimation;
     private DistrictInfor startCity, endCity, myCity;
-    private String start_address = "", end_address, start_lng, start_lat, end_lat, end_lng, begintime, coupon_vavle, coupon_id, bangFlag, pinFlag = "1";
-    private String begin, pin_start, pin_end, order_start, order_end;//后台定义可拼车时间段和可下单时间段
+    private String start_address = "", end_address, start_lng, start_lat, end_lat, end_lng, begintime, coupon_vavle, coupon_id, bangFlag, pinFlag = "1",
+            timetype = "1";
+    private String begin;//和可拼车时间去比较的出发时间
     private int count = 1, coupon = 0;
     private float totleFee = 0, price = 0, addstart = 0, addend = 0;
     private PopupWindow mWindow_exit;
@@ -215,6 +280,7 @@ public class MainNewMapActivity extends BaseActivity implements
     private ArrayList<String> times = new ArrayList<>();
     private ArrayList<String> seconds = new ArrayList<>();
     private PopTimeAdapter time_adapter;
+    private int bottomHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +298,6 @@ public class MainNewMapActivity extends BaseActivity implements
         };
         user = BaseApplication.getInstance().getUser();
         phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
-        getNetWorker().timeRule();
         if (user == null) {
             titlePoint.setVisibility(View.INVISIBLE);
         } else {
@@ -329,7 +394,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.purple_pin)));
         //设置Marker在屏幕上,不跟随地图移动
         screenMarker.setPositionByPixels(screenPosition.x, screenPosition.y);
-
+        if (infor != null) {
+            screenMarker.setVisible(false);
+        }
     }
 
     /**
@@ -434,9 +501,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case NOTICE_UNREAD:
                 break;
-//            case CAN_TRIPS:
-//                showProgressDialog("请稍后...");
-//                break;
+            case TRIPS_ADD:
+                showProgressDialog("请稍后...");
+                break;
         }
     }
 
@@ -446,6 +513,7 @@ public class MainNewMapActivity extends BaseActivity implements
         switch (information) {
             case CURRENT_TRIPS:
             case CAN_TRIPS:
+            case TRIPS_ADD:
                 cancelProgressDialog();
                 break;
             case NOTICE_UNREAD:
@@ -474,11 +542,11 @@ public class MainNewMapActivity extends BaseActivity implements
                 } else if ("2".equals(keytype)) {
                     CanNotTip();
                 } else {
-                    String start = BaseUtil.TransTimeHour(XtomSharedPreferencesUtil.get(mContext, "order_start"), "HH:mm");
-                    String end = BaseUtil.TransTimeHour(XtomSharedPreferencesUtil.get(mContext, "order_end"), "HH:mm");
+                    String start = BaseUtil.TransTimeHour(user.getOrder_start(), "HH:mm");
+                    String end = BaseUtil.TransTimeHour(user.getOrder_end(), "HH:mm");
                     if (isNull(start)) {
                         start = "5:00";
-                        end = "20:00";
+                        end = "20:30";
                     }
                     lvSend0.setVisibility(View.GONE);
                     TimeTip(start, end);
@@ -498,18 +566,6 @@ public class MainNewMapActivity extends BaseActivity implements
                     tvStartCity.setText(startCity.getName());
                 }
                 break;
-            case TIME_RULE:
-                HemaArrayParse<TimeRule> tResult = (HemaArrayParse<TimeRule>) baseResult;
-                TimeRule rule = tResult.getObjects().get(0);
-                XtomSharedPreferencesUtil.save(mContext, "order_start", rule.getTime1_begin());
-                XtomSharedPreferencesUtil.save(mContext, "order_end", rule.getTime1_end());
-                XtomSharedPreferencesUtil.save(mContext, "pin_end", rule.getTime2_end());
-                XtomSharedPreferencesUtil.save(mContext, "pin_start", rule.getTime2_begin());
-                pin_start = rule.getTime2_begin();
-                pin_end = rule.getTime2_end();
-                order_start = rule.getTime1_begin();
-                order_end = rule.getTime1_end();
-                break;
             case CLIENT_GET:
                 HemaArrayParse<User> uResult = (HemaArrayParse<User>) baseResult;
                 user = uResult.getObjects().get(0);
@@ -523,9 +579,23 @@ public class MainNewMapActivity extends BaseActivity implements
                     infor = null;
                 }
                 if (infor == null) {
-                    getNetWorker().canTrips(user.getToken());
                     lvSend0.startAnimation(appearAnimation);
                     lvSend0.setVisibility(View.VISIBLE);
+                    getNetWorker().canTrips(user.getToken());
+                } else {
+                    isSend2 = false;
+                    if (sendStartMarker != null)
+                        sendEndMarker.setVisible(false);
+                    if (sendStartMarker != null)
+                        sendStartMarker.setVisible(false);
+                    if (screenMarker != null)
+                        screenMarker.setVisible(false);
+                    lvSearch.setVisibility(View.GONE);
+                    lvSend0.setVisibility(View.GONE);
+                    lvSend1.setVisibility(View.GONE);
+                    lvCurrent0.setVisibility(View.VISIBLE);
+                    setData();
+                    bottomHeight = lvCurrentBottom.getLayoutParams().height;
                 }
                 break;
             case COUPONS_LIST:
@@ -538,6 +608,58 @@ public class MainNewMapActivity extends BaseActivity implements
                     coupon = Integer.parseInt(coupon_vavle);
                 }
                 break;
+            case TRIPS_ADD:
+                showTextDialog("发布成功");
+                //如果之前画过圈，清一下
+                hasCircle = false;
+                for (Polygon p : polygons) {
+                    p.remove();
+                }
+                mapView.invalidate();//刷新地图
+                polygons.clear();
+                prices.clear();
+                getNetWorker().currentTrips(user.getToken());
+                break;
+        }
+    }
+
+    private void setData() {
+        if (infor.getStatus().equals("0")) {//待派单
+                lvCurRout.setVisibility(View.VISIBLE);
+                lvCurDriver.setVisibility(View.GONE);
+                ivCurAvatar.setVisibility(View.GONE);
+                tvCurDistance.setVisibility(View.GONE);
+                ivCurTel.setImageResource(R.mipmap.img_order_kefu);
+                lvCurTogether.setVisibility(View.INVISIBLE);
+                tvCurButton0.setVisibility(View.VISIBLE);
+                tvCurButton1.setVisibility(View.GONE);
+                tvCurButton0.setTextColor(0xff5e5e5e);
+                tvCurButton0.setBackgroundResource(R.drawable.bg_operate);
+                tvCurButton0.setText("取消订单");
+                tvCurStart.setText(infor.getStartaddress());
+                tvCurEnd.setText(infor.getEndaddress());
+                tvCurNum.setText("我的乘车人数:" + infor.getNumbers() + "人");
+                tvCurTime.setText("我的出发时间:" + XtomTimeUtil.TransTime(infor.getBegintime(), "MM-dd HH:mm"));
+                tvPrice.setText(infor.getTotal_fee() + "元");
+                if (isNull(infor.getCoupon_fee()) || infor.getCoupon_fee().equals("0.00")) {
+                    tvCurCouple.setVisibility(View.GONE);
+                } else {
+                    tvCurCouple.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
+                }
+                if (infor.getIs_helpcall().equals("1")) {//帮人叫车
+                    lvCurBang.setVisibility(View.VISIBLE);
+                    tvCurBangName.setText(infor.getHelpcallname());
+                    tvCurBangTel.setText(infor.getHelpcallmobile());
+                } else {
+                    lvCurBang.setVisibility(View.GONE);
+                }
+                if (infor.getTimetype().equals("1")) {//预约
+                    tvCurTime.setVisibility(View.VISIBLE);
+                    tvCurNum.setVisibility(View.VISIBLE);
+                }else {//实时
+                    tvCurTime.setVisibility(View.GONE);
+                    tvCurNum.setVisibility(View.GONE);
+                }
         }
     }
 
@@ -545,8 +667,8 @@ public class MainNewMapActivity extends BaseActivity implements
     protected void callBackForGetDataFailed(HemaNetTask hemaNetTask, int i) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
         switch (information) {
-            case ADVERTISE_LIST:
-                showTextDialog("获取数据失败");
+            case TRIPS_ADD:
+                showTextDialog("发布失败");
                 break;
             case CAN_TRIPS:
                 showTextDialog("检查失败，请稍后重试");
@@ -560,7 +682,7 @@ public class MainNewMapActivity extends BaseActivity implements
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case ADVERTISE_LIST:
+            case TRIPS_ADD:
             case CAN_TRIPS:
                 showTextDialog(baseResult.getMsg());
                 break;
@@ -767,7 +889,8 @@ public class MainNewMapActivity extends BaseActivity implements
             R.id.tv_now, R.id.tv_appointment, R.id.tv_often, R.id.tv_start_city, R.id.iv_change,
             R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next,
             R.id.tv_sendtwo_cancel, R.id.tv_send_pin, R.id.tv_send_bao, R.id.tv_send_time,
-            R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button})
+            R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button,
+            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0})
     public void onClick(View view) {
         user = BaseApplication.getInstance().getUser();
         Intent it;
@@ -790,10 +913,15 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case R.id.lv_search:
                 break;
-            case R.id.tv_now:
-
+            case R.id.tv_now://实时
+                timetype = "2";
+                tvNow.setTextColor(getResources().getColor(R.color.yellow));
+                tvAppointment.setTextColor(getResources().getColor(R.color.word_black));
                 break;
-            case R.id.tv_appointment:
+            case R.id.tv_appointment://预约
+                timetype = "1";
+                tvAppointment.setTextColor(getResources().getColor(R.color.yellow));
+                tvNow.setTextColor(getResources().getColor(R.color.word_black));
                 break;
             case R.id.tv_often:
                 break;
@@ -930,9 +1058,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (count == 4) {
                     return;
                 }
-                if (!isNull(begin) && (BaseUtil.compareTime(begin, pin_start) == -1 || BaseUtil.compareTime(pin_end, begin) == -1)) {//选择的出发时间不在可拼单时间内
-                    String start = BaseUtil.TransTimeHour(pin_start, "HH:mm");
-                    String end = BaseUtil.TransTimeHour(pin_end, "HH:mm");
+                if (!isNull(begin) && (BaseUtil.compareTime(begin, user.getPin_start()) == -1 || BaseUtil.compareTime(user.getPin_end(), begin) == -1)) {//选择的出发时间不在可拼单时间内
+                    String start = BaseUtil.TransTimeHour(user.getPin_start(), "HH:mm");
+                    String end = BaseUtil.TransTimeHour(user.getPin_end(), "HH:mm");
                     showTextDialog("出发时间在" + start + "至" + end + "期间提供拼车服务");
                 } else {
                     pinFlag = "1";
@@ -988,7 +1116,73 @@ public class MainNewMapActivity extends BaseActivity implements
                 it.putExtra("all", totleFee + "");
                 startActivity(it);
                 break;
-            case R.id.tv_send_button:
+            case R.id.tv_send_button://发布
+                String helpcallname = "", helpcallmobile = "", content;
+                content = tvSendContent.getText().toString();
+                float allfee = totleFee + coupon;
+                if (bangFlag.equals("1")) {//代人叫车
+                    helpcallname = evSendBangName.getText().toString();
+                    helpcallmobile = evSendBangTel.getText().toString();
+                    if (isNull(helpcallname)) {
+                        showTextDialog("请填写乘车人姓名");
+                        return;
+                    }
+                    if (isNull(helpcallmobile)) {
+                        showTextDialog("请填写乘车人电话");
+                        return;
+                    }
+                } else {//自己叫车
+                    helpcallname = "";
+                    helpcallmobile = "";
+                }
+                if (timetype.equals("1")) {//预约
+                    if (isNull(begintime)) {
+                        showTextDialog("请选择出发时间");
+                        return;
+                    }
+                    getNetWorker().tripsAddNew(user.getToken(), timetype, helpcallname, helpcallmobile, start_address, startCity.getCity_id(), startCity.getName(),
+                            end_address, endCity.getCity_id(), endCity.getName(), begintime, count + "", pinFlag, content, start_lng, start_lat,
+                            end_lng, end_lat, coupon_id, allfee + "");
+                } else {//实时
+                    getNetWorker().tripsAddNew(user.getToken(), timetype, helpcallname, helpcallmobile, start_address, startCity.getCity_id(), startCity.getName(),
+                            end_address, endCity.getCity_id(), endCity.getName(), "", "4", "0", content, start_lng, start_lat,
+                            end_lng, end_lat, coupon_id, allfee + "");
+                }
+                break;
+            case R.id.iv_daohang://导航按钮
+                break;
+            case R.id.fv_current_top://收起、显示当前行程信息
+                HiddenAnimUtils.newInstance(mContext, lvCurrentBottom, ivCurrentTop, bottomHeight).toggle();
+//                if (lvCurrentBottom.getVisibility() == View.GONE) {
+//                    lvCurrentBottom.startAnimation(appearAnimation);
+//                    lvCurrentBottom.setVisibility(View.VISIBLE);
+//                } else {
+//                    lvCurrentBottom.startAnimation(disappearAnimation);
+//                    disappearAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+//
+//                        @Override
+//                        public void onAnimationStart(android.view.animation.Animation animation) {
+//                        }
+//
+//                        @Override
+//                        public void onAnimationRepeat(android.view.animation.Animation animation) {
+//                        }
+//
+//                        @Override
+//                        public void onAnimationEnd(android.view.animation.Animation animation) {
+//                            lvCurrentBottom.setVisibility(View.GONE);
+//                        }
+//                    });
+//                }
+                break;
+            case R.id.iv_cur_avatar://司机头像
+
+                break;
+            case R.id.iv_cur_tel://电话
+                break;
+            case R.id.tv_cur_button0:
+                break;
+            case R.id.tv_cur_button1:
                 break;
         }
     }
@@ -1034,6 +1228,15 @@ public class MainNewMapActivity extends BaseActivity implements
         } else {
             lvBangInfor.setVisibility(View.GONE);
         }
+        if (timetype.equals("1")) {//预约
+            lvSendOtherinfor.setVisibility(View.VISIBLE);
+        } else {//实时（默认包车）
+            lvSendOtherinfor.setVisibility(View.GONE);
+            pinFlag = "0";
+            count = 4;
+            begintime = "";
+        }
+
         resetPrice();
     }
 
@@ -1102,6 +1305,9 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
+        if (infor != null) {//有当前行程
+            return;
+        }
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
             return;
         }
@@ -1110,6 +1316,9 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     public void onCameraChangeFinish(CameraPosition cameraPosition) {
+        if (infor != null) {//有当前行程
+            return;
+        }
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
             return;
         }
@@ -1176,7 +1385,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (address.getAois() != null && address.getAois().size() > 0)
                     myAddress = address.getCity() + address.getAois().get(0).getAoiName();
                 else
-                    myAddress = address.getFormatAddress();
+                    myAddress = address.getFormatAddress().substring(3);
                 tvSearch.setText(myAddress);
                 tvSearch.postDelayed(new Runnable() {
                     @Override
@@ -1430,7 +1639,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         + second + ":00";
                 tvSendTime.setText(str);
                 begin = time + ":" + second + ":00";
-                if (BaseUtil.compareTime(begin, pin_start) == 1 && BaseUtil.compareTime(pin_end, begin) == 1) {//在可拼单时间内
+                if (BaseUtil.compareTime(begin, user.getPin_start()) == 1 && BaseUtil.compareTime(user.getPin_end(), begin) == 1) {//在可拼单时间内
                 } else {
                     pinFlag = "0";
                     tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,

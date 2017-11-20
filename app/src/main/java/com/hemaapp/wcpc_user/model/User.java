@@ -52,7 +52,11 @@ public class User extends HemaUser {
     private String coupon_value;//		代金券每一张的金额
     private String coupon_dateline;//	代金券有效期
     private String is_reg;//	是否为新注册记录	1：是，0：否
-
+    private String order_start;//
+    private String order_end;//
+    private String pin_end;//
+    private String pin_start;//
+    private String current_time;//
     public User() {
         super("");
     }
@@ -60,6 +64,11 @@ public class User extends HemaUser {
     public User(JSONObject jsonObject) throws DataParseException {
         super(jsonObject);
         try {
+            order_start = get(jsonObject, "time1_begin");
+            order_end = get(jsonObject, "time1_end");
+            pin_start = get(jsonObject, "time2_begin");
+            pin_end = get(jsonObject, "time2_end");
+            current_time = get(jsonObject, "current_time");
             today_cancel_count = get(jsonObject, "today_cancel_count");
             invitecode = get(jsonObject, "invitecode");
             id = get(jsonObject, "id");
@@ -189,6 +198,11 @@ public class User extends HemaUser {
                 ", coupon_value='" + coupon_value + '\'' +
                 ", coupon_dateline='" + coupon_dateline + '\'' +
                 ", is_reg='" + is_reg + '\'' +
+                ", order_start='" + order_start + '\'' +
+                ", order_end='" + order_end + '\'' +
+                ", pin_end='" + pin_end + '\'' +
+                ", pin_start='" + pin_start + '\'' +
+                ", current_time='" + current_time + '\'' +
                 '}';
     }
 
@@ -346,6 +360,26 @@ public class User extends HemaUser {
 
     public String getToday_cancel_count() {
         return today_cancel_count;
+    }
+
+    public String getOrder_start() {
+        return order_start;
+    }
+
+    public String getOrder_end() {
+        return order_end;
+    }
+
+    public String getPin_end() {
+        return pin_end;
+    }
+
+    public String getPin_start() {
+        return pin_start;
+    }
+
+    public String getCurrent_time() {
+        return current_time;
     }
 
     public String getTakecount() {

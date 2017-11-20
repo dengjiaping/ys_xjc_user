@@ -120,6 +120,17 @@
 
             <include layout="@layout/layout_send0" />
             <include layout="@layout/layout_send1" />
+            <TextView
+                android:id="@+id/tv_cur_tip"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:background="#FFD37A"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="平台已受理，司机会在出发前1小时与您取得联系"
+                android:textColor="@color/cl_3f3f3f"
+                android:textSize="14sp" />
+            <include layout="@layout/layout_current0" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

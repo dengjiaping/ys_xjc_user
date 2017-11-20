@@ -309,6 +309,40 @@ public class BaseNetWorker extends HemaNetWorker {
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
     }
+    /**
+     * 发布行程接口
+     */
+    public void tripsAddNew(String token,String timetype,String helpcallname,String helpcallmobile,
+                            String startaddress, String startcity_id, String startcity, String endaddress, String endcity_id, String endcity,
+                         String begintime, String numbers, String carpoolflag, String remarks,
+                         String lng_start, String lat_start, String lng_end, String lat_end,
+                         String coupon_id, String allfee) {
+        BaseHttpInformation information = BaseHttpInformation.TRIPS_ADD;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("timetype", timetype);
+        params.put("helpcallname", helpcallname);
+        params.put("helpcallmobile", helpcallmobile);
+        params.put("startaddress", startaddress);
+        params.put("startcity_id", startcity_id);
+        params.put("startcity", startcity);
+        params.put("endaddress", endaddress);
+        params.put("endcity_id", endcity_id);
+        params.put("endcity", endcity);
+        params.put("begintime", begintime);
+        params.put("numbers", numbers);
+        params.put("carpoolflag", carpoolflag);
+        params.put("remarks", remarks);
+        params.put("lng_start", lng_start);
+        params.put("lat_start", lat_start);
+        params.put("lng_end", lng_end);
+        params.put("lat_end", lat_end);
+        params.put("coupon_id", coupon_id);
+        params.put("allfee", allfee);
+
+        CurrentTask task = new CurrentTask(information, params);
+        executeTask(task);
+    }
 
     /**
      * 行程列表接口

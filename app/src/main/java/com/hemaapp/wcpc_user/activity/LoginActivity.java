@@ -164,7 +164,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 XtomSharedPreferencesUtil.save(mContext, "username", username);
                 XtomSharedPreferencesUtil.save(mContext, "password", password);
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
-
+                XtomSharedPreferencesUtil.save(mContext, "order_start", user.getOrder_start());
+                XtomSharedPreferencesUtil.save(mContext, "order_end", user.getOrder_end());
+                XtomSharedPreferencesUtil.save(mContext, "pin_end", user.getPin_end());
+                XtomSharedPreferencesUtil.save(mContext, "pin_start", user.getPin_start());
                 Intent it = new Intent(this, MainNewMapActivity.class);
                 startActivity(it);
                 finish();

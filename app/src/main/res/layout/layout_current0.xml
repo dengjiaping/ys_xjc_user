@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lv_current0"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_margin="5dp"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <ImageView
+        android:id="@+id/iv_daohang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:src="@mipmap/img_daohang" />
+
+    <FrameLayout
+        android:id="@+id/fv_current_top"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_current_top">
+
+        <ImageView
+            android:id="@+id/iv_current_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@mipmap/img_newtop" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/lv_current_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f0ffffff"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                android:id="@+id/iv_cur_avatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/default_driver"
+                android:visibility="visible" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/lv_cur_rout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/img_startposition" />
+
+                        <TextView
+                            android:id="@+id/tv_cur_start"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="起始点"
+                            android:textColor="@color/cl_3f3f3f"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/img_endposition" />
+
+                        <TextView
+                            android:id="@+id/tv_cur_end"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="目的地"
+                            android:textColor="@color/cl_3f3f3f"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lv_cur_driver"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_cur_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="用户名称"
+                            android:textColor="@color/cl_3f3f3f"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:id="@+id/iv_cur_sex"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginLeft="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@mipmap/img_sex_boy" />
+
+                        <TextView
+                            android:id="@+id/tv_cur_distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="15dp"
+                            android:text="距您0m"
+                            android:textColor="@color/yellow"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_cur_car"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="bottom"
+                        android:maxLines="1"
+                        android:paddingTop="10dp"
+                        android:text="白色"
+                        android:textColor="@color/qianhui"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/iv_cur_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/img_order_kefu" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_driver"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:src="@color/xian" />
+
+        <LinearLayout
+            android:id="@+id/lv_cur_price1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="3dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="3dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingLeft="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/lv_cur_bang"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_cur_bang_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@mipmap/main_bang"
+                            android:drawablePadding="5dp"
+                            android:gravity="center"
+                            android:text="姓名"
+                            android:textColor="@color/cl_5e5e5e"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_cur_bang_tel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="10dp"
+                            android:text=""
+                            android:textColor="#25A7FA"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_cur_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="我的乘车人数"
+                        android:textColor="@color/cl_5e5e5e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_cur_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:text="我的出发时间"
+                        android:textColor="@color/cl_5e5e5e"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="vertical"
+                    android:paddingLeft="13dp">
+
+                    <TextView
+                        android:id="@+id/tv_cur_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0元"
+                        android:textColor="@color/cl_5e5e5e"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tv_cur_couple"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:text="(代金券抵扣0元)"
+                        android:textColor="@color/cl_5e5e5e"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_driver"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@color/xian" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp">
+
+            <LinearLayout
+                android:id="@+id/lv_price2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_cur_price2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0元"
+                    android:textColor="@color/cl_5e5e5e"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_cur_couple2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="(代金券抵扣0元)"
+                    android:textColor="@color/cl_5e5e5e"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lv_cur_together"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_cur_together"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="同行乘客："
+                    android:textColor="@color/cl_5e5e5e"
+                    android:textSize="12sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_cur_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_cur_button0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_operate"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="取消订单"
+                android:textColor="@color/shenhui"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_cur_button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bt_qiangdan"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="到达目的地"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
