@@ -12,6 +12,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +36,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -42,20 +45,28 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.model.Poi;
 import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.animation.Animation;
 import com.amap.api.maps.model.animation.TranslateAnimation;
+import com.amap.api.navi.AmapNaviPage;
+import com.amap.api.navi.AmapNaviParams;
+import com.amap.api.navi.AmapNaviType;
+import com.amap.api.navi.INaviInfoCallback;
+import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.autonavi.rtbt.IFrameForRTBT;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RoundedImageView;
+import com.hemaapp.wcpc_user.AmapTTSController;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
@@ -68,25 +79,33 @@ import com.hemaapp.wcpc_user.ToLogin;
 import com.hemaapp.wcpc_user.UpGrade;
 import com.hemaapp.wcpc_user.adapter.PersonCountAdapter;
 import com.hemaapp.wcpc_user.adapter.PopTimeAdapter;
+import com.hemaapp.wcpc_user.adapter.TogetherAdapter;
 import com.hemaapp.wcpc_user.model.Area;
+import com.hemaapp.wcpc_user.model.Client;
 import com.hemaapp.wcpc_user.model.CouponListInfor;
 import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.DistrictInfor;
+import com.hemaapp.wcpc_user.model.DriverPosition;
 import com.hemaapp.wcpc_user.model.ID;
 import com.hemaapp.wcpc_user.model.PersonCountInfor;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
+import com.hemaapp.wcpc_user.view.DiDiView;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
+import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -102,7 +121,7 @@ import xtom.frame.util.XtomToastUtil;
  * 首页
  */
 public class MainNewMapActivity extends BaseActivity implements
-        GeocodeSearch.OnGeocodeSearchListener, AMap.OnCameraChangeListener, AMap.OnMyLocationChangeListener {
+        GeocodeSearch.OnGeocodeSearchListener, AMap.OnCameraChangeListener, AMap.OnMyLocationChangeListener, AMap.InfoWindowAdapter, INaviInfoCallback {
     @BindView(R.id.title_btn_left)
     ImageView titleBtnLeft;
     @BindView(R.id.title_btn_right_image)
@@ -249,10 +268,10 @@ public class MainNewMapActivity extends BaseActivity implements
     private UpGrade upGrade;
     private AMap aMap;
     Marker screenMarker = null;
-    private Marker sendStartMarker = null, sendEndMarker = null;
+    private Marker sendStartMarker = null, sendEndMarker = null, driverMarker = null;
     private ArrayList<Polygon> polygons = new ArrayList<>();
     private ArrayList<String> prices = new ArrayList<>();
-    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false;
+    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true;
     private GeocodeSearch geocoderSearch;
     private LatLng latlng, loclatlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
@@ -281,6 +300,10 @@ public class MainNewMapActivity extends BaseActivity implements
     private ArrayList<String> seconds = new ArrayList<>();
     private PopTimeAdapter time_adapter;
     private int bottomHeight;
+    private TogetherAdapter togetherAdapter;
+    private ArrayList<Client> clients = new ArrayList<>();
+    private AmapTTSController amapTTSController;
+    View infoWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,13 +320,16 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         };
         user = BaseApplication.getInstance().getUser();
+
         phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
         if (user == null) {
             titlePoint.setVisibility(View.INVISIBLE);
         } else {
             getNetWorker().noticeUnread(user.getToken(), "2", "1");
         }
-        getNetWorker().currentTrips(user.getToken());
+        amapTTSController = AmapTTSController.getInstance(getApplicationContext());
+        amapTTSController.init();
+
         getNetWorker().cityList("0");//获取已开通城市
         appearAnimation = new AlphaAnimation(0, 1);
         appearAnimation.setDuration(500);
@@ -324,6 +350,7 @@ public class MainNewMapActivity extends BaseActivity implements
         for (int i = 0; i < 4; i++) {//
             counts.add(i, new PersonCountInfor(String.valueOf(i + 1), false));
         }
+        handler();
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -336,6 +363,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case REFRESH_CUSTOMER_INFO:
                 getNetWorker().clientGet(user.getToken(), user.getId());
+                break;
+            case REFRESH_BLOG_LIST:
+                getNetWorker().currentTrips(user.getToken());
                 break;
         }
     }
@@ -351,6 +381,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     aMap.setOnMyLocationChangeListener(activity);
                     geocoderSearch = new GeocodeSearch(activity);
                     geocoderSearch.setOnGeocodeSearchListener(activity);
+
                 }
             });
 
@@ -463,6 +494,8 @@ public class MainNewMapActivity extends BaseActivity implements
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         mapView.onDestroy();
+        amapTTSController.destroy();
+        realseTimeTask();
     }
 
     @Override
@@ -481,6 +514,16 @@ public class MainNewMapActivity extends BaseActivity implements
     protected void onPause() {
         super.onPause();
         mapView.onPause();
+    }
+
+    private void realseTimeTask() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (timerTask != null) {
+            timerTask = null;
+        }
     }
 
     /**
@@ -504,6 +547,9 @@ public class MainNewMapActivity extends BaseActivity implements
             case TRIPS_ADD:
                 showProgressDialog("请稍后...");
                 break;
+            case ORDER_OPERATE:
+                showProgressDialog("请稍后...");
+                break;
         }
     }
 
@@ -514,6 +560,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case CURRENT_TRIPS:
             case CAN_TRIPS:
             case TRIPS_ADD:
+            case ORDER_OPERATE:
                 cancelProgressDialog();
                 break;
             case NOTICE_UNREAD:
@@ -571,31 +618,51 @@ public class MainNewMapActivity extends BaseActivity implements
                 user = uResult.getObjects().get(0);
                 BaseApplication.getInstance().setUser(user);
                 break;
-            case CURRENT_TRIPS:
+            case CURRENT_TRIPS://当前行程
                 HemaArrayParse<CurrentTripsInfor> llResult = (HemaArrayParse<CurrentTripsInfor>) baseResult;
-                if (llResult.getObjects() != null && llResult.getObjects().size() > 0)
+                if (llResult.getObjects() != null && llResult.getObjects().size() > 0) {
                     infor = llResult.getObjects().get(0);
-                else {
+                    togetherAdapter = new TogetherAdapter(mContext, clients);
+                    RecycleUtils.initHorizontalRecyle(rvCurList);
+                    rvCurList.setAdapter(togetherAdapter);
+                } else {
                     infor = null;
                 }
                 if (infor == null) {
+                    tvCurTip.setVisibility(View.GONE);
+                    lvCurrent0.setVisibility(View.GONE);
                     lvSend0.startAnimation(appearAnimation);
                     lvSend0.setVisibility(View.VISIBLE);
+                    lvSearch.setVisibility(View.VISIBLE);
+                    if (screenMarker != null) {
+                        screenMarker.setVisible(true);
+                    }
+                    if (sendEndMarker != null) {
+                        sendEndMarker.setVisible(true);
+                    }
+                    realseTimeTask();
+                    if (sendStartMarker != null) {
+                        sendStartMarker.setVisible(false);
+                        sendStartMarker.hideInfoWindow();
+                        aMap.setInfoWindowAdapter(null);
+                    }
                     getNetWorker().canTrips(user.getToken());
                 } else {
                     isSend2 = false;
                     if (sendStartMarker != null)
-                        sendEndMarker.setVisible(false);
-                    if (sendStartMarker != null)
                         sendStartMarker.setVisible(false);
+                    if (sendEndMarker != null)
+                        sendEndMarker.setVisible(false);
                     if (screenMarker != null)
                         screenMarker.setVisible(false);
                     lvSearch.setVisibility(View.GONE);
                     lvSend0.setVisibility(View.GONE);
                     lvSend1.setVisibility(View.GONE);
-                    lvCurrent0.setVisibility(View.VISIBLE);
                     setData();
+                    setMarker();
+                    lvCurrent0.setVisibility(View.VISIBLE);
                     bottomHeight = lvCurrentBottom.getLayoutParams().height;
+
                 }
                 break;
             case COUPONS_LIST:
@@ -620,46 +687,247 @@ public class MainNewMapActivity extends BaseActivity implements
                 prices.clear();
                 getNetWorker().currentTrips(user.getToken());
                 break;
+            case ORDER_OPERATE:
+                getNetWorker().currentTrips(user.getToken());
+                break;
+            case DRIVER_POSITION_GET:
+                HemaArrayParse<DriverPosition> DResult = (HemaArrayParse<DriverPosition>) baseResult;
+                DriverPosition position = DResult.getObjects().get(0);
+                LatLng driver_latlng = new LatLng(Double.parseDouble(position.getLat()), Double.parseDouble(position.getLng()));
+                if (driverMarker == null) {
+                    driverMarker = aMap.addMarker(new MarkerOptions()
+                            .position(driver_latlng)
+                            .icon(BitmapDescriptorFactory
+                                    .fromBitmap(BitmapFactory.
+                                            decodeResource(getResources(), R.mipmap.img_marker_car))));
+                }
+                driverMarker.setPosition(driver_latlng);
+                if (infor.getStatus().equals("3") && infor.getIs_helpcall().equals("1") && moveDriver) {//帮人叫车行驶中，移动到车的位置
+                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(driver_latlng, 15));
+                    moveDriver = false;
+                }
+                if (infor.getStatus().equals("1")) {
+                    float distance = AMapUtils.calculateLineDistance(loclatlng, driver_latlng);
+                    String dis = "0";
+                    if (distance > 1000) {
+                        dis = BaseUtil.divide(distance + "", "1000", 2) + "km";
+                    } else {
+                        dis = BaseUtil.multiply(distance + "", "100");
+                        dis = BaseUtil.divide(dis, "100", 1) + "m";
+                    }
+                    tvCurDistance.setText("距您" + dis);
+                }
+                break;
         }
     }
 
     private void setData() {
+        start_lng = infor.getLng_start();
+        start_lat = infor.getLat_start();
+        end_lng = infor.getLng_end();
+        end_lat = infor.getLat_end();
         if (infor.getStatus().equals("0")) {//待派单
-                lvCurRout.setVisibility(View.VISIBLE);
-                lvCurDriver.setVisibility(View.GONE);
-                ivCurAvatar.setVisibility(View.GONE);
-                tvCurDistance.setVisibility(View.GONE);
-                ivCurTel.setImageResource(R.mipmap.img_order_kefu);
-                lvCurTogether.setVisibility(View.INVISIBLE);
+            ivDaohang.setVisibility(View.GONE);
+            lvCurRout.setVisibility(View.VISIBLE);
+            lvCurDriver.setVisibility(View.GONE);
+            ivCurAvatar.setVisibility(View.GONE);
+            tvCurDistance.setVisibility(View.GONE);
+            ivCurTel.setImageResource(R.mipmap.img_order_kefu);
+            lvCurTogether.setVisibility(View.INVISIBLE);
+            tvCurButton0.setVisibility(View.VISIBLE);
+            tvCurButton1.setVisibility(View.GONE);
+            tvCurButton0.setTextColor(0xff5e5e5e);
+            tvCurButton0.setBackgroundResource(R.drawable.bg_operate);
+            tvCurButton0.setText("取消订单");
+            tvCurStart.setText(infor.getStartaddress());
+            tvCurEnd.setText(infor.getEndaddress());
+            tvCurNum.setText("我的乘车人数:" + infor.getNumbers() + "人");
+            tvCurTime.setText("出发时间:" + XtomTimeUtil.TransTime(infor.getBegintime(), "MM-dd HH:mm"));
+            tvCurPrice.setText(infor.getTotal_fee() + "元");
+            tvCurPrice2.setText(infor.getTotal_fee() + "元");
+            if (isNull(infor.getCoupon_fee()) || infor.getCoupon_fee().equals("0.00")) {
+                tvCurCouple.setVisibility(View.GONE);
+                tvCurCouple2.setVisibility(View.GONE);
+            } else {
+                tvCurCouple.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
+                tvCurCouple2.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
+            }
+            if (infor.getIs_helpcall().equals("1")) {//帮人叫车
+                lvCurBang.setVisibility(View.VISIBLE);
+                tvCurBangName.setText(infor.getHelpcallname());
+                tvCurBangTel.setText(infor.getHelpcallmobile());
+            } else {
+                lvCurBang.setVisibility(View.GONE);
+
+            }
+            if (infor.getTimetype().equals("1")) {//预约
+                tvCurTime.setVisibility(View.VISIBLE);
+                tvCurNum.setVisibility(View.VISIBLE);
+            } else {//实时
+                tvCurTime.setVisibility(View.GONE);
+                tvCurNum.setVisibility(View.GONE);
+            }
+        } else {
+            if (infor.getStatus().equals("1")) {//待上车
+                ivDaohang.setVisibility(View.VISIBLE);
                 tvCurButton0.setVisibility(View.VISIBLE);
-                tvCurButton1.setVisibility(View.GONE);
-                tvCurButton0.setTextColor(0xff5e5e5e);
-                tvCurButton0.setBackgroundResource(R.drawable.bg_operate);
+                tvCurButton1.setVisibility(View.VISIBLE);
+                tvCurDistance.setVisibility(View.VISIBLE);
                 tvCurButton0.setText("取消订单");
-                tvCurStart.setText(infor.getStartaddress());
-                tvCurEnd.setText(infor.getEndaddress());
-                tvCurNum.setText("我的乘车人数:" + infor.getNumbers() + "人");
-                tvCurTime.setText("我的出发时间:" + XtomTimeUtil.TransTime(infor.getBegintime(), "MM-dd HH:mm"));
-                tvPrice.setText(infor.getTotal_fee() + "元");
-                if (isNull(infor.getCoupon_fee()) || infor.getCoupon_fee().equals("0.00")) {
-                    tvCurCouple.setVisibility(View.GONE);
-                } else {
-                    tvCurCouple.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
-                }
-                if (infor.getIs_helpcall().equals("1")) {//帮人叫车
-                    lvCurBang.setVisibility(View.VISIBLE);
-                    tvCurBangName.setText(infor.getHelpcallname());
-                    tvCurBangTel.setText(infor.getHelpcallmobile());
-                } else {
-                    lvCurBang.setVisibility(View.GONE);
-                }
-                if (infor.getTimetype().equals("1")) {//预约
-                    tvCurTime.setVisibility(View.VISIBLE);
-                    tvCurNum.setVisibility(View.VISIBLE);
-                }else {//实时
-                    tvCurTime.setVisibility(View.GONE);
-                    tvCurNum.setVisibility(View.GONE);
-                }
+                tvCurButton1.setText("确认上车");
+                tvCurButton0.setTextColor(0xff5e5e5e);
+                tvCurButton1.setTextColor(0xffffffff);
+                tvCurTime.setVisibility(View.VISIBLE);
+                tvCurTime.setText("出发时间:" + XtomTimeUtil.TransTime(infor.getBegintime(), "MM-dd HH:mm"));
+                tvCurButton0.setBackgroundResource(R.drawable.bg_operate);
+                tvCurButton1.setBackgroundResource(R.drawable.bt_qiangdan);
+            } else if (infor.getStatus().equals("3")) {//待送达
+                ivDaohang.setVisibility(View.VISIBLE);
+                tvCurTime.setVisibility(View.GONE);
+                tvCurButton0.setVisibility(View.GONE);
+                tvCurButton1.setVisibility(View.VISIBLE);
+                tvCurDistance.setVisibility(View.GONE);
+                tvCurButton1.setText("到达目的地");
+                tvCurButton1.setTextColor(0xffffffff);
+                tvCurButton1.setBackgroundResource(R.drawable.bt_qiangdan);
+            } else if (infor.getStatus().equals("5")) {//待支付
+                ivDaohang.setVisibility(View.GONE);
+                tvCurTime.setVisibility(View.GONE);
+                tvCurButton0.setVisibility(View.VISIBLE);
+                tvCurButton1.setVisibility(View.VISIBLE);
+                tvCurDistance.setVisibility(View.GONE);
+                tvCurButton0.setText("到达目的地");
+                tvCurButton1.setText("去支付");
+                tvCurButton0.setTextColor(0xffff9900);
+                tvCurButton1.setTextColor(0xffffffff);
+                tvCurButton1.setBackgroundResource(R.drawable.bt_qiangdan);
+                tvCurButton0.setBackgroundColor(0xffffffff);
+            }
+            if (infor.getIs_helpcall().equals("1")) {//帮人叫车
+                lvCurBang.setVisibility(View.VISIBLE);
+                tvCurBangName.setText(infor.getHelpcallname());
+                tvCurBangTel.setText(infor.getHelpcallmobile());
+            } else {
+                lvCurBang.setVisibility(View.GONE);
+            }
+            ivCurAvatar.setVisibility(View.VISIBLE);
+            tvCurTip.setVisibility(View.GONE);
+            lvCurRout.setVisibility(View.GONE);
+            lvCurDriver.setVisibility(View.VISIBLE);
+            ivCurTel.setImageResource(R.mipmap.img_order_tel);
+            lvCurTogether.setVisibility(View.VISIBLE);
+
+            ImageLoader.getInstance().displayImage(infor.getDriver_avatar(), ivCurAvatar, BaseApplication.getInstance()
+                    .getOptions(R.mipmap.default_driver));
+            ivCurAvatar.setCornerRadius(100);
+            tvCurName.setText(infor.getRealname());
+            tvCurCar.setText(infor.getCarbrand() + " " + infor.getCarnumber());
+            tvCurNum.setText("我的乘车人数:" + infor.getNumbers() + "人");
+            if (isNull(infor.getCoupon_fee()) || infor.getCoupon_fee().equals("0.00")) {
+                tvCurCouple.setVisibility(View.GONE);
+                tvCurCouple2.setVisibility(View.GONE);
+            } else {
+                tvCurCouple.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
+                tvCurCouple2.setText("(代金券抵扣" + infor.getCoupon_fee() + "元)");
+            }
+            tvCurPrice.setText(infor.getTotal_fee() + "元");
+            tvCurPrice2.setText(infor.getTotal_fee() + "元");
+            clients.clear();
+            clients.addAll(infor.getClients());
+            if (clients.size() == 0)
+                tvCurTogether.setVisibility(View.GONE);
+            else
+                tvCurTogether.setVisibility(View.VISIBLE);
+            togetherAdapter.notifyDataSetChanged();
+        }
+        if ("男".equals(infor.getDriver_sex()))
+            ivCurSex.setImageResource(R.mipmap.img_sex_boy);
+        else
+            ivCurSex.setImageResource(R.mipmap.img_sex_girl);
+        if (infor.getTimetype().equals("1")) {//预约
+            tvCurCouple.setVisibility(View.VISIBLE);
+            tvCurPrice.setVisibility(View.VISIBLE);
+            lvPrice2.setVisibility(View.GONE);
+            lvCurPrice1.setVisibility(View.VISIBLE);
+        } else {//实时
+            if (infor.getIs_helpcall().equals("1")) {
+                tvCurCouple.setVisibility(View.VISIBLE);
+                tvCurPrice.setVisibility(View.VISIBLE);
+                lvPrice2.setVisibility(View.GONE);
+                lvCurPrice1.setVisibility(View.VISIBLE);
+            } else {
+                lvPrice2.setVisibility(View.VISIBLE);
+                lvCurPrice1.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setMarker() {
+        realseTimeTask();
+        tvCurTip.setVisibility(View.GONE);
+        if (screenMarker != null)
+            screenMarker.setVisible(false);
+        if (sendEndMarker != null)
+            sendEndMarker.setVisible(false);
+        if (sendStartMarker != null) {
+            sendStartMarker.setVisible(false);
+            sendStartMarker.hideInfoWindow();
+            aMap.setInfoWindowAdapter(null);
+        }
+        if (driverMarker != null)
+            driverMarker.setVisible(false);
+        if (infor.getStatus().equals("0")) {//待派单
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(loc_lat),
+                    Double.parseDouble(loc_lng)), 15));
+            if (infor.getTimetype().equals("1")) {//预约,显示自己位置和出发点
+                tvCurTip.setVisibility(View.VISIBLE);
+                sendStartMarker = aMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
+                        .title("出发地")
+                        .icon(BitmapDescriptorFactory
+                                .fromBitmap(BitmapFactory.
+                                        decodeResource(getResources(), R.mipmap.marker_send))));
+                sendStartMarker.setVisible(true);
+            } else {//实时
+                //倒计时
+                aMap.setInfoWindowAdapter(this);
+                sendStartMarker = aMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
+                        .icon(BitmapDescriptorFactory
+                                .fromBitmap(BitmapFactory.
+                                        decodeResource(getResources(), R.mipmap.marker_send))));
+                sendStartMarker.setVisible(true);
+                sendStartMarker.showInfoWindow();
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(start_lat),
+                        Double.parseDouble(start_lng)), 15));
+                setOriginTime(0, 0, 0);
+                startTimeTask();
+            }
+        } else if (infor.getStatus().equals("1")) {//待上车 ，显示自己位置+出发点+车
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(loc_lat),
+                    Double.parseDouble(loc_lng)), 15));
+            if (sendStartMarker == null) {
+                sendStartMarker = aMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
+                        .title("出发地")
+                        .icon(BitmapDescriptorFactory
+                                .fromBitmap(BitmapFactory.
+                                        decodeResource(getResources(), R.mipmap.marker_send))));
+            }
+            sendStartMarker.setVisible(true);
+        } else if (infor.getStatus().equals("3")) {//待送达。显示自己+目的地（帮人叫车要显示车）
+            if (infor.getIs_helpcall().equals("0"))
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(loc_lat),
+                        Double.parseDouble(loc_lng)), 15));
+            if (sendEndMarker == null) {
+                sendEndMarker = aMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(end_lat), Double.parseDouble(end_lng)))
+                        .title("目的地")
+                        .icon(BitmapDescriptorFactory
+                                .fromBitmap(BitmapFactory.
+                                        decodeResource(getResources(), R.mipmap.marker_send))));
+            }
+            sendEndMarker.setVisible(true);
         }
     }
 
@@ -673,6 +941,9 @@ public class MainNewMapActivity extends BaseActivity implements
             case CAN_TRIPS:
                 showTextDialog("检查失败，请稍后重试");
                 break;
+            case ORDER_OPERATE:
+                showTextDialog("抱歉，操作失败");
+                break;
         }
     }
 
@@ -684,6 +955,7 @@ public class MainNewMapActivity extends BaseActivity implements
         switch (information) {
             case TRIPS_ADD:
             case CAN_TRIPS:
+            case ORDER_OPERATE:
                 showTextDialog(baseResult.getMsg());
                 break;
         }
@@ -692,6 +964,10 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     protected void findView() {
+        infoWindow = getLayoutInflater().inflate(
+                R.layout.layout_inforwindow, null);
+        tvMin = (TextView) infoWindow.findViewById(R.id.tv_infowindow_min);
+        tvSec = (TextView) infoWindow.findViewById(R.id.tv_infowindow_sec);
     }
 
     @Override
@@ -912,6 +1188,17 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.lv_search:
+                it = new Intent(mContext, SearchActivity.class);
+                if (selectAddress.equals("1")) {
+                    it.putExtra("citycode", startCity.getName());
+                    it.putExtra("hint", "从哪出发");
+                    startActivityForResult(it, 10);
+                }
+                if (selectAddress.equals("2")) {
+                    it.putExtra("citycode", endCity.getName());
+                    it.putExtra("hint", "你要去哪");
+                    startActivityForResult(it, 11);
+                }
                 break;
             case R.id.tv_now://实时
                 timetype = "2";
@@ -1135,6 +1422,8 @@ public class MainNewMapActivity extends BaseActivity implements
                     helpcallname = "";
                     helpcallmobile = "";
                 }
+                if (isNull(coupon_id))
+                    coupon_id="0";
                 if (timetype.equals("1")) {//预约
                     if (isNull(begintime)) {
                         showTextDialog("请选择出发时间");
@@ -1150,39 +1439,56 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.iv_daohang://导航按钮
+                if (infor != null) {
+                    LatLng p0 = new LatLng(Double.parseDouble(infor.getLat_start()), Double.parseDouble(infor.getLng_start()));
+                    LatLng p = new LatLng(Double.parseDouble(infor.getLat_end()), Double.parseDouble(infor.getLng_end()));
+                    if (infor.getStatus().equals("0")) {//待派单
+                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi(infor.getStartaddress(), p0, ""), null, new Poi(infor.getEndaddress(), p, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                    } else if (infor.getStatus().equals("1")) {//待上车
+                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                    } else {
+                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getEndaddress(), p, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                    }
+                }
                 break;
             case R.id.fv_current_top://收起、显示当前行程信息
                 HiddenAnimUtils.newInstance(mContext, lvCurrentBottom, ivCurrentTop, bottomHeight).toggle();
-//                if (lvCurrentBottom.getVisibility() == View.GONE) {
-//                    lvCurrentBottom.startAnimation(appearAnimation);
-//                    lvCurrentBottom.setVisibility(View.VISIBLE);
-//                } else {
-//                    lvCurrentBottom.startAnimation(disappearAnimation);
-//                    disappearAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
-//
-//                        @Override
-//                        public void onAnimationStart(android.view.animation.Animation animation) {
-//                        }
-//
-//                        @Override
-//                        public void onAnimationRepeat(android.view.animation.Animation animation) {
-//                        }
-//
-//                        @Override
-//                        public void onAnimationEnd(android.view.animation.Animation animation) {
-//                            lvCurrentBottom.setVisibility(View.GONE);
-//                        }
-//                    });
-//                }
                 break;
             case R.id.iv_cur_avatar://司机头像
 
                 break;
             case R.id.iv_cur_tel://电话
+                if (infor != null) {
+                    if (infor.getStatus().equals("0")) {//待派单
+                        phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
+                        toMakePhone();
+                    } else {
+                        phone = infor.getDriver_username();
+                        toMakePhone();
+                    }
+                }
                 break;
             case R.id.tv_cur_button0:
+                if (infor != null) {
+                    if (infor.getStatus().equals("0") || infor.getStatus().equals("1")) {//取消订单
+                        CancelTip();
+                    }
+                }
                 break;
             case R.id.tv_cur_button1:
+                if (infor != null) {
+                    if (infor.getStatus().equals("1")) {//确认上车
+                        shangcheDialog();
+                    } else if (infor.getStatus().equals("3")) {//确认送达
+                        showarrivedDialog();
+                    } else if (infor.getStatus().equals("5")) {//支付
+                        it = new Intent(mContext, ToPayActivity.class);
+                        it.putExtra("id", infor.getId());
+                        it.putExtra("total_fee", infor.getTotal_fee());
+                        it.putExtra("driver_id", infor.getDriver_id());
+                        startActivityForResult(it, R.id.layout);
+                    }
+                }
                 break;
         }
     }
@@ -1299,6 +1605,29 @@ public class MainNewMapActivity extends BaseActivity implements
                 String content = data.getStringExtra("content");
                 tvSendContent.setText(content);
                 break;
+            case 7://取消订单
+            case R.id.layout:
+            case R.id.layout_1:
+                getNetWorker().currentTrips(user.getToken());
+                break;
+            case 10://出发地搜索
+                Double la = data.getDoubleExtra("lat", 0);
+                Double ln = data.getDoubleExtra("lng", 0);
+                lng = ln + "";
+                lat = la + "";
+                myAddress = data.getStringExtra("name");
+                latlng = new LatLng(la, ln);
+               aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                break;
+            case 11://目的地搜索
+                Double la1 = data.getDoubleExtra("lat", 0);
+                Double ln1 = data.getDoubleExtra("lng", 0);
+                lng = ln1 + "";
+                lat = la1 + "";
+                myAddress = data.getStringExtra("name");
+                latlng = new LatLng(la1, ln1);
+                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -1387,13 +1716,19 @@ public class MainNewMapActivity extends BaseActivity implements
                 else
                     myAddress = address.getFormatAddress().substring(3);
                 tvSearch.setText(myAddress);
-                tvSearch.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                        CircularAnim.show(lvSearch).go();
-                    }
-                }, 500);
+                if (infor == null) {
+                    tvSearch.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.GONE);
+                            if (infor == null)
+                                CircularAnim.show(lvSearch).go();
+                        }
+                    }, 500);
+                } else {
+                    lvSearch.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                }
                 if (hasCircle) {
                     if (selectAddress.equals("1")) {//出发地
                         tvStart.setText(myAddress);
@@ -1469,6 +1804,12 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     public void onMyLocationChange(Location location) {
+        if (infor != null && infor.getStatus().equals("1")) {//待上车，调取司机位置
+            getNetWorker().driverPositionGet(user.getToken(), infor.getId(), infor.getDriver_id());
+        }
+        if (infor != null && infor.getStatus().equals("3") && infor.getIs_helpcall().equals("1")) {//待送达，帮人叫车，调取司机位置
+            getNetWorker().driverPositionGet(user.getToken(), infor.getId(), infor.getDriver_id());
+        }
         if (location != null) {
             log_e("执行定位------------------------------" + location.getExtras().getString("desc"));
             String c = location.getExtras().getString("desc").split(" ")[1];
@@ -1484,6 +1825,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 lng = String.valueOf(location.getLongitude());
                 lat = String.valueOf(location.getLatitude());
                 aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                getNetWorker().currentTrips(user.getToken());
             }
             isFirstLoc = false;
         }
@@ -1802,6 +2144,172 @@ public class MainNewMapActivity extends BaseActivity implements
         days1.add(day - 1, sdf1.format(dt1));
     }
 
+    private void toMakePhone() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_phone, null);
+        TextView content1 = (TextView) mViewGroup.findViewById(R.id.textview);
+        TextView content2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        if (infor.getStatus().equals("0"))
+            content1.setText("拨打客服电话");
+        else
+            content1.setText("拨打司机电话");
+        content2.setText(phone);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                //Intent.ACTION_CALL 直接拨打电话，就是进入拨打电话界面，电话已经被拨打出去了。
+                //Intent.ACTION_DIAL 是进入拨打电话界面，电话号码已经输入了，但是需要人为的按拨打电话键，才能播出电话。
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+                        + phone));
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void showarrivedDialog() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_exit, null);
+        TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        pop_content.setText("为了保障您的出行，请谨慎操作。\n确定到达目的地吗？");
+        cancel.setText("取消");
+        exit.setText("确定");
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                getNetWorker().orderOperate(user.getToken(), "5", infor.getId(), "", "", "");
+            }
+        });
+    }
+
+    private void shangcheDialog() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_exit, null);
+        TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        pop_content.setText("为保障您的出行，请谨慎操作。\n确定已上车吗？");
+        cancel.setText("取消");
+        exit.setText("确定");
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                getNetWorker().orderOperate(user.getToken(), "3", infor.getId(), "", "", "");
+            }
+        });
+    }
+
+    private void CancelTip() {
+        user = BaseApplication.getInstance().getUser();
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_first_tip, null);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
+        TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        if (user.getToday_cancel_count().equals("3")) {
+            title1.setText("您今天已取消3次订单！");
+        } else
+            title1.setText("确定要取消吗？");
+        title2.setText("一天内订单取消不能超过3次,您已取消" + user.getToday_cancel_count() + "次");
+        cancel.setText("我再想想");
+        ok.setText("确定");
+        ok.setTextColor(0xffa2a2a2);
+        cancel.setTextColor(0xfff49400);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                if (user.getToday_cancel_count().equals("3")) {
+                    return;
+                }
+                Intent it = new Intent(mContext, CancelOrderActivity.class);
+                it.putExtra("id", infor.getId());
+                if (infor.getStatus().equals("0"))
+                    it.putExtra("keytype", "1");
+                else
+                    it.putExtra("keytype", "6");
+                startActivityForResult(it, 7);
+            }
+        });
+    }
+
     private void NotifiTip() {
         if (mWindow != null) {
             mWindow.dismiss();
@@ -1854,4 +2362,116 @@ public class MainNewMapActivity extends BaseActivity implements
         startActivity(localIntent);
     }
 
+    @Override
+    public void onInitNaviFailure() {
+
+    }
+
+    @Override
+    public void onGetNavigationText(String s) {
+        amapTTSController.onGetNavigationText(s);
+    }
+
+    @Override
+    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+
+    }
+
+    @Override
+    public void onArriveDestination(boolean b) {
+
+    }
+
+    @Override
+    public void onStartNavi(int i) {
+
+    }
+
+    @Override
+    public void onCalculateRouteSuccess(int[] ints) {
+
+    }
+
+    @Override
+    public void onCalculateRouteFailure(int i) {
+
+    }
+
+    @Override
+    public void onStopSpeaking() {
+        amapTTSController.stopSpeaking();
+    }
+
+    private Handler handler;
+    private Timer timer;
+    private TimerTask timerTask;
+    static int minute = -1;
+    static int second = -1;
+    static int millisecond = -1;
+    final int TimeGapMilliSecond = 1;
+    final int TimeGapSecond = 1000;
+    final int TimeGapMinute = 60 * 1000;
+    boolean isTimer = true; //是否在计时
+    private TextView tvMin, tvSec;
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+
+        return infoWindow;
+    }
+
+    private void handler() {
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) { // msg.what == -1 正计时
+                    if (millisecond == 999) {
+                        if (second == 59) {
+                            minute++;
+                            second = 0;
+                            millisecond = 0;
+                        } else {
+                            second++;
+                            millisecond = 0;
+                        }
+                    } else {
+                        millisecond++;
+                    }
+                }
+                tvShow();
+            }
+        };
+    }
+
+    public void tvShow() {
+        tvSec.setText(BaseUtil.alignmentString(second) + "秒");
+        tvMin.setText(BaseUtil.alignmentString(minute) + "分");
+    }
+
+    public void setOriginTime(int setMinute, int setSecond, int setMilliSecond) {
+        minute = setMinute;
+        second = setSecond;
+        millisecond = setMilliSecond;
+    }
+
+    public void startTimeTask() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask, 0, TimeGapMilliSecond);
+
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+
+        return null;
+    }
 }

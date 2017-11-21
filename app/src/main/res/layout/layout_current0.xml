@@ -7,7 +7,7 @@
     android:layout_margin="5dp"
     android:background="@color/transparent"
     android:orientation="vertical"
-    android:visibility="visible">
+    android:visibility="gone">
 
     <ImageView
         android:id="@+id/iv_daohang"
@@ -226,6 +226,7 @@
                             android:drawableLeft="@mipmap/main_bang"
                             android:drawablePadding="5dp"
                             android:gravity="center"
+                            android:layout_gravity="center_vertical"
                             android:text="姓名"
                             android:textColor="@color/cl_5e5e5e"
                             android:textSize="12sp" />
@@ -254,7 +255,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="5dp"
-                        android:text="我的出发时间"
+                        android:text="出发时间"
                         android:textColor="@color/cl_5e5e5e"
                         android:textSize="12sp" />
                 </LinearLayout>

@@ -661,4 +661,32 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 		}
 		return false;
 	}
+	public static final String alignmentString(int time){
+		if (time < 10) {
+			return "0" + time;
+		} else {
+			return "" + time;
+		}
+	}
+	//乘
+	public static String multiply(String v1, String v2) {
+		BigDecimal b1 = new BigDecimal(v1);
+		BigDecimal b2 = new BigDecimal(v2);
+		return b1.multiply(b2).toString();
+	}
+	//除
+	public static String divide(String v1, String v2,int scale ) {
+		//如果精确范围小于0，抛出异常信息
+		BigDecimal b1 = new BigDecimal(v1);
+		BigDecimal b2 = new BigDecimal(v2);
+		return b1.divide(b2,scale,BigDecimal.ROUND_HALF_UP).toString();
+	}
+	//保留小数
+	public static String round(double v, int scale) {
+		if (scale < 0) {
+			return "0";
+		}
+		BigDecimal b = new BigDecimal(Double.toString(v));
+		return b.setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+	}
 }
