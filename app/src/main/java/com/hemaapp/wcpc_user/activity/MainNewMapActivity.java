@@ -629,6 +629,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     infor = null;
                 }
                 if (infor == null) {
+                    myLocationStyle.showMyLocation(true);
                     tvCurTip.setVisibility(View.GONE);
                     lvCurrent0.setVisibility(View.GONE);
                     lvSend0.startAnimation(appearAnimation);
@@ -648,6 +649,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     }
                     getNetWorker().canTrips(user.getToken());
                 } else {
+                    myLocationStyle.showMyLocation(true);
                     isSend2 = false;
                     if (sendStartMarker != null)
                         sendStartMarker.setVisible(false);
@@ -890,6 +892,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 sendStartMarker.setVisible(true);
             } else {//实时
                 //倒计时
+                myLocationStyle.showMyLocation(false);
                 aMap.setInfoWindowAdapter(this);
                 sendStartMarker = aMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
@@ -1211,6 +1214,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 tvNow.setTextColor(getResources().getColor(R.color.word_black));
                 break;
             case R.id.tv_often:
+                it = new Intent(mContext, OftenListActivity.class);
+                startActivityForResult(it, 12);
                 break;
             case R.id.tv_start_city:
                 it = new Intent(mContext, SelectCityActivity.class);
@@ -1423,7 +1428,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     helpcallmobile = "";
                 }
                 if (isNull(coupon_id))
-                    coupon_id="0";
+                    coupon_id = "0";
                 if (timetype.equals("1")) {//预约
                     if (isNull(begintime)) {
                         showTextDialog("请选择出发时间");
@@ -1617,7 +1622,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 lat = la + "";
                 myAddress = data.getStringExtra("name");
                 latlng = new LatLng(la, ln);
-               aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
                 break;
             case 11://目的地搜索
                 Double la1 = data.getDoubleExtra("lat", 0);
@@ -1627,6 +1632,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 myAddress = data.getStringExtra("name");
                 latlng = new LatLng(la1, ln1);
                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                break;
+            case 12://常用行程
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);

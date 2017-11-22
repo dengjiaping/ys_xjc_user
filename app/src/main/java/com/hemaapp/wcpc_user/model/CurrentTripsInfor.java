@@ -55,10 +55,14 @@ public class CurrentTripsInfor extends XtomObject {
     private String is_helpcall; //	是否代人叫车	1：是，0：否
     private String  helpcallname; //	代人叫车	姓名，默认空字符串
     private String  helpcallmobile; //	代人叫车	电话，默认空字符串
+    private String  current_time; //
+    private String  regdate; //
 
     public CurrentTripsInfor(JSONObject jsonObject) throws DataParseException {
         if(jsonObject != null){
             try {
+                current_time = get(jsonObject, "current_time");
+                regdate = get(jsonObject, "regdate");
                 timetype = get(jsonObject, "timetype");
                 is_helpcall = get(jsonObject, "is_helpcall");
                 helpcallname = get(jsonObject, "helpcallname");
@@ -159,6 +163,8 @@ public class CurrentTripsInfor extends XtomObject {
                 ", is_helpcall='" + is_helpcall + '\'' +
                 ", helpcallname='" + helpcallname + '\'' +
                 ", helpcallmobile='" + helpcallmobile + '\'' +
+                ", current_time='" + current_time + '\'' +
+                ", regdate='" + regdate + '\'' +
                 '}';
     }
 
@@ -325,6 +331,14 @@ public class CurrentTripsInfor extends XtomObject {
 
     public String getTogether_client_arr() {
         return together_client_arr;
+    }
+
+    public String getCurrent_time() {
+        return current_time;
+    }
+
+    public String getRegdate() {
+        return regdate;
     }
 
     public ArrayList<Client> getClients() {

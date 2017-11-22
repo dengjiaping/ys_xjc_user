@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/title_noline" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/lv_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:background="@color/white">
+
+                        <TextView
+                            android:id="@+id/tv_start_city"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint="出发城市"
+                            android:text=""
+                            android:textColor="@color/cl_3f3f3f"
+                            android:textSize="@dimen/textsize_7" />
+
+                        <ImageView
+                            android:id="@+id/iv_change"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@mipmap/ing_chang" />
+
+                        <TextView
+                            android:id="@+id/tv_end_city"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint="到达城市"
+                            android:text=""
+                            android:textColor="@color/cl_3f3f3f"
+                            android:textSize="@dimen/textsize_7" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_driver"
+                        android:src="@color/xian" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="90dp"
+                        android:background="@color/white">
+
+                        <LinearLayout
+                            android:id="@+id/leftlin"
+                            android:layout_width="38dp"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="18dp"
+                                android:src="@mipmap/img_startposition"
+                                tools:ignore="ContentDescription" />
+
+                            <ImageView
+                                android:layout_width="3dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="11dp"
+                                android:src="@mipmap/img_xian"
+                                tools:ignore="ContentDescription" />
+
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="11dp"
+                                android:src="@mipmap/img_endposition"
+                                tools:ignore="ContentDescription" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/leftlin"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_start"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:ellipsize="end"
+                                android:gravity="center_vertical"
+                                android:hint="从哪儿出发"
+                                android:maxLines="1"
+                                android:paddingRight="15dp"
+                                android:text=""
+                                android:textColor="@color/cl_3f3f3f"
+                                android:textColorHint="@color/cl_a0a0a0"
+                                android:textSize="@dimen/textsize_7" />
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/height_driver"
+                                android:src="@color/xian" />
+
+                            <TextView
+                                android:id="@+id/tv_end"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:ellipsize="end"
+                                android:gravity="center_vertical"
+                                android:hint="您要去哪儿"
+                                android:maxLines="1"
+                                android:paddingRight="15dp"
+                                android:text=""
+                                android:textColor="@color/cl_3f3f3f"
+                                android:textColorHint="@color/cl_a0a0a0"
+                                android:textSize="@dimen/textsize_7" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:src="@color/xian" />
+
+
+                    <TextView
+                        android:id="@+id/tv_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="35dp"
+                        android:background="@drawable/bt_login"
+                        android:gravity="center"
+                        android:paddingBottom="12dp"
+                        android:paddingTop="12dp"
+                        android:text="保存"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </ScrollView>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:src="@drawable/line_shadow" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -39,6 +39,7 @@ public class DistrictInfor extends XtomObject implements Serializable {
 	private ArrayList<Area> areas=new ArrayList<>();
 	private ArrayList<Area> areas1=new ArrayList<>();
 	private ArrayList<Area> areas2=new ArrayList<>();
+
 	public DistrictInfor(JSONObject jsonObject) throws DataParseException {
 		if(jsonObject!=null){
 			try {

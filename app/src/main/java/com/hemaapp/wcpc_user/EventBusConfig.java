@@ -19,17 +19,10 @@ public enum EventBusConfig {
     REFRESH_BLOG_LIST(9, "刷新生意圈"),
     REFRESH_BLOG_INFOR(10, "刷新帖子详情"),
     REFRESH_USER(11, "刷新我的详情"),
-    REFRESH_ZIXUN_LIST(12, "刷新资讯列表"),
+    REFRESH_OFTEN_LIST(12, "刷新常用行程列表"),
     REFRESH_CARTYPE(13, "刷新接车时间列表"),
     PAY_WECHAT(14, "微信支付"),
-    REFRESH_Custom_LIST(15, "刷新客户列表"),
-    REFRESH_CAR_LIST(16, "刷新接车列表"),
-    REFRESH_Custom_INFOR(17, "刷新客户详情"),
-    REFRESH_CAR_INFOR(18, "刷新接车详情"),
-    REFRESH_folder_LIST(19, "刷新文件夹"),
-    REFRESH_MEMO_LIST(20, "刷新备忘录"),
-    GET_COLOR(21, "获取颜色"),
-    GET_FROMS(22, "获取引流液来源");
+    REFRESH_folder_LIST(19, "刷新文件夹");
 
 
     private int id;

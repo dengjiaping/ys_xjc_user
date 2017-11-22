@@ -21,6 +21,7 @@ import com.hemaapp.wcpc_user.model.FileUploadResult;
 import com.hemaapp.wcpc_user.model.ID;
 import com.hemaapp.wcpc_user.model.MyTripsInfor;
 import com.hemaapp.wcpc_user.model.NoticeListInfor;
+import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.OrderDetailInfor;
 import com.hemaapp.wcpc_user.model.ReplyListInfor;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
@@ -178,7 +179,7 @@ public class BaseNetWorker extends HemaNetWorker {
         HashMap<String, String> files = new HashMap<>();
         files.put("temp_file", temp_file); //
 
-        ExecuteNetTask<FileUploadResult> task = new ExecuteNetTask<>(information, params,files, FileUploadResult.class);
+        ExecuteNetTask<FileUploadResult> task = new ExecuteNetTask<>(information, params, files, FileUploadResult.class);
         executeTask(task);
     }
 
@@ -224,6 +225,9 @@ public class BaseNetWorker extends HemaNetWorker {
         HashMap<String, String> params = new HashMap<>();
         params.put("temp_token", tempToken);// 登陆令牌
         params.put("username", username);
+        params.put("devicetype", "2"); // 用户登录所用手机类型 1：苹果 2：安卓（方便服务器运维统计）
+        String version = HemaUtil.getAppVersionForSever(mContext);
+        params.put("lastloginversion", version);// 登陆所用的系统版本号
 
         ExecuteNetTask<User> task = new ExecuteNetTask<>(information, params, User.class);
         executeTask(task);
@@ -309,14 +313,15 @@ public class BaseNetWorker extends HemaNetWorker {
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
     }
+
     /**
      * 发布行程接口
      */
-    public void tripsAddNew(String token,String timetype,String helpcallname,String helpcallmobile,
+    public void tripsAddNew(String token, String timetype, String helpcallname, String helpcallmobile,
                             String startaddress, String startcity_id, String startcity, String endaddress, String endcity_id, String endcity,
-                         String begintime, String numbers, String carpoolflag, String remarks,
-                         String lng_start, String lat_start, String lng_end, String lat_end,
-                         String coupon_id, String allfee) {
+                            String begintime, String numbers, String carpoolflag, String remarks,
+                            String lng_start, String lat_start, String lng_end, String lat_end,
+                            String coupon_id, String allfee) {
         BaseHttpInformation information = BaseHttpInformation.TRIPS_ADD;
         HashMap<String, String> params = new HashMap<>();
         params.put("token", token);
@@ -782,15 +787,21 @@ public class BaseNetWorker extends HemaNetWorker {
     /**
      * 地区列表接口
      */
+    public void cityList(String keyid,String paramid) {
+        BaseHttpInformation information = BaseHttpInformation.CITY_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("keyid", keyid);
+        params.put("paramid", paramid);
+        ExecuteNetTask<DistrictInfor> task = new ExecuteNetTask<>(information, params, DistrictInfor.class);
+        executeTask(task);
+    }
     public void cityList(String keyid) {
         BaseHttpInformation information = BaseHttpInformation.CITY_LIST;
         HashMap<String, String> params = new HashMap<>();
         params.put("keyid", keyid);
-
         ExecuteNetTask<DistrictInfor> task = new ExecuteNetTask<>(information, params, DistrictInfor.class);
         executeTask(task);
     }
-
     /**
      * 是否可以发布行程接口
      */
@@ -862,6 +873,36 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);
         params.put("keyid", keyid);
         params.put("sharetype", sharetype);
+
+        CurrentTask task = new CurrentTask(information, params);
+        executeTask(task);
+    }
+
+    public void oftenList(String token, int page) {
+        BaseHttpInformation information = BaseHttpInformation.CLIENT_ROUTE_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("page", String.valueOf(page));//
+        ExecuteNetTask<Often> task = new ExecuteNetTask<>(information, params, Often.class);
+        executeTask(task);
+    }
+    public void oftenAdd(String token, String id, String startaddress, String startcity_id, String startcity
+            , String endaddress, String endcity_id, String endcity, String lng_start
+            , String lat_start, String lng_end, String lat_end) {
+        BaseHttpInformation information = BaseHttpInformation.CLIENT_ROUTE_SAVE;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("id", id);
+        params.put("startaddress", startaddress);
+        params.put("startcity_id", startcity_id);
+        params.put("startcity", startcity);
+        params.put("endaddress", endaddress);
+        params.put("endcity_id", endcity_id);
+        params.put("endcity", endcity);
+        params.put("lng_start", lng_start);
+        params.put("lat_start", lat_start);
+        params.put("lng_end", lng_end);
+        params.put("lat_end", lat_end);
 
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
