@@ -15,16 +15,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Interpolator;
 import android.widget.EditText;
@@ -33,7 +39,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
@@ -61,7 +69,6 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.autonavi.rtbt.IFrameForRTBT;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
@@ -72,6 +79,7 @@ import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
 import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.CircularAnim;
+import com.hemaapp.wcpc_user.EventBusConfig;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.RecycleUtils;
@@ -87,15 +95,15 @@ import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.DistrictInfor;
 import com.hemaapp.wcpc_user.model.DriverPosition;
 import com.hemaapp.wcpc_user.model.ID;
+import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.PersonCountInfor;
+import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
-import com.hemaapp.wcpc_user.view.DiDiView;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
-import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -104,12 +112,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.tencent.qzone.QZone;
+import cn.sharesdk.wechat.favorite.WechatFavorite;
+import cn.sharesdk.wechat.friends.Wechat;
+import cn.sharesdk.wechat.moments.WechatMoments;
 import de.greenrobot.event.EventBus;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.util.XtomDeviceUuidFactory;
@@ -121,7 +139,8 @@ import xtom.frame.util.XtomToastUtil;
  * 首页
  */
 public class MainNewMapActivity extends BaseActivity implements
-        GeocodeSearch.OnGeocodeSearchListener, AMap.OnCameraChangeListener, AMap.OnMyLocationChangeListener, AMap.InfoWindowAdapter, INaviInfoCallback {
+        GeocodeSearch.OnGeocodeSearchListener, AMap.OnCameraChangeListener, AMap.OnMyLocationChangeListener, AMap.InfoWindowAdapter, INaviInfoCallback,
+        PlatformActionListener {
     @BindView(R.id.title_btn_left)
     ImageView titleBtnLeft;
     @BindView(R.id.title_btn_right_image)
@@ -252,6 +271,13 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvPrice2;
     @BindView(R.id.lv_cur_price1)
     LinearLayout lvCurPrice1;
+    @BindView(R.id.nav_view)
+    NavigationView navView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.lv_main)
+    FrameLayout lvMain;
+
     private User user;
     private int msgcount;
     private long time;// 用于判断二次点击返回键的时间间隔
@@ -304,13 +330,17 @@ public class MainNewMapActivity extends BaseActivity implements
     private ArrayList<Client> clients = new ArrayList<>();
     private AmapTTSController amapTTSController;
     View infoWindow;
+    Often often;//常用行程
+    private boolean isDrawer = false;//侧滑
+    private OnekeyShare oks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activity = this;
-        setContentView(R.layout.activity_main_newmap);
+        setContentView(R.layout.activity_main_newmap2);
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
+        ShareSDK.initSDK(this);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         EventBus.getDefault().register(this);
 
@@ -320,7 +350,6 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         };
         user = BaseApplication.getInstance().getUser();
-
         phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
         if (user == null) {
             titlePoint.setVisibility(View.INVISIBLE);
@@ -351,6 +380,8 @@ public class MainNewMapActivity extends BaseActivity implements
             counts.add(i, new PersonCountInfor(String.valueOf(i + 1), false));
         }
         handler();
+        findCenter();
+        setCenter();
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -368,6 +399,23 @@ public class MainNewMapActivity extends BaseActivity implements
                 getNetWorker().currentTrips(user.getToken());
                 break;
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        if (infor == null) {
+            lvSend0.setVisibility(View.VISIBLE);
+            lvSend1.setVisibility(View.GONE);
+            often = (Often) intent.getSerializableExtra("often");
+            getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
+            getNetWorker().canTrips(user.getToken());
+        } else {
+            XtomToastUtil.showShortToast(mContext, "当前行程未结束！");
+        }
+        super.onNewIntent(intent);
     }
 
     private void init() {
@@ -480,11 +528,15 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     protected boolean onKeyBack() {
-        if ((System.currentTimeMillis() - time) >= 2000) {
-            XtomToastUtil.showShortToast(mContext, "再按一次返回键退出程序");
-            time = System.currentTimeMillis();
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            XtomActivityManager.finishAll();
+            if ((System.currentTimeMillis() - time) >= 2000) {
+                XtomToastUtil.showShortToast(mContext, "再按一次返回键退出程序");
+                time = System.currentTimeMillis();
+            } else {
+                XtomActivityManager.finishAll();
+            }
         }
         return true;
     }
@@ -600,23 +652,47 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case CITY_LIST:
+                String paramid = hemaNetTask.getParams().get("paramid");
                 HemaArrayParse<DistrictInfor> CResult = (HemaArrayParse<DistrictInfor>) baseResult;
-                allDistricts = CResult.getObjects();
-                String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
-                for (DistrictInfor infor : allDistricts) {
-                    if (infor.getName().equals(locCity)) {
-                        startCity = infor;
-                        break;
+                if (isNull(paramid)) {
+                    allDistricts = CResult.getObjects();
+                    String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
+                    for (DistrictInfor infor : allDistricts) {
+                        if (infor.getName().equals(locCity)) {
+                            startCity = infor;
+                            break;
+                        }
                     }
-                }
-                if (startCity != null) {
+                    if (startCity != null) {
+                        tvStartCity.setText(startCity.getName());
+                    }
+                } else {//常用行程
+                    endCity = CResult.getObjects().get(0);
+                    myCity = endCity;
+                    startCity = new DistrictInfor(often.getStartcity(), often.getStartcity_id());
+                    start_lat = often.getLat_start();
+                    start_lng = often.getLng_start();
+                    end_lng = often.getLng_end();
+                    end_lat = often.getLat_end();
+                    start_address = often.getStartaddress();
+                    end_address = often.getEndaddress();
+                    tvStart.setText(start_address);
+                    tvEnd.setText(end_address);
                     tvStartCity.setText(startCity.getName());
+                    tvEndCity.setText(endCity.getName());
+                    //如果之前画过圈，清一下
+                    hasCircle = false;
+                    price = Float.parseFloat(myCity.getPrice());
+                    areas.clear();
+                    areas.addAll(myCity.getAreas());
+                    setOftenMap();
                 }
                 break;
             case CLIENT_GET:
                 HemaArrayParse<User> uResult = (HemaArrayParse<User>) baseResult;
                 user = uResult.getObjects().get(0);
                 BaseApplication.getInstance().setUser(user);
+                setCenter();
                 break;
             case CURRENT_TRIPS://当前行程
                 HemaArrayParse<CurrentTripsInfor> llResult = (HemaArrayParse<CurrentTripsInfor>) baseResult;
@@ -678,6 +754,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case TRIPS_ADD:
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                 showTextDialog("发布成功");
                 //如果之前画过圈，清一下
                 hasCircle = false;
@@ -721,6 +798,50 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
         }
+    }
+
+    private void setOftenMap() {
+        for (Polygon p : polygons) {
+            p.remove();
+        }
+        mapView.invalidate();//刷新地图
+        polygons.clear();
+        prices.clear();
+        for (Area area : areas) {
+            PolygonOptions pOption = new PolygonOptions();
+            String[] str = area.getLnglat().split(";");
+            for (int i = 0; i < str.length; i++) {
+                String lat = str[i].split(",")[1];
+                String lng = str[i].split(",")[0];
+                pOption.add(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)));
+            }
+            Polygon polygon = aMap.addPolygon(pOption.strokeWidth(4)
+                    .strokeColor(Color.argb(50, 1, 1, 1))
+                    .fillColor(0x70e5e5e5));
+            polygons.add(polygon);
+            prices.add(area.getAddprice());
+            if (isNull(move_lat)) {
+                move_lat = str[0].split(",")[1];
+                move_lng = str[0].split(",")[0];
+            }
+        }
+        hasCircle = true;//已经画圈
+        for (int i = 0; i < polygons.size(); i++) {
+            if (polygons.get(i).contains(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng))) && startCity.getCity_id().equals(areas.get(i).getCity_id())) {//选择地点是出发城市
+                addstart = Float.parseFloat(prices.get(i));
+            }
+            if (polygons.get(i).contains(new LatLng(Double.parseDouble(end_lat), Double.parseDouble(end_lng))) && endCity.getCity_id().equals(areas.get(i).getCity_id())) {//选择地点是到达城市
+                addend = Float.parseFloat(prices.get(i));
+            }
+        }
+        tvStart.setBackgroundColor(0xffffffff);
+        tvEnd.setBackgroundColor(0x70e5e5e5);
+        selectAddress = "1";//选择出发地
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(start_lat),
+                Double.parseDouble(start_lng)), 15));
+        selectAddress = "2";//选择出发地
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(end_lat),
+                Double.parseDouble(end_lng)), 15));
     }
 
     private void setData() {
@@ -903,7 +1024,12 @@ public class MainNewMapActivity extends BaseActivity implements
                 sendStartMarker.showInfoWindow();
                 aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(start_lat),
                         Double.parseDouble(start_lng)), 15));
-                setOriginTime(0, 0, 0);
+                long tt = BaseUtil.time(infor.getRegdate(), infor.getCurrent_time());
+                int min = (int) (tt / (60 * 1000));
+                int sec = (int) (tt / 1000 - (min * 60));
+                log_e("min========" + min);
+                log_e("sec========" + sec);
+                setOriginTime(min, sec, 0);
                 startTimeTask();
             }
         } else if (infor.getStatus().equals("1")) {//待上车 ，显示自己位置+出发点+车
@@ -971,6 +1097,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 R.layout.layout_inforwindow, null);
         tvMin = (TextView) infoWindow.findViewById(R.id.tv_infowindow_min);
         tvSec = (TextView) infoWindow.findViewById(R.id.tv_infowindow_sec);
+
     }
 
     @Override
@@ -979,6 +1106,40 @@ public class MainNewMapActivity extends BaseActivity implements
 
     @Override
     protected void setListener() {
+        lvMain.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (isDrawer) {
+                    return navView.dispatchTouchEvent(motionEvent);
+                } else {
+                    return false;
+                }
+            }
+        });
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                isDrawer = true;
+                //获取屏幕的宽高
+                WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                Display display = manager.getDefaultDisplay();
+                //设置右面的布局位置  根据左面菜单的right作为右面布局的left   左面的right+屏幕的宽度（或者right的宽度这里是相等的）为右面布局的right
+                lvMain.layout(navView.getRight(), 0, navView.getRight() + display.getWidth(), display.getHeight());
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                isDrawer = false;
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
     }
 
 
@@ -1175,12 +1336,13 @@ public class MainNewMapActivity extends BaseActivity implements
         Intent it;
         switch (view.getId()) {
             case R.id.title_btn_left:
-                if (user == null) {
-                    ToLogin.showLogin(mContext);
-                } else {
-                    it = new Intent(mContext, PersonCenterNewActivity.class);
-                    startActivity(it);
-                }
+//                if (user == null) {
+//                    ToLogin.showLogin(mContext);
+//                } else {
+//                    it = new Intent(mContext, PersonCenterNewActivity.class);
+//                    startActivity(it);
+//                }
+                drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.title_btn_right_image:
                 if (user == null) {
@@ -1634,6 +1796,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
                 break;
             case 12://常用行程
+                often = (Often) data.getSerializableExtra("often");
+                getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -1988,7 +2152,8 @@ public class MainNewMapActivity extends BaseActivity implements
                         + second + ":00";
                 tvSendTime.setText(str);
                 begin = time + ":" + second + ":00";
-                if (BaseUtil.compareTime(begin, user.getPin_start()) == 1 && BaseUtil.compareTime(user.getPin_end(), begin) == 1) {//在可拼单时间内
+                if (BaseUtil.compareTime(begin, user.getPin_start()) == 1
+                        && BaseUtil.compareTime(user.getPin_end(), begin) == 1) {//在可拼单时间内
                 } else {
                     pinFlag = "0";
                     tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -2416,9 +2581,9 @@ public class MainNewMapActivity extends BaseActivity implements
     static int second = -1;
     static int millisecond = -1;
     final int TimeGapMilliSecond = 1;
-    final int TimeGapSecond = 1000;
-    final int TimeGapMinute = 60 * 1000;
-    boolean isTimer = true; //是否在计时
+    //final int TimeGapSecond = 1000;
+    // final int TimeGapMinute = 60 * 1000;
+    //boolean isTimer = true; //是否在计时
     private TextView tvMin, tvSec;
 
     @Override
@@ -2480,5 +2645,309 @@ public class MainNewMapActivity extends BaseActivity implements
     public View getInfoContents(Marker marker) {
 
         return null;
+    }
+
+    //----------------------------个人中心------------------------------------------------------------------------------------------
+    RoundedImageView ivAvatar;
+    TextView tvCenterName;
+    ImageView ivSex;
+    TextView tvCarCount;
+    TextView tvFee;
+    LinearLayout lvMywallet;
+    TextView tvCouple;
+    LinearLayout lvMycouple;
+    LinearLayout lvMyorder;
+    TextView tvPassword;
+    TextView set;
+    TextView share;
+    TextView tvPhone;
+    LinearLayout lvPhone;
+
+    public void findCenter() {
+        View centerView = navView.inflateHeaderView(R.layout.layout_personcenter);
+        ivAvatar = (RoundedImageView) centerView.findViewById(R.id.iv_avatar);
+        tvCenterName = (TextView) centerView.findViewById(R.id.tv_center_name);
+        ivSex = (ImageView) centerView.findViewById(R.id.iv_sex);
+        tvCarCount = (TextView) centerView.findViewById(R.id.tv_car_count);
+        tvFee = (TextView) centerView.findViewById(R.id.tv_fee);
+        lvMywallet = (LinearLayout) centerView.findViewById(R.id.lv_mywallet);
+        tvCouple = (TextView) centerView.findViewById(R.id.tv_couple);
+        lvMycouple = (LinearLayout) centerView.findViewById(R.id.lv_mycouple);
+        lvMyorder = (LinearLayout) centerView.findViewById(R.id.lv_myorder);
+        tvPassword = (TextView) centerView.findViewById(R.id.tv_password);
+        set = (TextView) centerView.findViewById(R.id.set);
+        share = (TextView) centerView.findViewById(R.id.share);
+        tvPhone = (TextView) centerView.findViewById(R.id.tv_phone);
+        lvPhone = (LinearLayout) centerView.findViewById(R.id.lv_phone);
+    }
+
+    public void setCenter() {
+        SysInitInfo sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
+        ImageLoader.getInstance().displayImage(user.getAvatar(), ivAvatar, BaseApplication.getInstance()
+                .getOptions(R.mipmap.default_user));
+        ivAvatar.setCornerRadius(100);
+        tvCenterName.setText(user.getRealname());
+        tvPhone.setText(sysInitInfo.getSys_service_phone());
+        if ("男".equals(user.getSex()))
+            ivSex.setImageResource(R.mipmap.img_sex_boy);
+        else
+            ivSex.setImageResource(R.mipmap.img_sex_girl);
+        tvCarCount.setText("乘车次数 " + (isNull(user.getTakecount()) ? "0" : user.getTakecount()));
+        tvFee.setText(user.getFeeaccount() + "元");
+        tvCouple.setText(user.getCouponcount() + "张");
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, PersonInforActivity.class);
+                startActivityForResult(it, 20);
+            }
+        });
+        lvMywallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, MyPurseNewActivity.class);
+                startActivity(it);
+            }
+        });
+        lvMycouple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, MyCouponListActivity.class);
+                it.putExtra("keytype", "1");
+                startActivity(it);
+            }
+        });
+        lvMyorder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, MListActivity.class);
+                startActivity(it);
+            }
+        });
+        tvPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, PassWord0Activity.class);
+                startActivity(it);
+            }
+        });
+        set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, SetActivity.class);
+                startActivity(it);
+            }
+        });
+        lvPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toCenterPhone();
+            }
+        });
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share();
+            }
+        });
+    }
+
+    private void toCenterPhone() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_phone, null);
+        TextView content1 = (TextView) mViewGroup.findViewById(R.id.textview);
+        TextView content2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        content1.setText("拨打客服电话");
+        content2.setText(BaseApplication.getInstance().getSysInitInfo().getSys_service_phone());
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                //Intent.ACTION_CALL 直接拨打电话，就是进入拨打电话界面，电话已经被拨打出去了。
+                //Intent.ACTION_DIAL 是进入拨打电话界面，电话号码已经输入了，但是需要人为的按拨打电话键，才能播出电话。
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+                        + BaseApplication.getInstance().getSysInitInfo().getSys_service_phone()));
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onComplete(Platform arg0, int arg1, HashMap<String, Object> hashMap) {
+        if (arg0.getName().equals(Wechat.NAME)) {// 判断成功的平台是不是微信
+            handlerShaer.sendEmptyMessage(1);
+        }
+        if (arg0.getName().equals(WechatMoments.NAME)) {// 判断成功的平台是不是微信朋友圈
+            handlerShaer.sendEmptyMessage(2);
+        }
+        if (arg0.getName().equals(QQ.NAME)) {// 判断成功的平台是不是QQ
+            handlerShaer.sendEmptyMessage(3);
+        }
+        if (arg0.getName().equals(QZone.NAME)) {// 判断成功的平台是不是空间
+            handlerShaer.sendEmptyMessage(4);
+        }
+        if (arg0.getName().equals(WechatFavorite.NAME)) {// 判断成功的平台是不是微信收藏
+            handlerShaer.sendEmptyMessage(5);
+        }
+    }
+
+    @Override
+    public void onError(Platform arg0, int arg1, Throwable arg2) {
+        arg2.printStackTrace();
+        Message msg = new Message();
+        msg.what = 6;
+        msg.obj = arg2.getMessage();
+        handlerShaer.sendMessage(msg);
+
+    }
+
+    @Override
+    public void onCancel(Platform platform, int i) {
+        handlerShaer.sendEmptyMessage(7);
+    }
+
+    Handler handlerShaer = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "1");
+                    Toast.makeText(getApplicationContext(), "微信分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 2:
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "2");
+                    Toast.makeText(getApplicationContext(), "朋友圈分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 3:
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "3");
+                    Toast.makeText(getApplicationContext(), "QQ分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 4:
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "4");
+                    Toast.makeText(getApplicationContext(), "QQ空间分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 5:
+                    Toast.makeText(getApplicationContext(), "微信收藏分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 7:
+                    Toast.makeText(getApplicationContext(), "取消分享", Toast.LENGTH_LONG).show();
+                    break;
+                case 6:
+                    Toast.makeText(getApplicationContext(), "分享失败", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    };
+
+    @SuppressWarnings("deprecation")
+    private void share() {
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(mContext);
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_share, null);
+        TextView wechat = (TextView) mViewGroup_exit.findViewById(R.id.wechat);
+        TextView moment = (TextView) mViewGroup_exit.findViewById(R.id.moment);
+        TextView qqshare = (TextView) mViewGroup_exit.findViewById(R.id.qq);
+        TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
+        TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
+        View all = mViewGroup_exit.findViewById(R.id.allitem);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+        cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+            }
+        });
+        all.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+            }
+        });
+        qqshare.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QQ.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        wechat.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(Wechat.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        moment.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(WechatMoments.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        qzone.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QZone.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+    }
+
+    private void showShare(String platform) {
+        String pathWX = BaseApplication.getInstance().getSysInitInfo().getSys_plugins() + "share/sdk.php?invitecode=" + user.getInvitecode() + "&keyid=0" + "&type=1";
+        String imageurl = BaseUtil.initImagePath(mContext);
+        if (oks == null) {
+            oks = new OnekeyShare();
+            oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
+            oks.setTitleUrl(pathWX); // 标题的超链接
+            oks.setText("莱芜 ⇌ 济南25元；\n" +
+                    "莱芜 ⇌ 泰安15元。");
+            oks.setImagePath(imageurl);
+            oks.setUrl(pathWX);
+            oks.setSiteUrl(pathWX);
+            oks.setCallback(this);
+
+        }
+        oks.setPlatform(platform);
+        oks.show(mContext);
     }
 }

@@ -787,7 +787,7 @@ public class BaseNetWorker extends HemaNetWorker {
     /**
      * 地区列表接口
      */
-    public void cityList(String keyid,String paramid) {
+    public void cityList(String keyid, String paramid) {
         BaseHttpInformation information = BaseHttpInformation.CITY_LIST;
         HashMap<String, String> params = new HashMap<>();
         params.put("keyid", keyid);
@@ -795,6 +795,7 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<DistrictInfor> task = new ExecuteNetTask<>(information, params, DistrictInfor.class);
         executeTask(task);
     }
+
     public void cityList(String keyid) {
         BaseHttpInformation information = BaseHttpInformation.CITY_LIST;
         HashMap<String, String> params = new HashMap<>();
@@ -802,6 +803,7 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<DistrictInfor> task = new ExecuteNetTask<>(information, params, DistrictInfor.class);
         executeTask(task);
     }
+
     /**
      * 是否可以发布行程接口
      */
@@ -886,6 +888,7 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<Often> task = new ExecuteNetTask<>(information, params, Often.class);
         executeTask(task);
     }
+
     public void oftenAdd(String token, String id, String startaddress, String startcity_id, String startcity
             , String endaddress, String endcity_id, String endcity, String lng_start
             , String lat_start, String lng_end, String lat_end) {
@@ -904,6 +907,16 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("lng_end", lng_end);
         params.put("lat_end", lat_end);
 
+        CurrentTask task = new CurrentTask(information, params);
+        executeTask(task);
+    }
+
+    public void oftenOperate(String token, String keytype, String keyid) {
+        BaseHttpInformation information = BaseHttpInformation.CLIENT_ROUTE_OPEARATE;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("keytype", keytype);//
+        params.put("keyid", keyid);//
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
     }

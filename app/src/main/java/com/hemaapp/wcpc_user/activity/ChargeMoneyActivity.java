@@ -1,7 +1,10 @@
 package com.hemaapp.wcpc_user.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +26,8 @@ import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseConfig;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
+import com.hemaapp.wcpc_user.EventBusConfig;
+import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.alipay.PayResult;
 import com.hemaapp.wcpc_user.model.AlipayTrade;
@@ -35,6 +40,7 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.unionpay.UPPayAssistEx;
 import com.unionpay.uppay.PayActivity;
 
+import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
 /**
@@ -57,15 +63,53 @@ public class ChargeMoneyActivity extends BaseActivity {
     private String money;
     private User user;
     IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
-
+    private WXPayReceiver mReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chargemoney);
         super.onCreate(savedInstanceState);
         user = BaseApplication.getInstance().getUser();
         msgApi.registerApp(BaseConfig.APPID_WEIXIN);
+        mReceiver = new WXPayReceiver();
+        IntentFilter mFilter = new IntentFilter();
+        mFilter.addAction("com.hemaapp.wcpc_user.wxpay");
+        registerReceiver(mReceiver, mFilter);
     }
+    private class WXPayReceiver extends BroadcastReceiver {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("com.hemaapp.wcpc_user.wxpay".equals(intent.getAction())) {
+                int code = intent.getIntExtra("code", -1);
+                switch (code) {
+                    case 0:
+                        EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
+                        showTextDialog("充值成功");
+                        title.postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+                        break;
+                    case -1:
+                        showTextDialog("支付失败");
+                        break;
+                    case -2:
+                        showTextDialog("您取消了支付");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
     @Override
     protected void callBeforeDataBack(HemaNetTask hemaNetTask) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
@@ -130,8 +174,15 @@ public class ChargeMoneyActivity extends BaseActivity {
 		 */
         String str = data.getExtras().getString("pay_result");
         if (str.equalsIgnoreCase("success")) {
-            msg = "支付成功！";
+            EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
+            msg = "充值成功！";
             showTextDialog(msg);
+            title.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 1000);
             title.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -202,14 +253,15 @@ public class ChargeMoneyActivity extends BaseActivity {
             String staus = result.getResultStatus();
             switch (staus) {
                 case "9000":
-                    activity.showTextDialog("支付成功");
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
+                    activity.showTextDialog("充值成功");
                     postAtTime(new Runnable() {
 
                         @Override
                         public void run() {
                             activity.finish();
                         }
-                    }, 1500);
+                    }, 1000);
                     break;
                 case "8000":
                     activity.showTextDialog("支付结果确认中");

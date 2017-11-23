@@ -10,16 +10,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
-import com.hemaapp.hm_FrameWork.dialog.HemaButtonDialog;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
+import com.hemaapp.wcpc_user.BaseRecycleAdapter;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
-import com.hemaapp.wcpc_user.adapter.MytripAdapter;
+import com.hemaapp.wcpc_user.RecycleUtils;
+import com.hemaapp.wcpc_user.adapter.OftenAdapter;
 import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.User;
 
@@ -57,7 +58,7 @@ public class OftenListActivity extends BaseActivity {
     TextView tvButton;
     private User user;
     private String token = "";
-    private MytripAdapter adapter;
+    private OftenAdapter adapter;
     private ArrayList<Often> blogs = new ArrayList<>();
     private Integer currentPage = 0;
 
@@ -73,10 +74,18 @@ public class OftenListActivity extends BaseActivity {
             token = "";
         else
             token = user.getToken();
-//        adapter = new MytripAdapter(mContext, blogs, getNetWorker());
-//        RecycleUtils.initVerticalRecyle(rvList);
-//        rvList.setAdapter(adapter);
+        adapter = new OftenAdapter(mContext, blogs, getNetWorker());
+        RecycleUtils.initVerticalRecyle(rvList);
+        rvList.setAdapter(adapter);
         getList(currentPage);
+        adapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                mIntent.putExtra("often",blogs.get(position));
+                setResult(RESULT_OK,mIntent);
+                finish();
+            }
+        });
     }
 
     private void getList(int page) {
@@ -116,7 +125,7 @@ public class OftenListActivity extends BaseActivity {
         switch (information) {
             case CLIENT_ROUTE_LIST:
                 break;
-            case TRIPS_SAVEOPERATE:
+            case CLIENT_ROUTE_OPEARATE:
                 showProgressDialog("请稍后");
                 break;
             default:
@@ -134,7 +143,7 @@ public class OftenListActivity extends BaseActivity {
                 progressbar.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setVisibility(View.VISIBLE);
                 break;
-            case TRIPS_SAVEOPERATE:
+            case CLIENT_ROUTE_OPEARATE:
                 cancelProgressDialog();
                 break;
             default:
@@ -178,9 +187,9 @@ public class OftenListActivity extends BaseActivity {
                 } else {
                     empty.setVisibility(View.INVISIBLE);
                 }
-              //  adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
                 break;
-            case TRIPS_SAVEOPERATE:
+            case CLIENT_ROUTE_OPEARATE:
                 currentPage = 0;
                 getList(0);
                 break;
@@ -196,7 +205,7 @@ public class OftenListActivity extends BaseActivity {
                 .getHttpInformation();
         switch (information) {
             case CLIENT_ROUTE_LIST:
-            case TRIPS_SAVEOPERATE:
+            case CLIENT_ROUTE_OPEARATE:
                 showTextDialog(baseResult.getMsg());
                 break;
             default:
@@ -213,8 +222,8 @@ public class OftenListActivity extends BaseActivity {
             case CLIENT_ROUTE_LIST:
                 showTextDialog("加载失败");
                 break;
-            case TRIPS_SAVEOPERATE:
-                showTextDialog("操作失败");
+            case CLIENT_ROUTE_OPEARATE:
+                showTextDialog("删除失败");
                 break;
             default:
                 break;
@@ -261,20 +270,6 @@ public class OftenListActivity extends BaseActivity {
     }
 
 
-    private HemaButtonDialog mDialog;
-
-    public void delete() {
-        if (mDialog == null) {
-            mDialog = new HemaButtonDialog(mContext);
-            mDialog.setLeftButtonText("取消");
-            mDialog.setRightButtonText("确定");
-            mDialog.setText("您确定要删除此常用行程吗?");
-            mDialog.setButtonListener(new ButtonListener());
-            mDialog.setRightButtonTextColor(mContext.getResources().getColor(R.color.yellow));
-        }
-        mDialog.show();
-    }
-
     @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.tv_button})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -284,25 +279,11 @@ public class OftenListActivity extends BaseActivity {
             case R.id.title_btn_right:
                 break;
             case R.id.tv_button:
-                Intent it=new Intent(mContext,OftenAddActivity.class);
+                Intent it = new Intent(mContext, OftenAddActivity.class);
                 startActivity(it);
                 break;
         }
     }
 
-    private class ButtonListener implements HemaButtonDialog.OnButtonListener {
-
-        @Override
-        public void onLeftButtonClick(HemaButtonDialog dialog) {
-            dialog.cancel();
-        }
-
-        @Override
-        public void onRightButtonClick(HemaButtonDialog dialog) {
-            dialog.cancel();
-            User user = BaseApplication.getInstance().getUser();
-           // getNetWorker().tripsOperate(user.getToken(), "6", "0", "");
-        }
-    }
 
 }

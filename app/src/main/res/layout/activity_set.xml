@@ -79,7 +79,8 @@
                         android:paddingRight="15dp"
                         android:text="@string/tv_share"
                         android:textColor="@color/cl_5e5e5e"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:visibility="gone" />
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -196,17 +197,47 @@
                         android:layout_marginLeft="15dp"
                         android:src="@color/xian" />
 
-                    <TextView
-                        android:id="@id/textview_3"
+                    <LinearLayout
+                        android:id="@+id/lv_version"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:drawableRight="@mipmap/triangle"
                         android:gravity="center_vertical"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:text="@string/tv_update"
-                        android:textColor="@color/cl_5e5e5e"
-                        android:textSize="14sp" />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="15dp"
+                            android:paddingRight="15dp"
+                            android:text="检查更新"
+                            android:textColor="@color/cl_5e5e5e"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_version"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="15dp"
+                            android:drawablePadding="5dp"
+                            android:drawableRight="@mipmap/triangle"
+                            android:gravity="right|center_vertical"
+                            android:text="1.0.0"
+                            android:textColor="@color/cl_a0a0a0"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+                    <!--<TextView-->
+                    <!--android:id="@id/textview_3"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="50dp"-->
+                    <!--android:drawableRight="@mipmap/triangle"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:paddingLeft="15dp"-->
+                    <!--android:paddingRight="15dp"-->
+                    <!--android:text="@string/tv_update"-->
+                    <!--android:textColor="@color/cl_5e5e5e"-->
+                    <!--android:textSize="14sp" />-->
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -237,10 +268,10 @@
                     android:id="@+id/button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:layout_marginTop="30dp"
-                    android:layout_marginBottom="20dp"
                     android:background="@color/white"
                     android:gravity="center"
                     android:paddingBottom="13dp"

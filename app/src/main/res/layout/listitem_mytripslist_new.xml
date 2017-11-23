@@ -24,8 +24,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingRight="10dp">
 
             <TextView
                 android:id="@+id/tv_time"
@@ -59,7 +59,6 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:paddingLeft="8dp"
-                android:gravity="right"
                 android:text="行程状态"
                 android:textColor="@color/status_togo"
                 android:textSize="14sp" />
@@ -84,15 +83,36 @@
             android:layout_height="wrap_content"
             android:padding="10dp">
 
-            <com.hemaapp.hm_FrameWork.view.RoundedImageView
-                android:id="@+id/iv_avatar"
+            <FrameLayout
+                android:id="@+id/fv_avatar"
                 android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="8dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/default_driver"
-                android:visibility="gone" />
+                android:layout_height="70dp"
+                android:layout_marginRight="8dp">
+
+                <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/default_driver"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_time_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/bg_order_yuyue"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="1dp"
+                    android:text="预约"
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -200,20 +220,58 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:paddingBottom="7dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="7dp">
 
-            <TextView
-                android:id="@+id/tv_num"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="我的乘车人数"
-                android:textColor="@color/cl_5e5e5e"
-                android:textSize="14sp" />
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/lv_bang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/tv_bang_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableLeft="@mipmap/main_bang"
+                        android:drawablePadding="5dp"
+                        android:gravity="center"
+                        android:text="姓名"
+                        android:textColor="@color/cl_5e5e5e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_bang_tel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:text=""
+                        android:textColor="#25A7FA"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="我的乘车人数"
+                    android:textColor="@color/cl_5e5e5e"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -260,7 +318,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="备注"
+                android:paddingRight="5dp"
+                android:text="备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注"
                 android:textColor="@color/cl_9c9c9c"
                 android:textSize="12sp" />
 

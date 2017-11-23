@@ -45,6 +45,20 @@ public class Often extends XtomObject implements Serializable {
 		}
 	}
 
+	public Often(String id, String startaddress, String startcity_id, String startcity, String endaddress, String endcity_id, String endcity, String lng_start, String lat_start, String lng_end, String lat_end) {
+		this.id = id;
+		this.startaddress = startaddress;
+		this.startcity_id = startcity_id;
+		this.startcity = startcity;
+		this.endaddress = endaddress;
+		this.endcity_id = endcity_id;
+		this.endcity = endcity;
+		this.lng_start = lng_start;
+		this.lat_start = lat_start;
+		this.lng_end = lng_end;
+		this.lat_end = lat_end;
+	}
+
 	@Override
 	public String toString() {
 		return "Often{" +

@@ -87,7 +87,12 @@ public class DistrictInfor extends XtomObject implements Serializable {
 			}
 		}
 	}
-	
+
+	public DistrictInfor(String name, String city_id) {
+		this.name = name;
+		this.city_id = city_id;
+	}
+
 	public String getCheckflag() {
 		return checkflag;
 	}

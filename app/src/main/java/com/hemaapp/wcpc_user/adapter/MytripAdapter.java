@@ -21,10 +21,12 @@ import com.hemaapp.wcpc_user.BaseRecycleAdapter;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.ToLogin;
 import com.hemaapp.wcpc_user.activity.CancelOrderActivity;
+import com.hemaapp.wcpc_user.activity.MainNewMapActivity;
 import com.hemaapp.wcpc_user.activity.PingJiaActivity;
 import com.hemaapp.wcpc_user.activity.SendActivity;
 import com.hemaapp.wcpc_user.activity.ToPayActivity;
 import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
+import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.User;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -65,10 +67,17 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
             ((ImageView) holder.getView(R.id.iv_sex)).setImageResource(R.mipmap.img_sex_girl);
         }
 
+        if (infor.getTimetype().equals("1")) {
+            ((TextView) holder.getView(R.id.tv_time_type)).setBackgroundResource(R.drawable.bg_order_yuyue);
+        } else {
+            ((TextView) holder.getView(R.id.tv_time_type)).setBackgroundResource(R.drawable.bg_order_shishi);
+        }
         ((TextView) holder.getView(R.id.car)).setText(infor.getCarbrand() + " " + infor.getCarnumber());
         ((TextView) holder.getView(R.id.tv_start)).setText(infor.getStartaddress());
         ((TextView) holder.getView(R.id.tv_end)).setText(infor.getEndaddress());
         ((TextView) holder.getView(R.id.tv_content)).setText(infor.getRemarks());
+        ((TextView) holder.getView(R.id.tv_bang_name)).setText(infor.getHelpcallname());
+        ((TextView) holder.getView(R.id.tv_bang_tel)).setText(infor.getHelpcallmobile());
         String today = XtomTimeUtil.getCurrentTime("yyyy-MM-dd");
         String day = XtomTimeUtil.TransTime(infor.getBegintime(), "yyyy-MM-dd");
         String time = XtomTimeUtil.TransTime(infor.getBegintime(), "HH:mm");
@@ -90,7 +99,10 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
             ((TextView) holder.getView(R.id.tv_couple)).setText(" 代金券抵扣" + infor.getCoupon_fee() + "元 ");
         }
         if (infor.getStatus().equals("0")) {
+            holder.getView(R.id.iv_back).setVisibility(View.GONE);
             ((TextView) holder.getView(R.id.status)).setText("待派单");
+            holder.getView(R.id.tv_time_type).setVisibility(View.GONE);
+            holder.getView(R.id.fv_avatar).setVisibility(View.GONE);
             holder.getView(R.id.iv_avatar).setVisibility(View.GONE);
             holder.getView(R.id.lv_name).setVisibility(View.GONE);
             holder.getView(R.id.car).setVisibility(View.GONE);
@@ -98,26 +110,32 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
             ((TextView) holder.getView(R.id.tv_button0)).setVisibility(View.VISIBLE);
             ((TextView) holder.getView(R.id.tv_button1)).setVisibility(View.GONE);
         } else {
+            holder.getView(R.id.fv_avatar).setVisibility(View.VISIBLE);
             holder.getView(R.id.iv_avatar).setVisibility(View.VISIBLE);
+            holder.getView(R.id.tv_time_type).setVisibility(View.VISIBLE);
             holder.getView(R.id.lv_name).setVisibility(View.VISIBLE);
             holder.getView(R.id.car).setVisibility(View.VISIBLE);
             if (infor.getStatus().equals("1")) {
+                holder.getView(R.id.iv_back).setVisibility(View.GONE);
                 ((TextView) holder.getView(R.id.status)).setText("未上车");
                 ((TextView) holder.getView(R.id.tv_button0)).setText("取消订单");
                 ((TextView) holder.getView(R.id.tv_button1)).setText("确认上车 ");
                 ((TextView) holder.getView(R.id.tv_button0)).setVisibility(View.VISIBLE);
                 ((TextView) holder.getView(R.id.tv_button1)).setVisibility(View.VISIBLE);
             } else if (infor.getStatus().equals("3")) {
+                holder.getView(R.id.iv_back).setVisibility(View.GONE);
                 ((TextView) holder.getView(R.id.status)).setText("进行中");
                 ((TextView) holder.getView(R.id.tv_button1)).setText("到达目的地");
                 ((TextView) holder.getView(R.id.tv_button0)).setVisibility(View.GONE);
                 ((TextView) holder.getView(R.id.tv_button1)).setVisibility(View.VISIBLE);
             } else if (infor.getStatus().equals("5")) {
+                holder.getView(R.id.iv_back).setVisibility(View.GONE);
                 ((TextView) holder.getView(R.id.status)).setText("待支付");
                 ((TextView) holder.getView(R.id.tv_button1)).setText("  去支付  ");
                 ((TextView) holder.getView(R.id.tv_button0)).setVisibility(View.GONE);
                 ((TextView) holder.getView(R.id.tv_button1)).setVisibility(View.VISIBLE);
             } else if (infor.getStatus().equals("6")) {
+                holder.getView(R.id.iv_back).setVisibility(View.VISIBLE);
                 if (infor.getReplyflag1().equals("0")) {
                     ((TextView) holder.getView(R.id.status)).setText("待评价");
                     ((TextView) holder.getView(R.id.tv_button0)).setText("删除订单");
@@ -132,7 +150,10 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
                 }
 
             } else if (infor.getStatus().equals("10") || infor.getStatus().equals("11")) {
+                holder.getView(R.id.iv_back).setVisibility(View.GONE);
                 if (infor.getDriver_id().equals("0")) {
+                    holder.getView(R.id.fv_avatar).setVisibility(View.GONE);
+                    holder.getView(R.id.tv_time_type).setVisibility(View.GONE);
                     holder.getView(R.id.iv_avatar).setVisibility(View.GONE);
                     holder.getView(R.id.lv_name).setVisibility(View.GONE);
                     holder.getView(R.id.car).setVisibility(View.GONE);
@@ -142,6 +163,11 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
                 ((TextView) holder.getView(R.id.tv_button0)).setVisibility(View.VISIBLE);
                 ((TextView) holder.getView(R.id.tv_button1)).setVisibility(View.GONE);
             }
+        }
+        if (infor.getIs_helpcall().equals("1")) {
+            holder.getView(R.id.lv_bang).setVisibility(View.VISIBLE);
+        } else {
+            holder.getView(R.id.lv_bang).setVisibility(View.GONE);
         }
         holder.getView(R.id.tv_button0).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,13 +218,17 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
                 }
             }
         });
-        holder.getView(R.id.iv_back).setVisibility(View.GONE);
+        holder.getView(R.id.iv_back).setVisibility(View.VISIBLE);
         holder.getView(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 blog = infor;
-                Intent it=new Intent(mContext, SendActivity.class);
-
+                Intent it = new Intent(mContext, MainNewMapActivity.class);
+                Often often=new Often("0",blog.getEndaddress(),
+                        blog.getEndcity_id(),blog.getEndcity(),blog.getStartaddress(),blog.getStartcity_id(),blog.getStartcity(),
+                        blog.getLng_end(),
+                        blog.getLat_end(), blog.getLng_start(),blog.getLat_start());
+                it.putExtra("often",often);
                 mContext.startActivity(it);
             }
         });

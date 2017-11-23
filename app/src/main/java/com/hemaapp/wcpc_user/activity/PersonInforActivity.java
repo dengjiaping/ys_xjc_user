@@ -29,6 +29,8 @@ import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseConfig;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
 import com.hemaapp.wcpc_user.BaseImageWay;
+import com.hemaapp.wcpc_user.EventBusConfig;
+import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.model.User;
 
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import de.greenrobot.event.EventBus;
 import xtom.frame.image.load.XtomImageTask;
 import xtom.frame.util.XtomBaseUtil;
 import xtom.frame.util.XtomFileUtil;
@@ -265,6 +268,7 @@ public class PersonInforActivity extends BaseActivity {
                     getNetWorker().fileUpload(user.getToken(), "1", "0", "0", "0", "无",
                             tempPath);
                 } else {
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                     showTextDialog(baseResult.getMsg());
                     right.postDelayed(new Runnable() {
                         @Override
@@ -276,6 +280,7 @@ public class PersonInforActivity extends BaseActivity {
                 }
                 break;
             case FILE_UPLOAD:
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                 showTextDialog(baseResult.getMsg());
                 right.postDelayed(new Runnable() {
                     @Override

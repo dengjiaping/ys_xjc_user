@@ -51,12 +51,12 @@ sourceSets {
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'de.greenrobot:eventbus:2.4.0'
     //compile 'com.hemaapp:hm_framework:1.0.7'
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:multidex:1.0.0'
     compile project(':onekeyshare')
     compile project(':pickerview')

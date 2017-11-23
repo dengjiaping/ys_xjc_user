@@ -68,6 +68,7 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
     private LinearLayout layout_clearcache;
     private TextView text_clearcache;
     private TextView text_update;
+    private LinearLayout layout_update;
     private TextView text_aboutus;
     private TextView text_dafen;
     private TextView text_shuoming;
@@ -203,7 +204,7 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
             case R.id.layout:
                 new ClearTask().execute();
                 break;
-            case R.id.textview_3:
+            case R.id.lv_version:
                 getNetWorker().init();
                 break;
             case R.id.textview_4:
@@ -288,12 +289,13 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
         text_feedback = (TextView) findViewById(R.id.textview_1);
         layout_clearcache = (LinearLayout) findViewById(R.id.layout);
         text_clearcache = (TextView) findViewById(R.id.textview_2);
-        text_update = (TextView) findViewById(R.id.textview_3);
+        text_update = (TextView) findViewById(R.id.tv_version);
         text_aboutus = (TextView) findViewById(R.id.textview_4);
         exit = (TextView) findViewById(R.id.button);
         text_dafen = (TextView) findViewById(R.id.tv_dafen);
         text_shuoming = (TextView) findViewById(R.id.tv_shuoming);
         text_xieyi = (TextView) findViewById(R.id.tv_xieyi);
+        layout_update = (LinearLayout) findViewById(R.id.lv_version);
 
     }
 
@@ -319,9 +321,11 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
         text_share.setOnClickListener(this);
         text_feedback.setOnClickListener(this);
         layout_clearcache.setOnClickListener(this);
-        text_update.setOnClickListener(this);
         text_aboutus.setOnClickListener(this);
         exit.setOnClickListener(this);
+        layout_update.setOnClickListener(this);
+        String lastversion = getAppVersionForSever(mContext);
+        text_update.setText(lastversion);
     }
 
     private PopupWindow mWindow;

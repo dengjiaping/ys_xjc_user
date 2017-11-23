@@ -57,6 +57,7 @@ public class User extends HemaUser {
     private String pin_end;//
     private String pin_start;//
     private String current_time;//
+    private String couponcount;
     public User() {
         super("");
     }
@@ -64,6 +65,7 @@ public class User extends HemaUser {
     public User(JSONObject jsonObject) throws DataParseException {
         super(jsonObject);
         try {
+            couponcount = get(jsonObject, "couponcount");
             order_start = get(jsonObject, "time1_begin");
             order_end = get(jsonObject, "time1_end");
             pin_start = get(jsonObject, "time2_begin");
@@ -203,6 +205,7 @@ public class User extends HemaUser {
                 ", pin_end='" + pin_end + '\'' +
                 ", pin_start='" + pin_start + '\'' +
                 ", current_time='" + current_time + '\'' +
+                ", couponcount='" + couponcount + '\'' +
                 '}';
     }
 
@@ -380,6 +383,10 @@ public class User extends HemaUser {
 
     public String getCurrent_time() {
         return current_time;
+    }
+
+    public String getCouponcount() {
+        return couponcount;
     }
 
     public String getTakecount() {
