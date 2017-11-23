@@ -103,6 +103,7 @@ import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
+import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -531,6 +532,9 @@ public class MainNewMapActivity extends BaseActivity implements
     protected boolean onKeyBack() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (lvSend1.getVisibility() == View.VISIBLE) {
+            lvSend1.setVisibility(View.GONE);
+            lvSend0.setVisibility(View.VISIBLE);
         } else {
             if ((System.currentTimeMillis() - time) >= 2000) {
                 XtomToastUtil.showShortToast(mContext, "再按一次返回键退出程序");
@@ -1359,6 +1363,14 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.lv_search:
+                if (startCity == null) {
+                    showTextDialog("请先选择出发城市");
+                    return;
+                }
+                if (endCity == null) {
+                    showTextDialog("请先选择到达城市");
+                    return;
+                }
                 it = new Intent(mContext, SearchActivity.class);
                 if (selectAddress.equals("1")) {
                     it.putExtra("citycode", startCity.getName());
@@ -1443,6 +1455,14 @@ public class MainNewMapActivity extends BaseActivity implements
                 startActivityForResult(it, 2);
                 break;
             case R.id.tv_start:
+                if (startCity == null) {
+                    showTextDialog("请先选择出发城市");
+                    return;
+                }
+                if (endCity == null) {
+                    showTextDialog("请先选择到达城市");
+                    return;
+                }
                 if (hasCircle && !selectAddress.equals("1")) {
                     selectAddress = "1";
                     tvStart.setBackgroundColor(0x70e5e5e5);
@@ -1470,6 +1490,14 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.tv_end:
+                if (startCity == null) {
+                    showTextDialog("请先选择出发城市");
+                    return;
+                }
+                if (endCity == null) {
+                    showTextDialog("请先选择到达城市");
+                    return;
+                }
                 if (hasCircle && !selectAddress.equals("2")) {
                     selectAddress = "2";
                     tvStart.setBackgroundColor(0xffffffff);
@@ -1496,6 +1524,10 @@ public class MainNewMapActivity extends BaseActivity implements
                                 Double.parseDouble(move_lng)), 15));
                     }
                 }
+                it = new Intent(mContext, SearchActivity.class);
+                it.putExtra("citycode", endCity.getName());
+                it.putExtra("hint", "你要去哪");
+                startActivityForResult(it, 11);
                 break;
             case R.id.lv_bang://帮人下单
                 bangFlag = "1";

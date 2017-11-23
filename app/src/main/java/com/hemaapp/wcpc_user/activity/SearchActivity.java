@@ -21,6 +21,7 @@ import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.adapter.SelectPositionAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import xtom.frame.view.XtomListView;
@@ -37,7 +38,7 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
 
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;//搜索
-    private List<PoiItem> poiItems;
+    private List<PoiItem> poiItems=new ArrayList<>();
 
     private SelectPositionAdapter adapter;
     private String citycode;
