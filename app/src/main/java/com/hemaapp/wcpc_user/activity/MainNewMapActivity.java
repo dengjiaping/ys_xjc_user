@@ -39,7 +39,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -277,6 +276,8 @@ public class MainNewMapActivity extends BaseActivity implements
     DrawerLayout drawerLayout;
     @BindView(R.id.lv_main)
     FrameLayout lvMain;
+    @BindView(R.id.progressBar2)
+    ProgressBar progressBar2;
 
     private User user;
     private int msgcount;
@@ -424,6 +425,7 @@ public class MainNewMapActivity extends BaseActivity implements
             aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
                 @Override
                 public void onMapLoaded() {
+                    progressBar2.setVisibility(View.GONE);
                     addMarkerInScreenCenter();
                     aMap.setOnCameraChangeListener(activity);
                     aMap.setOnMyLocationChangeListener(activity);
@@ -432,7 +434,6 @@ public class MainNewMapActivity extends BaseActivity implements
 
                 }
             });
-
             aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
             aMap.getUiSettings().setZoomControlsEnabled(false);
             aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
@@ -968,6 +969,7 @@ public class MainNewMapActivity extends BaseActivity implements
         else
             ivCurSex.setImageResource(R.mipmap.img_sex_girl);
         if (infor.getTimetype().equals("1")) {//预约
+
             tvCurCouple.setVisibility(View.VISIBLE);
             tvCurPrice.setVisibility(View.VISIBLE);
             lvPrice2.setVisibility(View.GONE);
@@ -982,6 +984,10 @@ public class MainNewMapActivity extends BaseActivity implements
                 lvPrice2.setVisibility(View.VISIBLE);
                 lvCurPrice1.setVisibility(View.GONE);
             }
+        }
+        if (isNull(infor.getCoupon_fee()) || infor.getCoupon_fee().equals("0.00")) {
+            tvCurCouple.setVisibility(View.GONE);
+            tvCurCouple2.setVisibility(View.GONE);
         }
     }
 
