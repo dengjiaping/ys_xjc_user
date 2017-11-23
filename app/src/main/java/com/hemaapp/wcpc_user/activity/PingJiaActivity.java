@@ -452,7 +452,7 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
             imageurl = initImagePath();
         if (oks == null) {
             oks = new OnekeyShare();
-            oks.setTitle("念念不忘想起你，只想送你份好礼，注册即得50元代金券！");
+            oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
             oks.setTitleUrl(pathWX); // 标题的超链接
             oks.setText("莱芜 ⇌ 济南25元；\n" +
                     "莱芜 ⇌ 泰安15元。");
