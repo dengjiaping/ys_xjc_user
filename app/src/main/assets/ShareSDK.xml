@@ -78,15 +78,15 @@
         SortId="2" />
 
     <QQ
-        AppId="1104594492"
-        AppKey="U7yRL5gP6OJXcEtW "
+        AppId="1106525636"
+        AppKey="XJYQeYDRLtEzsMeS"
         Enable="true"
         Id="3"
         ShareByAppClient="true"
         SortId="3" />
 
     <TencentWeibo
-        AppKey="801307650"
+        AppKey="1106525636"
         AppSecret="ae36f4ee3946e1cbb98d6965b0b2ff5c"
         Enable="false"
         Id="4"
@@ -96,8 +96,8 @@
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
 
     <QZone
-        AppId="1104594492"
-        AppKey="U7yRL5gP6OJXcEtW"
+        AppId="1106525636"
+        AppKey="XJYQeYDRLtEzsMeS"
         Enable="true"
         Id="5"
         ShareByAppClient="true"

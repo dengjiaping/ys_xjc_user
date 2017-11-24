@@ -158,7 +158,7 @@
             </intent-filter>
 
             <intent-filter>
-                <data android:scheme="tencent1104594492" />
+                <data android:scheme="tencent1106525636" />
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -384,6 +384,7 @@
         <activity
             android:name=".activity.SearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.IntroductionActivity"

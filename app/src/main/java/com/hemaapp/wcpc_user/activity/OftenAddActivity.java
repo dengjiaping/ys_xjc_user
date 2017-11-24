@@ -254,9 +254,11 @@ public class OftenAddActivity extends BaseActivity {
                     it = new Intent(mContext, MapStartActivity.class);
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
                         it.putExtra("areas", myCity.getAreas2());
+                        it.putExtra("city_id", startCity.getCity_id());
                         it.putExtra("center_city", myCity.getCenter_lnglat2());
                     } else {
                         it.putExtra("areas", myCity.getAreas1());
+                        it.putExtra("city_id", startCity.getCity_id());
                         it.putExtra("center_city", myCity.getCenter_lnglat1());
                     }
                     it.putExtra("city", startCity.getName());
@@ -271,9 +273,11 @@ public class OftenAddActivity extends BaseActivity {
                     it = new Intent(mContext, MapStartActivity.class);
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
                         it.putExtra("areas", myCity.getAreas1());
+                        it.putExtra("city_id", endCity.getCity_id());
                         it.putExtra("center_city", myCity.getCenter_lnglat1());
                     } else {
                         it.putExtra("areas", myCity.getAreas2());
+                        it.putExtra("city_id", endCity.getCity_id());
                         it.putExtra("center_city", myCity.getCenter_lnglat2());
                     }
                     it.putExtra("city", endCity.getName());

@@ -534,7 +534,12 @@ public class MainNewMapActivity extends BaseActivity implements
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (lvSend1.getVisibility() == View.VISIBLE) {
+            isSend2 = false;
+            sendEndMarker.setVisible(false);
+            sendStartMarker.setVisible(false);
+            screenMarker.setVisible(true);
             lvSend1.setVisibility(View.GONE);
+            lvSend0.startAnimation(appearAnimation);
             lvSend0.setVisibility(View.VISIBLE);
         } else {
             if ((System.currentTimeMillis() - time) >= 2000) {
@@ -721,7 +726,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         screenMarker.setVisible(true);
                     }
                     if (sendEndMarker != null) {
-                        sendEndMarker.setVisible(true);
+                        sendEndMarker.setVisible(false);
                     }
                     realseTimeTask();
                     if (sendStartMarker != null) {
@@ -730,6 +735,16 @@ public class MainNewMapActivity extends BaseActivity implements
                         aMap.setInfoWindowAdapter(null);
                     }
                     getNetWorker().canTrips(user.getToken());
+
+                    endCity=null;
+                    start_address = "";
+                    end_address = "";
+                    tvEndCity.setText("");
+                    tvStart.setText("");
+                    tvEnd.setText("");
+                    end_lat = "";
+                    end_lng = "";
+                    start_lng="";
                 } else {
                     myLocationStyle.showMyLocation(true);
                     isSend2 = false;
@@ -1375,11 +1390,13 @@ public class MainNewMapActivity extends BaseActivity implements
                 it = new Intent(mContext, SearchActivity.class);
                 if (selectAddress.equals("1")) {
                     it.putExtra("citycode", startCity.getName());
+                    it.putExtra("city_id", startCity.getCity_id());
                     it.putExtra("hint", "从哪出发");
                     startActivityForResult(it, 10);
                 }
                 if (selectAddress.equals("2")) {
                     it.putExtra("citycode", endCity.getName());
+                    it.putExtra("city_id", endCity.getCity_id());
                     it.putExtra("hint", "你要去哪");
                     startActivityForResult(it, 11);
                 }
@@ -1527,6 +1544,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 it = new Intent(mContext, SearchActivity.class);
                 it.putExtra("citycode", endCity.getName());
+                it.putExtra("city_id", endCity.getCity_id());
                 it.putExtra("hint", "你要去哪");
                 startActivityForResult(it, 11);
                 break;

@@ -23,6 +23,7 @@ import com.hemaapp.wcpc_user.model.MyTripsInfor;
 import com.hemaapp.wcpc_user.model.NoticeListInfor;
 import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.OrderDetailInfor;
+import com.hemaapp.wcpc_user.model.Recomm;
 import com.hemaapp.wcpc_user.model.ReplyListInfor;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.TimeRule;
@@ -918,6 +919,14 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);//
         params.put("keyid", keyid);//
         CurrentTask task = new CurrentTask(information, params);
+        executeTask(task);
+    }
+
+    public void recomAddList(String city_id) {
+        BaseHttpInformation information = BaseHttpInformation.RECOM_ADDRESS_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("city_id", city_id);
+        ExecuteNetTask<Recomm> task = new ExecuteNetTask<>(information, params, Recomm.class);
         executeTask(task);
     }
 }

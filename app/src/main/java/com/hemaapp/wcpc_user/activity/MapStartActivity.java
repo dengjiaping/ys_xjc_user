@@ -96,6 +96,7 @@ public class MapStartActivity extends BaseActivity implements AMap.OnMyLocationC
     private OnLocationChangedListener mListener;
     Marker screenMarker = null;
     private boolean Loc = false, isFirst = true;
+    private String city_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,6 +320,7 @@ public class MapStartActivity extends BaseActivity implements AMap.OnMyLocationC
         areas.addAll((Collection<? extends Area>) mIntent.getSerializableExtra("areas"));
         city = mIntent.getStringExtra("city");
         title = mIntent.getStringExtra("title");
+        city_id = mIntent.getStringExtra("city_id");
         String center_point = mIntent.getStringExtra("center_city");
         if (!isNull(center_point)) {
             move_lng = center_point.split(",")[0];
@@ -485,7 +487,7 @@ public class MapStartActivity extends BaseActivity implements AMap.OnMyLocationC
                         .icon(BitmapDescriptorFactory
                                 .fromBitmap(BitmapFactory.
                                         decodeResource(getResources(), R.mipmap.loc_my))));
-              //  marker = aMap.addMarker(new MarkerOptions().position(latlng0));
+                //  marker = aMap.addMarker(new MarkerOptions().position(latlng0));
                 boolean b1 = false;
                 for (int i = 0; i < polygons.size(); i++) {
                     if (polygons.get(i).contains(latlng0)) {

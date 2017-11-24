@@ -2,9 +2,11 @@ package com.hemaapp.wcpc_user.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -15,14 +17,22 @@ import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
+import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.wcpc_user.BaseActivity;
+import com.hemaapp.wcpc_user.BaseHttpInformation;
+import com.hemaapp.wcpc_user.BaseRecycleAdapter;
 import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.R;
+import com.hemaapp.wcpc_user.RecycleUtils;
+import com.hemaapp.wcpc_user.adapter.RecommendAdapter;
 import com.hemaapp.wcpc_user.adapter.SelectPositionAdapter;
+import com.hemaapp.wcpc_user.model.Recomm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import xtom.frame.view.XtomListView;
 
@@ -35,23 +45,55 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
     private EditText editText;
     private TextView text_search;
     private XtomListView listView;
+    private RecyclerView rvList;
 
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;//搜索
-    private List<PoiItem> poiItems=new ArrayList<>();
+    private List<PoiItem> poiItems = new ArrayList<>();
 
     private SelectPositionAdapter adapter;
     private String citycode;
     private String content;
     private String hint;
+    private String city_id;
+    private ArrayList<Recomm> recomms = new ArrayList<>();
+    private RecommendAdapter recommendAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_search);
         super.onCreate(savedInstanceState);
+        recommendAdapter = new RecommendAdapter(mContext, recomms);
+        RecycleUtils.initVerticalRecyle(rvList);
+        rvList.setAdapter(recommendAdapter);
+        getNetWorker().recomAddList(city_id);
         if (isNull(citycode))
             citycode = "选择城市";
         text_city.setText(citycode);
+        recommendAdapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                BaseUtil.hideInput(mContext, text_city);
+                Recomm item = recomms.get(position);
+                if (!isNull(item.getLat())) {
+                    mIntent.putExtra("lng", Double.parseDouble(item.getLng()));
+                    mIntent.putExtra("lat", Double.parseDouble(item.getLat()));
+                    mIntent.putExtra("name", item.getAddress());
+                    mIntent.putExtra("city", citycode);
+                    setResult(RESULT_OK, mIntent);
+                    finish();
+                } else {
+                    showTextDialog("该数据异常");
+                }
+            }
+        });
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()   {
+            public void run() {
+                InputMethodManager inputManager = (InputMethodManager)editText.getContext().getSystemService(mContext.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(editText, 0);
+            }
+        }, 998);
     }
 
     @Override
@@ -65,7 +107,26 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
     }
 
     @Override
-    protected void callBackForServerSuccess(HemaNetTask hemaNetTask, HemaBaseResult hemaBaseResult) {
+    protected void callBackForServerSuccess(HemaNetTask netTask, HemaBaseResult baseResult) {
+        BaseHttpInformation information = (BaseHttpInformation) netTask
+                .getHttpInformation();
+        switch (information) {
+            case RECOM_ADDRESS_LIST:
+                @SuppressWarnings("unchecked")
+                HemaArrayParse<Recomm> gResult = (HemaArrayParse<Recomm>) baseResult;
+                ArrayList<Recomm> goods = gResult.getObjects();
+                this.recomms.clear();
+                this.recomms.addAll(goods);
+                if (recomms.size() == 0) {
+                    rvList.setVisibility(View.INVISIBLE);
+                } else {
+                    rvList.setVisibility(View.VISIBLE);
+                }
+                recommendAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
 
     }
 
@@ -81,12 +142,14 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
         editText = (EditText) findViewById(R.id.ev_content);
         text_search = (TextView) findViewById(R.id.button);
         listView = (XtomListView) findViewById(R.id.listview);
+        rvList = (RecyclerView) findViewById(R.id.rv_list);
     }
 
     @Override
     protected void getExras() {
         citycode = mIntent.getStringExtra("citycode");
         hint = mIntent.getStringExtra("hint");
+        city_id = mIntent.getStringExtra("city_id");
         if (isNull(hint))
             hint = "你要去哪";
 
@@ -102,7 +165,7 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content = s.toString();
+                content = s.toString().trim();
                 toStartSearch();
             }
 
@@ -180,9 +243,16 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
                 if (poiResult.getQuery().equals(query)) {// 是否是同一条
                     // 取得搜索到的poiitems有多少页
                     poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
+                    if (isNull(content))
+                        poiItems.clear();
+                    for (PoiItem poiItem : poiItems) {
+                        if (poiItem.getTitle().equals(citycode)) {
+                            poiItems.remove(poiItem);
+                            break;
+                        }
+                    }
 //                    List<SuggestionCity> suggestionCities = poiResult
 //                            .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
-
                     if (adapter == null) {
                         adapter = new SelectPositionAdapter(mContext, poiItems);
                         adapter.setEmptyString("抱歉，没有搜索到相关信息");
@@ -191,6 +261,13 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
                         adapter.setItems(poiItems);
                         adapter.setEmptyString("抱歉，没有搜索到相关信息");
                         adapter.notifyDataSetChanged();
+                    }
+                    if (poiItems.size() == 0) {
+                        rvList.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                    } else {
+                        rvList.setVisibility(View.INVISIBLE);
+                        listView.setVisibility(View.VISIBLE);
                     }
                 }
             } else {

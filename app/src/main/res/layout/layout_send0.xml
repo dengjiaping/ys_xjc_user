@@ -49,6 +49,8 @@
             android:id="@+id/tv_often"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
             android:layout_gravity="right"
             android:background="@drawable/bg_often"
             android:gravity="center"
@@ -61,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FAFAFA">
+        android:background="@drawable/bg_cor_top">
 
         <TextView
             android:id="@+id/tv_start_city"
@@ -191,7 +193,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#ffffff"
+            android:background="@drawable/bg_cor_left_bottom"
             android:gravity="center">
 
             <TextView
@@ -211,7 +213,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#4E4D5D"
+            android:background="@drawable/bg_cor_right_bottom"
             android:gravity="center">
 
             <TextView
@@ -224,79 +226,5 @@
                 android:textSize="@dimen/textsize_7" />
         </LinearLayout>
     </LinearLayout>
-    <!--<LinearLayout-->
-    <!--android:id="@+id/lv_bang"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:visibility="gone"-->
-    <!--android:orientation="vertical">-->
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="40dp"-->
-    <!--android:background="@color/white"-->
-    <!--android:gravity="center_vertical">-->
-
-    <!--<LinearLayout-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="1"-->
-    <!--android:gravity="center_vertical">-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="32dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@mipmap/main_bang" />-->
-
-    <!--<EditText-->
-    <!--android:id="@+id/ev_bang_name"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/transparent"-->
-    <!--android:gravity="center_vertical"-->
-    <!--android:hint="姓名"-->
-    <!--android:maxLines="1"-->
-    <!--android:textColor="@color/cl_3f3f3f"-->
-    <!--android:textColorHint="@color/cl_a0a0a0"-->
-    <!--android:textSize="@dimen/textsize_7" />-->
-    <!--</LinearLayout>-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="1dp"-->
-    <!--android:layout_height="15dp"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:src="@color/xian" />-->
-
-    <!--<LinearLayout-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="1"-->
-    <!--android:gravity="center_vertical">-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="32dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@mipmap/main_bang_tel" />-->
-
-    <!--<EditText-->
-    <!--android:id="@+id/ev_bang_tel"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/transparent"-->
-    <!--android:gravity="center_vertical"-->
-    <!--android:hint="联系电话"-->
-    <!--android:maxLines="1"-->
-    <!--android:textColor="@color/cl_3f3f3f"-->
-    <!--android:textColorHint="@color/cl_a0a0a0"-->
-    <!--android:textSize="@dimen/textsize_7" />-->
-    <!--</LinearLayout>-->
-    <!--</LinearLayout>-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="0.5dp"-->
-    <!--android:background="@color/white"-->
-    <!--android:paddingLeft="32dp"-->
-    <!--android:src="@color/xian" />-->
-    <!--</LinearLayout>-->
 </LinearLayout>

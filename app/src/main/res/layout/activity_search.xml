@@ -78,14 +78,23 @@
         android:layout_height="@dimen/height_driver1"
         android:src="@color/xian" />
 
-    <xtom.frame.view.XtomListView
-        android:id="@id/listview"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:cacheColorHint="@color/transparent"
-        android:divider="@color/xian"
-        android:dividerHeight="@dimen/height_driver"
-        android:listSelector="@color/transparent"
-        android:scrollbars="none" />
-
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none" />
+        <xtom.frame.view.XtomListView
+            android:id="@id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@color/transparent"
+            android:divider="@color/xian"
+            android:dividerHeight="@dimen/height_driver"
+            android:visibility="gone"
+            android:listSelector="@color/transparent"
+            android:scrollbars="none" />
+    </FrameLayout>
 </LinearLayout>
