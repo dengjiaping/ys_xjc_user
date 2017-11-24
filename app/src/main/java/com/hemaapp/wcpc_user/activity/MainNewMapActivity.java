@@ -389,7 +389,7 @@ public class MainNewMapActivity extends BaseActivity implements
         handler();
         findCenter();
         setCenter();
-        CanShadowDrawable.Builder.on(lvSend0Bottom)
+        CanShadowDrawable.Builder.on(lvSend0Bottom)//发布加阴影效果
                 .radius(dip2px(mContext, 2))
                 .shadowColor(Color.parseColor("#d9d9d9"))
                 .shadowRange(dip2px(mContext, 5))
@@ -398,7 +398,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 .offsetLeft(dip2px(mContext, 5))
                 .offsetRight(dip2px(mContext, 5))
                 .create();
-        CanShadowDrawable.Builder.on(lvSend1Bottom)
+        CanShadowDrawable.Builder.on(lvSend1Bottom)//发布加阴影效果
                 .radius(dip2px(mContext, 2))
                 .shadowColor(Color.parseColor("#d9d9d9"))
                 .shadowRange(dip2px(mContext, 5))
@@ -1165,6 +1165,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
             }
         });
+        drawerLayout.setScrimColor(0x50000000);
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
