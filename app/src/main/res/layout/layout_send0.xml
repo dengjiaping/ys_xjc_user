@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:layout_margin="5dp"
+    android:layout_margin="0dp"
     android:background="@color/transparent"
     android:orientation="vertical"
     android:visibility="gone">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -21,7 +23,7 @@
                 android:id="@+id/tv_appointment"
                 android:layout_width="58dp"
                 android:layout_height="match_parent"
-                android:layout_marginRight="8dp"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/bg_yuyue"
                 android:gravity="center"
                 android:text="预约"
@@ -49,9 +51,9 @@
             android:id="@+id/tv_often"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
             android:layout_gravity="right"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="1dp"
             android:background="@drawable/bg_often"
             android:gravity="center"
             android:text="  常用行程  "
@@ -60,170 +62,179 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/lv_send0_bottom"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/bg_cor_top">
-
-        <TextView
-            android:id="@+id/tv_start_city"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="出发城市"
-            android:text=""
-            android:textColor="@color/cl_3f3f3f"
-            android:textSize="@dimen/textsize_7" />
-
-        <ImageView
-            android:id="@+id/iv_change"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@mipmap/main_change" />
-
-        <TextView
-            android:id="@+id/tv_end_city"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="到达城市"
-            android:text=""
-            android:textColor="@color/cl_3f3f3f"
-            android:textSize="@dimen/textsize_7" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/white">
-
-        <FrameLayout
-            android:id="@+id/leftlin"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@mipmap/img_startposition" />
-
-            <ImageView
-                android:layout_width="3dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="0dp"
-                android:src="@mipmap/img_xian" />
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_marginTop="11dp"
-                android:src="@mipmap/img_endposition" />
-        </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/leftlin"
-            android:orientation="vertical">
+            android:layout_height="40dp"
+            android:background="@drawable/bg_cor_top">
 
             <TextView
-                android:id="@+id/tv_start"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:hint="从哪儿出发"
-                android:maxLines="1"
-                android:paddingLeft="2dp"
-                android:paddingRight="5dp"
+                android:id="@+id/tv_start_city"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="出发城市"
                 android:text=""
-                android:background="#70e5e5e5"
-                android:textColor="@color/cl_3f3f3f"
-                android:textColorHint="@color/cl_a0a0a0"
-                android:textSize="@dimen/textsize_7" />
+                android:textColorHint="#e3e3e3"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textsize_7.5" />
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:visibility="gone"
-                android:src="@color/xian" />
+                android:id="@+id/iv_change"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/main_change" />
 
             <TextView
-                android:id="@+id/tv_end"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:hint="您要去哪儿"
-                android:paddingLeft="2dp"
-                android:maxLines="1"
-                android:paddingRight="5dp"
+                android:id="@+id/tv_end_city"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="到达城市"
+                android:textColorHint="#e3e3e3"
                 android:text=""
-                android:textColor="@color/cl_3f3f3f"
-                android:textColorHint="@color/cl_a0a0a0"
-                android:textSize="@dimen/textsize_7" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/white"
-        android:paddingLeft="32dp"
-        android:src="@color/xian" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <LinearLayout
-            android:id="@+id/lv_bang"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_cor_left_bottom"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableLeft="@mipmap/main_other_black"
-                android:drawablePadding="5dp"
-                android:gravity="center"
-                android:text="代人叫车"
-                android:textColor="@color/word_black"
-                android:textColorHint="@color/cl_a0a0a0"
-                android:textSize="@dimen/textsize_7" />
+                android:textColor="@color/black"
+                android:textSize="@dimen/textsize_7.5" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/lv_one_next"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_cor_right_bottom"
-            android:gravity="center">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/white">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:id="@+id/leftlin"
+                android:layout_width="25dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="下一步"
-                android:textColor="@color/white"
-                android:textColorHint="@color/cl_a0a0a0"
-                android:textSize="@dimen/textsize_7" />
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/img_startposition" />
+
+                <ImageView
+                    android:layout_width="3dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="0dp"
+                    android:src="@mipmap/img_xian" />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginTop="0dp"
+                    android:src="@mipmap/img_endposition" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/leftlin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#40e5e5e5"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:hint="从哪儿出发"
+                    android:maxLines="1"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="5dp"
+                    android:text=""
+                    android:textColor="@color/cl_3f3f3f"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:src="@color/xian"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:hint="您要去哪儿"
+                    android:maxLines="1"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="5dp"
+                    android:text=""
+                    android:textColor="@color/cl_3f3f3f"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/white"
+            android:paddingLeft="32dp"
+            android:src="@color/xian" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <LinearLayout
+                android:id="@+id/lv_bang"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_cor_left_bottom"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableLeft="@mipmap/main_other_black"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:text="代人叫车"
+                    android:textColor="@color/word_black"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lv_one_next"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_cor_right_bottom"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="下一步"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

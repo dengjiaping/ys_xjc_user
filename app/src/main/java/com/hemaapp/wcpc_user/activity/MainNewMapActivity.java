@@ -1,7 +1,6 @@
 package com.hemaapp.wcpc_user.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -69,6 +68,7 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.canyinghao.caneffect.CanShadowDrawable;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
@@ -280,6 +280,10 @@ public class MainNewMapActivity extends BaseActivity implements
     FrameLayout lvMain;
     @BindView(R.id.progressBar2)
     ProgressBar progressBar2;
+    @BindView(R.id.lv_send0_bottom)
+    LinearLayout lvSend0Bottom;
+    @BindView(R.id.lv_send1_bottom)
+    LinearLayout lvSend1Bottom;
 
     private User user;
     private int msgcount;
@@ -385,6 +389,24 @@ public class MainNewMapActivity extends BaseActivity implements
         handler();
         findCenter();
         setCenter();
+        CanShadowDrawable.Builder.on(lvSend0Bottom)
+                .radius(dip2px(mContext, 2))
+                .shadowColor(Color.parseColor("#d9d9d9"))
+                .shadowRange(dip2px(mContext, 5))
+                .offsetTop(dip2px(mContext, 5))
+                .offsetBottom(dip2px(mContext, 5))
+                .offsetLeft(dip2px(mContext, 5))
+                .offsetRight(dip2px(mContext, 5))
+                .create();
+        CanShadowDrawable.Builder.on(lvSend1Bottom)
+                .radius(dip2px(mContext, 2))
+                .shadowColor(Color.parseColor("#d9d9d9"))
+                .shadowRange(dip2px(mContext, 5))
+                .offsetTop(dip2px(mContext, 5))
+                .offsetBottom(dip2px(mContext, 5))
+                .offsetLeft(dip2px(mContext, 5))
+                .offsetRight(dip2px(mContext, 5))
+                .create();
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -511,7 +533,7 @@ public class MainNewMapActivity extends BaseActivity implements
         }
         hasCircle = true;//已经画圈
         selectAddress = "1";//选择出发地
-        tvStart.setBackgroundColor(0x70e5e5e5);
+        tvStart.setBackgroundColor(0x40e5e5e5);
         tvEnd.setBackgroundColor(0xffffffff);
         if (!isNull(myCity.getCenter_lnglat1())) {
             String locCity = XtomSharedPreferencesUtil.get(mContext, "city");
@@ -535,6 +557,7 @@ public class MainNewMapActivity extends BaseActivity implements
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (lvSend1.getVisibility() == View.VISIBLE) {
             isSend2 = false;
+            lvSearch.setVisibility(View.VISIBLE);
             sendEndMarker.setVisible(false);
             sendStartMarker.setVisible(false);
             screenMarker.setVisible(true);
@@ -709,7 +732,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 HemaArrayParse<CurrentTripsInfor> llResult = (HemaArrayParse<CurrentTripsInfor>) baseResult;
                 if (llResult.getObjects() != null && llResult.getObjects().size() > 0) {
                     infor = llResult.getObjects().get(0);
-                    togetherAdapter = new TogetherAdapter(mContext, clients,navView);
+                    togetherAdapter = new TogetherAdapter(mContext, clients, navView);
                     RecycleUtils.initHorizontalRecyle(rvCurList);
                     rvCurList.setAdapter(togetherAdapter);
                 } else {
@@ -736,7 +759,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     }
                     getNetWorker().canTrips(user.getToken());
 
-                    endCity=null;
+                    endCity = null;
                     start_address = "";
                     end_address = "";
                     tvEndCity.setText("");
@@ -744,7 +767,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     tvEnd.setText("");
                     end_lat = "";
                     end_lng = "";
-                    start_lng="";
+                    start_lng = "";
                 } else {
                     myLocationStyle.showMyLocation(true);
                     isSend2 = false;
@@ -856,7 +879,7 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         }
         tvStart.setBackgroundColor(0xffffffff);
-        tvEnd.setBackgroundColor(0x70e5e5e5);
+        tvEnd.setBackgroundColor(0x40e5e5e5);
         selectAddress = "1";//选择出发地
         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(start_lat),
                 Double.parseDouble(start_lng)), 15));
@@ -1150,7 +1173,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 Display display = manager.getDefaultDisplay();
                 //设置右面的布局位置  根据左面菜单的right作为右面布局的left   左面的right+屏幕的宽度（或者right的宽度这里是相等的）为右面布局的right
-                lvMain.layout(navView.getRight(), 0, navView.getRight() + display.getWidth(), display.getHeight());
+                // lvMain.layout(navView.getRight(), 0, navView.getRight() + display.getWidth(), display.getHeight());
+                // lvMain.layout(0, 0, navView.getRight() + display.getWidth(), display.getHeight());
             }
 
             @Override
@@ -1455,10 +1479,10 @@ public class MainNewMapActivity extends BaseActivity implements
                     if (selectAddress.equals("1")) {
                         selectAddress = "2";
                         tvStart.setBackgroundColor(0xffffffff);
-                        tvEnd.setBackgroundColor(0x70e5e5e5);
+                        tvEnd.setBackgroundColor(0x40e5e5e5);
                     } else if (selectAddress.equals("2")) {
                         selectAddress = "1";
-                        tvStart.setBackgroundColor(0x70e5e5e5);
+                        tvStart.setBackgroundColor(0x40e5e5e5);
                         tvEnd.setBackgroundColor(0xffffffff);
                     }
                 }
@@ -1483,7 +1507,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 if (hasCircle && !selectAddress.equals("1")) {
                     selectAddress = "1";
-                    tvStart.setBackgroundColor(0x70e5e5e5);
+                    tvStart.setBackgroundColor(0x40e5e5e5);
                     tvEnd.setBackgroundColor(0xffffffff);
                     String centerLatlng = "";
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
@@ -1519,7 +1543,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (hasCircle && !selectAddress.equals("2")) {
                     selectAddress = "2";
                     tvStart.setBackgroundColor(0xffffffff);
-                    tvEnd.setBackgroundColor(0x70e5e5e5);
+                    tvEnd.setBackgroundColor(0x40e5e5e5);
                     String centerLatlng = "";
                     if (myCity.getCity_id().equals(startCity.getCity_id())) {//正常myCity就是endCity，但是点击交换之后，要特殊处理
                         centerLatlng = myCity.getCenter_lnglat1();
@@ -1557,6 +1581,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 sendNext();
                 break;
             case R.id.tv_sendtwo_cancel://取消，回上一步
+                lvSearch.setVisibility(View.VISIBLE);
                 isSend2 = false;
                 sendEndMarker.setVisible(false);
                 sendStartMarker.setVisible(false);
@@ -1739,6 +1764,7 @@ public class MainNewMapActivity extends BaseActivity implements
             return;
         }
         isSend2 = true;
+        lvSearch.setVisibility(View.GONE);
         screenMarker.setVisible(false);
         sendStartMarker = aMap.addMarker(new MarkerOptions()
                 .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
@@ -2739,7 +2765,9 @@ public class MainNewMapActivity extends BaseActivity implements
         tvPhone = (TextView) centerView.findViewById(R.id.tv_phone);
         lvPhone = (LinearLayout) centerView.findViewById(R.id.lv_phone);
     }
+
     private ShowLargeImageView mView;
+
     public void setCenter() {
         SysInitInfo sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
         ImageLoader.getInstance().displayImage(user.getAvatar(), ivAvatar, BaseApplication.getInstance()

@@ -4,356 +4,363 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:layout_margin="5dp"
     android:background="@color/transparent"
     android:orientation="vertical"
     android:visibility="gone">
 
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#F4F4F4">
-
-        <TextView
-            android:id="@+id/tv_sendtwo_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="    取消    "
-            android:textColor="@color/qianhui"
-            android:textSize="@dimen/textsize_7" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="发布行程"
-            android:textColor="@color/cl_3f3f3f"
-            android:textSize="@dimen/textsize_7" />
-    </FrameLayout>
-
     <LinearLayout
-        android:id="@+id/lv_bang_infor"
+        android:id="@+id/lv_send1_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/white"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/main_bang" />
-
-                <EditText
-                    android:id="@+id/ev_send_bang_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/transparent"
-                    android:gravity="center_vertical"
-                    android:hint="乘车人姓名"
-                    android:maxLines="1"
-                    android:textColor="@color/cl_3f3f3f"
-                    android:textColorHint="@color/cl_a0a0a0"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center"
-                android:src="@color/xian" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/main_bang_tel" />
-
-                <EditText
-                    android:id="@+id/ev_send_bang_tel"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/transparent"
-                    android:gravity="center_vertical"
-                    android:hint="联系电话"
-                    android:maxLines="1"
-                    android:inputType="phone"
-                    android:textColor="@color/cl_3f3f3f"
-                    android:textColorHint="@color/cl_a0a0a0"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/white"
-            android:paddingLeft="32dp"
-            android:src="@color/xian" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lv_send_otherinfor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/white"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/send_car" />
-
-                <TextView
-                    android:id="@+id/tv_send_pin"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:drawableRight="@mipmap/img_agree_s"
-                    android:gravity="center_vertical"
-                    android:paddingRight="75dp"
-                    android:text="@string/tv_agree"
-                    android:textColor="@color/word_black"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center"
-                android:src="@color/xian" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/send_car"
-                    android:visibility="invisible" />
-
-                <TextView
-                    android:id="@+id/tv_send_bao"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:drawableRight="@mipmap/img_agree_n"
-                    android:gravity="center_vertical"
-                    android:paddingRight="75dp"
-                    android:text="包车"
-                    android:textColor="@color/word_black"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/white"
-            android:paddingLeft="32dp"
-            android:src="@color/xian" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/white"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/send_time" />
-
-                <TextView
-                    android:id="@+id/tv_send_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:hint="出发时间"
-                    android:maxLines="1"
-                    android:textColor="@color/cl_3f3f3f"
-                    android:textColorHint="@color/cl_a0a0a0"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center"
-                android:src="@color/xian" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/send_count" />
-
-                <TextView
-                    android:id="@+id/tv_send_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:hint="乘车人数"
-                    android:text="1人"
-                    android:textColor="@color/cl_3f3f3f"
-                    android:textColorHint="@color/cl_a0a0a0"
-                    android:textSize="@dimen/textsize_7" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/white"
-            android:paddingLeft="32dp"
-            android:src="@color/xian" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/white"
-        android:gravity="center_vertical">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/send_couple" />
+            android:background="#F4F4F4">
 
             <TextView
-                android:id="@+id/tv_send_coupon"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_sendtwo_cancel"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:hint="选择代金券"
-                android:maxLines="1"
-                android:textColor="@color/cl_3f3f3f"
-                android:textColorHint="@color/cl_a0a0a0"
+                android:gravity="center"
+                android:text="    取消    "
+                android:textColor="@color/main_n1"
                 android:textSize="@dimen/textsize_7" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="发布行程"
+                android:textColor="@color/cl_3f3f3f"
+                android:textSize="@dimen/textsize_7.5" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/lv_bang_infor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/main_bang" />
+
+                    <EditText
+                        android:id="@+id/ev_send_bang_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:hint="乘车人姓名"
+                        android:maxLines="1"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textColorHint="@color/cl_a0a0a0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:src="@color/xian" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/main_bang_tel" />
+
+                    <EditText
+                        android:id="@+id/ev_send_bang_tel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:hint="联系电话"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textColorHint="@color/cl_a0a0a0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/white"
+                android:paddingLeft="32dp"
+                android:src="@color/xian" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lv_send_otherinfor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/send_car" />
+
+                    <TextView
+                        android:id="@+id/tv_send_pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:drawableRight="@mipmap/img_agree_s"
+                        android:gravity="center_vertical"
+                        android:paddingRight="75dp"
+                        android:text="@string/tv_agree"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:src="@color/xian" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/send_car"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/tv_send_bao"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:drawableRight="@mipmap/img_agree_n"
+                        android:gravity="center_vertical"
+                        android:paddingRight="75dp"
+                        android:text="包车"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/white"
+                android:paddingLeft="32dp"
+                android:src="@color/xian" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/send_time" />
+
+                    <TextView
+                        android:id="@+id/tv_send_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:hint="出发时间"
+                        android:maxLines="1"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textColorHint="@color/cl_a0a0a0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:src="@color/xian" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/send_count" />
+
+                    <TextView
+                        android:id="@+id/tv_send_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:hint="乘车人数"
+                        android:text="1人"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textColorHint="@color/cl_a0a0a0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/white"
+                android:paddingLeft="32dp"
+                android:src="@color/xian" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/send_couple" />
+
+                <TextView
+                    android:id="@+id/tv_send_coupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:hint="选择代金券"
+                    android:maxLines="1"
+                    android:textColor="@color/cl_3f3f3f"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:src="@color/xian" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/send_content" />
+
+                <TextView
+                    android:id="@+id/tv_send_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:hint="备注"
+                    android:singleLine="true"
+                    android:textColor="@color/cl_3f3f3f"
+                    android:textColorHint="@color/cl_a0a0a0"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <ImageView
-            android:layout_width="1dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/white"
+            android:paddingLeft="32dp"
             android:src="@color/xian" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/send_content" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/white">
 
             <TextView
-                android:id="@+id/tv_send_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:hint="备注"
-                android:singleLine="true"
-                android:textColor="@color/cl_3f3f3f"
-                android:textColorHint="@color/cl_a0a0a0"
-                android:textSize="@dimen/textsize_7" />
-        </LinearLayout>
+                android:id="@+id/tv_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="0元"
+                android:textColor="@color/yellow"
+                android:textSize="16sp" />
 
+            <TextView
+                android:id="@+id/tv_send_feeinfor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_feeinfor"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="  费用明细  "
+                android:textColor="@color/yellow"
+                android:textSize="14sp" />
+        </FrameLayout>
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/white"
-        android:paddingLeft="32dp"
-        android:src="@color/xian" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@color/white">
-
-        <TextView
-            android:id="@+id/tv_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="0元"
-            android:textColor="@color/yellow"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tv_send_feeinfor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/bg_feeinfor"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:text="  费用明细  "
-            android:textColor="@color/yellow"
-            android:textSize="14sp" />
-    </FrameLayout>
 
     <TextView
         android:id="@+id/tv_send_button"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
         android:background="@drawable/bt_login"
         android:gravity="center"
         android:text="@string/tv_submit_publish"
