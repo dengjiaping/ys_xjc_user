@@ -1,6 +1,7 @@
 package com.hemaapp.wcpc_user.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -72,6 +73,7 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RoundedImageView;
+import com.hemaapp.hm_FrameWork.view.ShowLargeImageView;
 import com.hemaapp.wcpc_user.AmapTTSController;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
@@ -103,7 +105,6 @@ import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
-import com.iflytek.thridparty.G;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -358,7 +359,7 @@ public class MainNewMapActivity extends BaseActivity implements
         } else {
             getNetWorker().noticeUnread(user.getToken(), "2", "1");
         }
-        amapTTSController = AmapTTSController.getInstance(getApplicationContext());
+        amapTTSController = AmapTTSController.getInstance(mContext);
         amapTTSController.init();
 
         getNetWorker().cityList("0");//获取已开通城市
@@ -703,7 +704,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 HemaArrayParse<CurrentTripsInfor> llResult = (HemaArrayParse<CurrentTripsInfor>) baseResult;
                 if (llResult.getObjects() != null && llResult.getObjects().size() > 0) {
                     infor = llResult.getObjects().get(0);
-                    togetherAdapter = new TogetherAdapter(mContext, clients);
+                    togetherAdapter = new TogetherAdapter(mContext, clients,navView);
                     RecycleUtils.initHorizontalRecyle(rvCurList);
                     rvCurList.setAdapter(togetherAdapter);
                 } else {
@@ -1660,7 +1661,9 @@ public class MainNewMapActivity extends BaseActivity implements
                 HiddenAnimUtils.newInstance(mContext, lvCurrentBottom, ivCurrentTop, bottomHeight).toggle();
                 break;
             case R.id.iv_cur_avatar://司机头像
-
+                mView = new ShowLargeImageView(mContext, navView);
+                mView.show();
+                mView.setImageURL(infor.getDriver_avatar());
                 break;
             case R.id.iv_cur_tel://电话
                 if (infor != null) {
@@ -2718,7 +2721,7 @@ public class MainNewMapActivity extends BaseActivity implements
         tvPhone = (TextView) centerView.findViewById(R.id.tv_phone);
         lvPhone = (LinearLayout) centerView.findViewById(R.id.lv_phone);
     }
-
+    private ShowLargeImageView mView;
     public void setCenter() {
         SysInitInfo sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
         ImageLoader.getInstance().displayImage(user.getAvatar(), ivAvatar, BaseApplication.getInstance()

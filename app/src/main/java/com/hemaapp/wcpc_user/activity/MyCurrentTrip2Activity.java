@@ -148,6 +148,8 @@ public class MyCurrentTrip2Activity extends BaseActivity implements AMap.OnMyLoc
     ImageView ivSend;
     @BindView(R.id.tv_notrip)
     TextView tvNotrip;
+    @BindView(R.id.rootview)
+    LinearLayout rootview;
     private AMap aMap;
 
     private AMapLocationClient locationClient = null;
@@ -194,7 +196,7 @@ public class MyCurrentTrip2Activity extends BaseActivity implements AMap.OnMyLoc
         appearAnimation.setDuration(500);
         disappearAnimation = new AlphaAnimation(1, 0);
         disappearAnimation.setDuration(500);
-        togetherAdapter = new TogetherAdapter(mContext, clients);
+        togetherAdapter = new TogetherAdapter(mContext, clients, rootview);
         RecycleUtils.initHorizontalRecyle(rvList);
         rvList.setAdapter(togetherAdapter);
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
@@ -27,7 +28,7 @@ public class AmapTTSController {
     /**
      * 请替换您自己申请的ID。
      */
-    private final String appId = "5754d59f";
+    private final String appId = "5a176ebb";
 
     public static AmapTTSController ttsManager;
     private Context mContext;
@@ -102,7 +103,7 @@ public class AmapTTSController {
     };
 
     private AmapTTSController(Context context) {
-        mContext = context.getApplicationContext();
+        mContext = context;
         SpeechUtility.createUtility(mContext, SpeechConstant.APPID + "=" + appId);
         if (mTts == null) {
             createSynthesizer();
@@ -120,9 +121,16 @@ public class AmapTTSController {
                         }
                     }
                 });
+        if (mTts==null){
+            Log.e("hahah", "createSynthesizer:mTts==null " );
+        }else {
+            Log.e("heheh", "createSynthesizer:mTts!!==null " );
+        }
     }
 
     public void init() {
+        mTts.setParameter(SpeechConstant.PARAMS, null);
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
         //设置发音人
         mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
         //设置语速,值范围：[0, 100],默认值：50
