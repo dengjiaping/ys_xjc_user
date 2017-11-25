@@ -58,6 +58,7 @@ public class PersonInforActivity extends BaseActivity {
     private LinearLayout layout_sex;
     private TextView text_sex;
     private TextView tvInvit;
+    private TextView tv_username;
 
     private User user;
     private String realname, sex;
@@ -217,6 +218,7 @@ public class PersonInforActivity extends BaseActivity {
         sex = user.getSex();
         text_sex.setText(sex);
         tvInvit.setText(user.getInvitecode());
+        tv_username.setText(user.getUsername());
     }
 
     @Override
@@ -336,6 +338,7 @@ public class PersonInforActivity extends BaseActivity {
         layout_sex = (LinearLayout) findViewById(R.id.layout_0);
         text_sex = (TextView) findViewById(R.id.textview_0);
         tvInvit = (TextView) findViewById(R.id.tv_invit);
+        tv_username= (TextView) findViewById(R.id.tv_username);
     }
 
     @Override
