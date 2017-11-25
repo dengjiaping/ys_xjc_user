@@ -218,7 +218,6 @@ public class MytripAdapter extends BaseRecycleAdapter<CurrentTripsInfor> {
                 }
             }
         });
-        holder.getView(R.id.iv_back).setVisibility(View.VISIBLE);
         holder.getView(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
