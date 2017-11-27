@@ -26,13 +26,15 @@ public class SysInfoDBHelper extends DBHelper {
 	        +"iphone_must_update, iphone_last_version, sys_chat_ip,sys_chat_port,sys_pagesize,"
 			+"sys_service_phone,android_update_url,iphone_update_url,"
 			+ "iphone_comment_url,msg_invite, start_img, driver_android_must_update, driver_android_last_version_mer, "
-			+ "driver_iphone_must_update_mer, driver_iphone_last_version_mer, driver_android_update_url, driver_iphone_update_url  ";
+			+ "driver_iphone_must_update_mer, driver_iphone_last_version_mer, driver_android_update_url, driver_iphone_update_url," +
+			"sharetitle,sharecontent  ";
 
 	String updateColumns = "sys_web_service=?, sys_plugins=?, sys_show_iospay=?, android_must_update=?, android_last_version=?, "
 			+"iphone_must_update=?, iphone_last_version=?, sys_chat_ip=?,sys_chat_port=?,sys_pagesize=?,"
 			+"sys_service_phone=?,android_update_url=?,iphone_update_url=?,"
 			+ "iphone_comment_url=?,msg_invite=?, start_img=?, driver_android_must_update=?, driver_android_last_version_mer=?, "
-			+ "driver_iphone_must_update_mer=?, driver_iphone_last_version_mer=?, driver_android_update_url=?, driver_iphone_update_url=?  ";
+			+ "driver_iphone_must_update_mer=?, driver_iphone_last_version_mer=?, driver_android_update_url=?, driver_iphone_update_url=?," +
+			"sharetitle=?, sharecontent=? ";
 
 	/**
 	 * 实例化系统初始化信息数据库帮助类
@@ -62,7 +64,7 @@ public class SysInfoDBHelper extends DBHelper {
 	 */
 	public boolean insert(SysInitInfo infor) {
 		String sql = "insert into " + tableName + " (" + columns
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		Object[] bindArgs = new Object[] {
 				infor.getSys_web_service(), infor.getSys_plugins(),
@@ -74,7 +76,7 @@ public class SysInfoDBHelper extends DBHelper {
 				infor.getIphone_comment_url(), infor.getMsg_invite(), infor.getStart_img(),
 				infor.getDriver_android_must_update(), infor.getDriver_android_last_version_mer(),
 		        infor.getDriver_iphone_must_update_mer(), infor.getDriver_iphone_last_version_mer(),
-				infor.getDriver_android_update_url(), infor.getDriver_iphone_update_url()};
+				infor.getDriver_android_update_url(), infor.getDriver_iphone_update_url(),infor.getSharetitle(),infor.getSharecontent()};
 		SQLiteDatabase db = getWritableDatabase();
 		boolean success = true;
 		try {
@@ -106,7 +108,7 @@ public class SysInfoDBHelper extends DBHelper {
 				infor.getIphone_comment_url(), infor.getMsg_invite(), infor.getStart_img(),
 				infor.getDriver_android_must_update(), infor.getDriver_android_last_version_mer(),
 				infor.getDriver_iphone_must_update_mer(), infor.getDriver_iphone_last_version_mer(),
-				infor.getDriver_android_update_url(), infor.getDriver_iphone_update_url()};
+				infor.getDriver_android_update_url(), infor.getDriver_iphone_update_url(),infor.getSharetitle(),infor.getSharecontent()};
 		SQLiteDatabase db = getWritableDatabase();
 		boolean success = true;
 		try {
@@ -175,7 +177,8 @@ public class SysInfoDBHelper extends DBHelper {
 					cursor.getString(15), cursor.getString(16),
 					cursor.getString(17), cursor.getString(18),
 					cursor.getString(19), cursor.getString(20),
-					cursor.getString(21));
+					cursor.getString(21),cursor.getString(22),
+					cursor.getString(23));
 		}
 		cursor.close();
 		db.close();

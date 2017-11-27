@@ -450,12 +450,16 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     private void showShare(String platform) {
         if (isNull(imageurl))
             imageurl = initImagePath();
+        String sharecontent=BaseApplication.getInstance().getSysInitInfo().getSharecontent();
+        sharecontent= sharecontent.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
-            oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
+            oks.setTitle(BaseApplication.getInstance().getSysInitInfo().getSharetitle());
+            //oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
             oks.setTitleUrl(pathWX); // 标题的超链接
-            oks.setText("莱芜 ⇌ 济南25元；\n" +
-                    "莱芜 ⇌ 泰安15元。");
+//            oks.setText("莱芜 ⇌ 济南25元；\n" +
+//                    "莱芜 ⇌ 泰安15元。");
+            oks.setText(sharecontent);
             oks.setFilePath(imageurl);
             imageurl = initImagePath();
             oks.setImagePath(imageurl);

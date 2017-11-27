@@ -3023,12 +3023,18 @@ public class MainNewMapActivity extends BaseActivity implements
     private void showShare(String platform) {
         String pathWX = BaseApplication.getInstance().getSysInitInfo().getSys_plugins() + "share/sdk.php?invitecode=" + user.getInvitecode() + "&keyid=0" + "&type=1";
         String imageurl = BaseUtil.initImagePath(mContext);
+        String sharecontent=BaseApplication.getInstance().getSysInitInfo().getSharecontent();
+        sharecontent= sharecontent.replace("\\n", "\n");
+        String sharetitle=BaseApplication.getInstance().getSysInitInfo().getSharetitle();
+        sharetitle= sharetitle.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
-            oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
+            //oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
+            oks.setTitle(sharetitle);
             oks.setTitleUrl(pathWX); // 标题的超链接
-            oks.setText("莱芜 ⇌ 济南25元；\n" +
-                    "莱芜 ⇌ 泰安15元。");
+//            oks.setText("莱芜 ⇌ 济南25元；\n" +
+//                    "莱芜 ⇌ 泰安15元。");
+            oks.setText(sharecontent);
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
             oks.setSiteUrl(pathWX);

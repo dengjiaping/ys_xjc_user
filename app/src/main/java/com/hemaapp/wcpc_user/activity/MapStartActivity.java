@@ -121,6 +121,14 @@ public class MapStartActivity extends BaseActivity implements AMap.OnMyLocationC
                 public void onMapLoaded() {
                     addMarkerInScreenCenter();
                     setUpMap();
+                    Intent it = new Intent(mContext, SearchActivity.class);
+                    it.putExtra("citycode", city);
+                    it.putExtra("city_id", city_id);
+                    if (title.equals("选择出发地")) {
+                    } else {
+                        it.putExtra("hint", "你要去哪");
+                        startActivityForResult(it, 1);
+                    }
                 }
             });
             geocoderSearch = new GeocodeSearch(this);
@@ -395,6 +403,7 @@ public class MapStartActivity extends BaseActivity implements AMap.OnMyLocationC
             case R.id.lv_search:
                 Intent it = new Intent(mContext, SearchActivity.class);
                 it.putExtra("citycode", city);
+                it.putExtra("city_id", city_id);
                 if (title.equals("选择出发地"))
                     it.putExtra("hint", "从哪出发");
                 else

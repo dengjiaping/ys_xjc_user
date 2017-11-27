@@ -45,11 +45,14 @@ public class SysInitInfo extends XtomObject {
 
 	private String msg_invite;// 邀请下载短信内容
 								// 我往你家扔了一个纸条，想知道内容吗？快来看看吧！下载地址：http://www.biaobiao.com/download/index_mobile.html
-
+	private String sharetitle;
+	private String sharecontent;
 
 	public SysInitInfo(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
 			try {
+				sharetitle = get(jsonObject, "sharetitle");
+				sharecontent = get(jsonObject, "sharecontent");
 				sys_web_service = get(jsonObject, "sys_web_service");
 				sys_plugins = get(jsonObject, "sys_plugins");
 				sys_show_iospay = get(jsonObject, "sys_show_iospay");
@@ -92,8 +95,10 @@ public class SysInitInfo extends XtomObject {
                        String msg_invite, String start_img, String driver_android_must_update,
                        String driver_android_last_version_mer, String driver_iphone_must_update_mer,
                        String driver_iphone_last_version_mer, String driver_android_update_url,
-                       String driver_iphone_update_url) {
+                       String driver_iphone_update_url,String sharetitle,String sharecontent) {
 		super();
+		this.sharetitle = sharetitle;
+		this.sharecontent = sharecontent;
 		this.sys_web_service = sys_web_service;
 		this.sys_plugins = sys_plugins;
 		this.sys_show_iospay = sys_show_iospay;
@@ -121,12 +126,12 @@ public class SysInitInfo extends XtomObject {
 	@Override
 	public String toString() {
 		return "SysInitInfo{" +
-				"android_last_version='" + android_last_version + '\'' +
-				", sys_web_service='" + sys_web_service + '\'' +
+				"sys_web_service='" + sys_web_service + '\'' +
 				", sys_plugins='" + sys_plugins + '\'' +
 				", sys_show_iospay='" + sys_show_iospay + '\'' +
 				", start_img='" + start_img + '\'' +
 				", android_must_update='" + android_must_update + '\'' +
+				", android_last_version='" + android_last_version + '\'' +
 				", iphone_must_update='" + iphone_must_update + '\'' +
 				", iphone_last_version='" + iphone_last_version + '\'' +
 				", driver_android_must_update='" + driver_android_must_update + '\'' +
@@ -143,6 +148,8 @@ public class SysInitInfo extends XtomObject {
 				", driver_iphone_update_url='" + driver_iphone_update_url + '\'' +
 				", iphone_comment_url='" + iphone_comment_url + '\'' +
 				", msg_invite='" + msg_invite + '\'' +
+				", sharetitle='" + sharetitle + '\'' +
+				", sharecontent='" + sharecontent + '\'' +
 				'}';
 	}
 
@@ -228,6 +235,14 @@ public class SysInitInfo extends XtomObject {
 
 	public String getDriver_iphone_must_update_mer() {
 		return driver_iphone_must_update_mer;
+	}
+
+	public String getSharetitle() {
+		return sharetitle;
+	}
+
+	public String getSharecontent() {
+		return sharecontent;
 	}
 
 	public String getDriver_iphone_update_url() {

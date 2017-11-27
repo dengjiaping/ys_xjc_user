@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * 
  */
 public class DBHelper extends SQLiteOpenHelper {
-	private static final String DBNAME = "hm_wcpc_user03.db";
+	private static final String DBNAME = "hm_wcpc_user04.db";
 	/**
 	 * 系统初始化信息
 	 */
@@ -41,7 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "iphone_update_url text, iphone_comment_url text,msg_invite text, "
 				+ "start_img text, driver_android_must_update text, driver_android_last_version_mer text, "
 					+ "driver_iphone_must_update_mer text, driver_iphone_last_version_mer text, driver_android_update_url text, "
-					+ "driver_iphone_update_url text ";
+					+ "driver_iphone_update_url text,sharetitle text,sharecontent text ";
 		String sysSQL = "create table " + SYSINITINFO
 				+ " (id integer primary key," + sys + ")";
 		// 创建系统初始化信息缓存表
