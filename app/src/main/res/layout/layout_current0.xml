@@ -16,6 +16,32 @@
         android:layout_gravity="right"
         android:src="@mipmap/img_daohang" />
 
+    <LinearLayout
+        android:id="@+id/lv_cur_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/yellow"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="“小叫车”已为您匹配好司机,在您出发前1-2小时会把司机信息推送给您,如有紧急需求请联系客服,感谢您的耐心等待!"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_6.5" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@mipmap/tip_yellow" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/fv_current_top"
         android:layout_width="match_parent"
@@ -223,10 +249,10 @@
                             android:id="@+id/tv_cur_bang_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:drawableLeft="@mipmap/main_bang"
                             android:drawablePadding="5dp"
                             android:gravity="center"
-                            android:layout_gravity="center_vertical"
                             android:text="姓名"
                             android:textColor="@color/cl_5e5e5e"
                             android:textSize="12sp" />

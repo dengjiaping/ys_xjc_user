@@ -89,6 +89,8 @@ import com.hemaapp.wcpc_user.UpGrade;
 import com.hemaapp.wcpc_user.adapter.PersonCountAdapter;
 import com.hemaapp.wcpc_user.adapter.PopTimeAdapter;
 import com.hemaapp.wcpc_user.adapter.TogetherAdapter;
+import com.hemaapp.wcpc_user.keepappalive.ScreenManager;
+import com.hemaapp.wcpc_user.keepappalive.ScreenReceiverUtil;
 import com.hemaapp.wcpc_user.model.Area;
 import com.hemaapp.wcpc_user.model.Client;
 import com.hemaapp.wcpc_user.model.CouponListInfor;
@@ -102,6 +104,7 @@ import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
+import com.hemaapp.wcpc_user.util.AndroidBug5497Workaround;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
@@ -208,8 +211,9 @@ public class MainNewMapActivity extends BaseActivity implements
     TextView tvSendButton;
     @BindView(R.id.lv_send1)
     LinearLayout lvSend1;//发单第二步
-    @BindView(R.id.tv_cur_tip)
-    TextView tvCurTip;
+//    @BindView(R.id.tv_cur_tip)
+//    TextView tvCurTip;
+
     @BindView(R.id.iv_daohang)
     ImageView ivDaohang;
     @BindView(R.id.fv_current_top)
@@ -284,6 +288,8 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvSend0Bottom;
     @BindView(R.id.lv_send1_bottom)
     LinearLayout lvSend1Bottom;
+    @BindView(R.id.lv_cur_tip)
+    LinearLayout lvCurTip;
 
     private User user;
     private int msgcount;
@@ -304,7 +310,7 @@ public class MainNewMapActivity extends BaseActivity implements
     private Marker sendStartMarker = null, sendEndMarker = null, driverMarker = null;
     private ArrayList<Polygon> polygons = new ArrayList<>();
     private ArrayList<String> prices = new ArrayList<>();
-    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true;
+    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false;
     private GeocodeSearch geocoderSearch;
     private LatLng latlng, loclatlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
@@ -340,6 +346,8 @@ public class MainNewMapActivity extends BaseActivity implements
     Often often;//常用行程
     private boolean isDrawer = false;//侧滑
     private OnekeyShare oks;
+    private ScreenManager manager;
+    private ScreenReceiverUtil screenReceiverUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -347,6 +355,7 @@ public class MainNewMapActivity extends BaseActivity implements
         setContentView(R.layout.activity_main_newmap2);
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
+        AndroidBug5497Workaround.assistActivity(this);
         ShareSDK.initSDK(this);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         EventBus.getDefault().register(this);
@@ -407,6 +416,31 @@ public class MainNewMapActivity extends BaseActivity implements
                 .offsetLeft(dip2px(mContext, 5))
                 .offsetRight(dip2px(mContext, 5))
                 .create();
+        initPXActivity();
+    }
+
+    /**
+     * 初始化1px像素activity
+     */
+    private void initPXActivity() {
+        screenReceiverUtil = new ScreenReceiverUtil(this);
+        manager = ScreenManager.getScreenManager(this);
+        screenReceiverUtil.setScreenListener(new ScreenReceiverUtil.ScreenListener() {
+            @Override
+            public void screenOn() {
+                manager.finishActivity();
+            }
+
+            @Override
+            public void screenOff() {
+                manager.startSingleActivity();
+            }
+
+            @Override
+            public void onUserPresent() {
+                //锁屏按钮操作
+            }
+        });
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -582,6 +616,7 @@ public class MainNewMapActivity extends BaseActivity implements
         mapView.onDestroy();
         amapTTSController.destroy();
         realseTimeTask();
+        screenReceiverUtil.unRegisterScreenListenr();
     }
 
     @Override
@@ -740,7 +775,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 if (infor == null) {
                     myLocationStyle.showMyLocation(true);
-                    tvCurTip.setVisibility(View.GONE);
+                    lvCurTip.setVisibility(View.GONE);
                     lvCurrent0.setVisibility(View.GONE);
                     lvSend0.startAnimation(appearAnimation);
                     lvSend0.setVisibility(View.VISIBLE);
@@ -978,7 +1013,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 lvCurBang.setVisibility(View.GONE);
             }
             ivCurAvatar.setVisibility(View.VISIBLE);
-            tvCurTip.setVisibility(View.GONE);
+            lvCurTip.setVisibility(View.GONE);
             lvCurRout.setVisibility(View.GONE);
             lvCurDriver.setVisibility(View.VISIBLE);
             ivCurTel.setImageResource(R.mipmap.img_order_tel);
@@ -1036,7 +1071,7 @@ public class MainNewMapActivity extends BaseActivity implements
 
     private void setMarker() {
         realseTimeTask();
-        tvCurTip.setVisibility(View.GONE);
+        lvCurTip.setVisibility(View.GONE);
         if (screenMarker != null)
             screenMarker.setVisible(false);
         if (sendEndMarker != null)
@@ -1052,7 +1087,7 @@ public class MainNewMapActivity extends BaseActivity implements
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(loc_lat),
                     Double.parseDouble(loc_lng)), 15));
             if (infor.getTimetype().equals("1")) {//预约,显示自己位置和出发点
-                tvCurTip.setVisibility(View.VISIBLE);
+                lvCurTip.setVisibility(View.VISIBLE);
                 sendStartMarker = aMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(start_lat), Double.parseDouble(start_lng)))
                         .title("出发地")
@@ -1864,6 +1899,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 getNetWorker().currentTrips(user.getToken());
                 break;
             case 10://出发地搜索
+                isSearch = true;
                 Double la = data.getDoubleExtra("lat", 0);
                 Double ln = data.getDoubleExtra("lng", 0);
                 lng = ln + "";
@@ -1873,6 +1909,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
                 break;
             case 11://目的地搜索
+                isSearch = true;
                 Double la1 = data.getDoubleExtra("lat", 0);
                 Double ln1 = data.getDoubleExtra("lng", 0);
                 lng = ln1 + "";
@@ -1909,8 +1946,10 @@ public class MainNewMapActivity extends BaseActivity implements
             return;
         }
         log_e("onCameraChangeFinish-------------------------------------------------------------");
-        tvSearch.setText("");
-        myAddress = "";
+        if (!isSearch) {
+            tvSearch.setText("");
+            myAddress = "";
+        }
         CircularAnim.hide(lvSearch).go();
         progressBar.setVisibility(View.VISIBLE);
         //屏幕中心的Marker跳动
@@ -1968,10 +2007,13 @@ public class MainNewMapActivity extends BaseActivity implements
             if (result != null && result.getRegeocodeAddress() != null
                     && result.getRegeocodeAddress().getFormatAddress() != null) {
                 RegeocodeAddress address = result.getRegeocodeAddress();
-                if (address.getAois() != null && address.getAois().size() > 0)
-                    myAddress = address.getCity() + address.getAois().get(0).getAoiName();
-                else
-                    myAddress = address.getFormatAddress().substring(3);
+                if (!isSearch) {
+                    if (address.getAois() != null && address.getAois().size() > 0)
+                        myAddress = address.getCity() + address.getAois().get(0).getAoiName();
+                    else
+                        myAddress = address.getFormatAddress().substring(3);
+                }
+                isSearch=false;
                 tvSearch.setText(myAddress);
                 if (infor == null) {
                     tvSearch.postDelayed(new Runnable() {
@@ -3023,10 +3065,10 @@ public class MainNewMapActivity extends BaseActivity implements
     private void showShare(String platform) {
         String pathWX = BaseApplication.getInstance().getSysInitInfo().getSys_plugins() + "share/sdk.php?invitecode=" + user.getInvitecode() + "&keyid=0" + "&type=1";
         String imageurl = BaseUtil.initImagePath(mContext);
-        String sharecontent=BaseApplication.getInstance().getSysInitInfo().getSharecontent();
-        sharecontent= sharecontent.replace("\\n", "\n");
-        String sharetitle=BaseApplication.getInstance().getSysInitInfo().getSharetitle();
-        sharetitle= sharetitle.replace("\\n", "\n");
+        String sharecontent = BaseApplication.getInstance().getSysInitInfo().getSharecontent();
+        sharecontent = sharecontent.replace("\\n", "\n");
+        String sharetitle = BaseApplication.getInstance().getSysInitInfo().getSharetitle();
+        sharetitle = sharetitle.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
             //oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
