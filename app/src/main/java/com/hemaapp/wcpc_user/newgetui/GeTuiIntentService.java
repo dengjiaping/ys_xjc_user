@@ -15,7 +15,8 @@ import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.EventBusConfig;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
-import com.hemaapp.wcpc_user.activity.MainNewActivity;
+import com.hemaapp.wcpc_user.activity.MainNewMapActivity;
+import com.hemaapp.wcpc_user.activity.MainNewMapActivity;
 import com.hemaapp.wcpc_user.activity.NoticeListActivity;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushConsts;
@@ -33,6 +34,7 @@ import de.greenrobot.event.EventBus;
 
 import static com.hemaapp.wcpc_user.EventBusConfig.NEW_MESSAGE;
 import static com.hemaapp.wcpc_user.EventBusConfig.REFRESH_BLOG_LIST;
+import static com.hemaapp.wcpc_user.EventBusConfig.REFRESH_CUSTOMER_INFO;
 
 
 /**
@@ -102,6 +104,8 @@ public class GeTuiIntentService extends GTIntentService {
             pushModel = new PushModel(keyType, keyId, msg,msg_nickname,msg_avatar);
             EventBus.getDefault().post(new EventBusModel(NEW_MESSAGE));
             EventBus.getDefault().post(new EventBusModel(REFRESH_BLOG_LIST));
+            if (keyType.equals("12"))
+                EventBus.getDefault().post(new EventBusModel(REFRESH_CUSTOMER_INFO));
             mynotify(context);
             PushUtils.savemsgreadflag(context, true, keyType);
 
@@ -186,7 +190,7 @@ public class GeTuiIntentService extends GTIntentService {
                     intent.putExtra("pagerPosition", 1);
                     break;
                 case "2"://司机确认上车
-                    intent = new Intent(context, MainNewActivity.class);
+                    intent = new Intent(context, MainNewMapActivity.class);
                     intent.putExtra("pagerPosition", 0);
                     break;
                 case "3"://
@@ -194,15 +198,15 @@ public class GeTuiIntentService extends GTIntentService {
 //                    intent.putExtra("pagerPosition", 1);
                     break;
                 case "4"://司机确认送达
-                    intent = new Intent(context, MainNewActivity.class);
+                    intent = new Intent(context, MainNewMapActivity.class);
                     intent.putExtra("pagerPosition", 0);
                     break;
                 case "7"://司机已代付
-                    intent = new Intent(context, MainNewActivity.class);
+                    intent = new Intent(context, MainNewMapActivity.class);
                     intent.putExtra("pagerPosition", 0);
                     break;
                 default:
-                    intent = new Intent(context, MainNewActivity.class);
+                    intent = new Intent(context, MainNewMapActivity.class);
                     intent.putExtra("pagerPosition", 0);
                     break;
             }

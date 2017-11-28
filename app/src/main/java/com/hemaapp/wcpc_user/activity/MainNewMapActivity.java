@@ -815,10 +815,14 @@ public class MainNewMapActivity extends BaseActivity implements
                     lvSearch.setVisibility(View.GONE);
                     lvSend0.setVisibility(View.GONE);
                     lvSend1.setVisibility(View.GONE);
+                    lvCurrent0.setVisibility(View.VISIBLE);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lvCurrentBottom.setLayoutParams(layoutParams);
+                    lvCurrentBottom.setVisibility(View.VISIBLE);
                     setData();
                     setMarker();
-                    lvCurrent0.setVisibility(View.VISIBLE);
                     bottomHeight = lvCurrentBottom.getLayoutParams().height;
+                    log_e("bottomHeight====="+bottomHeight);
 
                 }
                 break;
@@ -929,7 +933,7 @@ public class MainNewMapActivity extends BaseActivity implements
         end_lng = infor.getLng_end();
         end_lat = infor.getLat_end();
         if (infor.getStatus().equals("0")) {//待派单
-            ivDaohang.setVisibility(View.GONE);
+            ivDaohang.setVisibility(View.VISIBLE);
             lvCurRout.setVisibility(View.VISIBLE);
             lvCurDriver.setVisibility(View.GONE);
             ivCurAvatar.setVisibility(View.GONE);
@@ -1728,7 +1732,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     LatLng p0 = new LatLng(Double.parseDouble(infor.getLat_start()), Double.parseDouble(infor.getLng_start()));
                     LatLng p = new LatLng(Double.parseDouble(infor.getLat_end()), Double.parseDouble(infor.getLng_end()));
                     if (infor.getStatus().equals("0")) {//待派单
-                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi(infor.getStartaddress(), p0, ""), null, new Poi(infor.getEndaddress(), p, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
                     } else if (infor.getStatus().equals("1")) {//待上车
                         AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
                     } else {

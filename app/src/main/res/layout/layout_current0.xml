@@ -20,6 +20,7 @@
         android:id="@+id/lv_cur_tip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="3dp"
         android:orientation="vertical">
 
         <TextView

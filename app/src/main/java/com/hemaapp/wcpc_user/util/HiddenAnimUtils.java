@@ -67,33 +67,33 @@ public class HiddenAnimUtils {
     }
 
     private void openAnim(View v) {
-        v.setVisibility(View.VISIBLE);
-        ValueAnimator animator = createDropAnimator(v, 0, mHeight);
+        hideView.setVisibility(View.VISIBLE);
+        ValueAnimator animator = createDropAnimator(hideView, 0, mHeight);
         animator.start();
     }
 
     private void closeAnimate(final View view) {
-        int origHeight = view.getHeight();
-        ValueAnimator animator = createDropAnimator(view, origHeight, 0);
+        int origHeight = hideView.getHeight();
+        ValueAnimator animator = createDropAnimator(hideView, origHeight, 0);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
+                hideView.setVisibility(View.GONE);
             }
         });
         animator.start();
     }
 
-    private ValueAnimator createDropAnimator(final View v, int start, int end) {
+    private ValueAnimator createDropAnimator(final View v1, int start, int end) {
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
             public void onAnimationUpdate(ValueAnimator arg0) {
                 int value = (int) arg0.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+                ViewGroup.LayoutParams layoutParams = hideView.getLayoutParams();
                 layoutParams.height = value;
-                v.setLayoutParams(layoutParams);
+                hideView.setLayoutParams(layoutParams);
             }
         });
         return animator;

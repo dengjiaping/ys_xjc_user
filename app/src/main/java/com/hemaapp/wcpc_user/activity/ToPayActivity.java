@@ -150,6 +150,7 @@ public class ToPayActivity extends BaseActivity {
             case ALIPAY:
             case WEI_XIN:
             case UNIONPAY:
+                showProgressDialog("请稍后...");
                 break;
         }
     }
@@ -222,6 +223,9 @@ public class ToPayActivity extends BaseActivity {
                 .getHttpInformation();
         switch (information) {
             case CLIENT_GET:
+            case ALIPAY:
+            case WEI_XIN:
+            case UNIONPAY:
                 showTextDialog(baseResult.getMsg());
                 break;
             case ORDER_SAVE:
@@ -240,6 +244,11 @@ public class ToPayActivity extends BaseActivity {
         switch (information) {
             case CLIENT_GET:
                 showTextDialog("抱歉，获取数据失败");
+                break;
+            case ALIPAY:
+            case WEI_XIN:
+            case UNIONPAY:
+                showTextDialog("加载失败");
                 break;
             case ORDER_SAVE:
                 String paytype = netTask.getParams().get("paytype");
