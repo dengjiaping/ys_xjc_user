@@ -57,6 +57,7 @@ import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.animation.Animation;
 import com.amap.api.maps.model.animation.TranslateAnimation;
+import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
@@ -312,7 +313,7 @@ public class MainNewMapActivity extends BaseActivity implements
     private ArrayList<String> prices = new ArrayList<>();
     private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false;
     private GeocodeSearch geocoderSearch;
-    private LatLng latlng, loclatlng;
+    private LatLng latlng, loclatlng, driver_latlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
     private String move_lat, move_lng, myAddress, lng, lat, loc_lng, loc_lat, selectAddress = "0";
     MyLocationStyle myLocationStyle;
@@ -494,6 +495,7 @@ public class MainNewMapActivity extends BaseActivity implements
             });
             aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
             aMap.getUiSettings().setZoomControlsEnabled(false);
+            aMap.getUiSettings().setRotateGesturesEnabled(false);
             aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
             aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
             setupLocationStyle();
@@ -507,7 +509,7 @@ public class MainNewMapActivity extends BaseActivity implements
         // 自定义系统定位蓝点
         myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
-        myLocationStyle.interval(2000);
+        myLocationStyle.interval(3000);
         // 自定义定位蓝点图标
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.
                 fromResource(R.mipmap.loc_my));
@@ -774,12 +776,16 @@ public class MainNewMapActivity extends BaseActivity implements
                     infor = null;
                 }
                 if (infor == null) {
+                    isSearch = false;
                     myLocationStyle.showMyLocation(true);
                     lvCurTip.setVisibility(View.GONE);
                     lvCurrent0.setVisibility(View.GONE);
                     lvSend0.startAnimation(appearAnimation);
                     lvSend0.setVisibility(View.VISIBLE);
                     lvSearch.setVisibility(View.VISIBLE);
+                    if (driverMarker != null) {
+                        driverMarker.setVisible(false);
+                    }
                     if (screenMarker != null) {
                         screenMarker.setVisible(true);
                     }
@@ -803,9 +809,14 @@ public class MainNewMapActivity extends BaseActivity implements
                     end_lat = "";
                     end_lng = "";
                     start_lng = "";
+                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(loc_lat),
+                            Double.parseDouble(loc_lng)), 15));
                 } else {
                     myLocationStyle.showMyLocation(true);
                     isSend2 = false;
+                    if (driverMarker != null) {
+                        driverMarker.setVisible(false);
+                    }
                     if (sendStartMarker != null)
                         sendStartMarker.setVisible(false);
                     if (sendEndMarker != null)
@@ -822,7 +833,7 @@ public class MainNewMapActivity extends BaseActivity implements
                     setData();
                     setMarker();
                     bottomHeight = lvCurrentBottom.getLayoutParams().height;
-                    log_e("bottomHeight====="+bottomHeight);
+                    log_e("bottomHeight=====" + bottomHeight);
 
                 }
                 break;
@@ -839,6 +850,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case TRIPS_ADD:
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                 showTextDialog("发布成功");
+                tvSearch.setText("");
                 //如果之前画过圈，清一下
                 hasCircle = false;
                 for (Polygon p : polygons) {
@@ -855,7 +867,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case DRIVER_POSITION_GET:
                 HemaArrayParse<DriverPosition> DResult = (HemaArrayParse<DriverPosition>) baseResult;
                 DriverPosition position = DResult.getObjects().get(0);
-                LatLng driver_latlng = new LatLng(Double.parseDouble(position.getLat()), Double.parseDouble(position.getLng()));
+                driver_latlng = new LatLng(Double.parseDouble(position.getLat()), Double.parseDouble(position.getLng()));
                 if (driverMarker == null) {
                     driverMarker = aMap.addMarker(new MarkerOptions()
                             .position(driver_latlng)
@@ -1734,7 +1746,10 @@ public class MainNewMapActivity extends BaseActivity implements
                     if (infor.getStatus().equals("0")) {//待派单
                         AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
                     } else if (infor.getStatus().equals("1")) {//待上车
-                        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                        if (driver_latlng == null)
+                            AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getStartaddress(), p0, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
+                        else
+                            AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi(infor.getStartaddress(), p0, ""), null, new Poi("司机位置", driver_latlng, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
                     } else {
                         AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(null, null, new Poi(infor.getEndaddress(), p, ""), AmapNaviType.DRIVER), MainNewMapActivity.this);
                     }
@@ -2014,10 +2029,14 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (!isSearch) {
                     if (address.getAois() != null && address.getAois().size() > 0)
                         myAddress = address.getCity() + address.getAois().get(0).getAoiName();
-                    else
-                        myAddress = address.getFormatAddress().substring(3);
+                    else {
+                        if (address.getFormatAddress().contains("自治区")) {
+                            myAddress = address.getFormatAddress().split("自治区")[1];
+                        } else
+                            myAddress = address.getFormatAddress().substring(3);
+                    }
                 }
-                isSearch=false;
+                isSearch = false;
                 tvSearch.setText(myAddress);
                 if (infor == null) {
                     tvSearch.postDelayed(new Runnable() {
@@ -2027,7 +2046,7 @@ public class MainNewMapActivity extends BaseActivity implements
                             if (infor == null)
                                 CircularAnim.show(lvSearch).go();
                         }
-                    }, 500);
+                    }, 400);
                 } else {
                     lvSearch.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
