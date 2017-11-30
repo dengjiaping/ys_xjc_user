@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:gravity="top"
-            android:hint="请填写您对本次行程的其他备注说明，如，行李箱数量、尺寸（行李箱长宽高尺寸建议不要超过70cm），是否有儿童、老人（儿童按成人车费计价），是否携带宠物（原则上不允许宠物上车），是否需要预留副驾驶位置，可接受的出发时间范围等(选填)。"
+            android:hint="请填写您对本次行程的其他备注说明，如，行李箱数量、尺寸（行李箱长宽高尺寸建议不要超过60cm），是否有儿童、老人（儿童按成人车费计价），是否携带宠物（原则上不允许宠物上车），是否需要预留副驾驶位置，可接受的出发时间范围等(选填)。"
             android:minLines="6"
             android:padding="10dp"
             android:text=""

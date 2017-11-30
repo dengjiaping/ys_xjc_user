@@ -87,7 +87,7 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_set);
         super.onCreate(savedInstanceState);
-        ShareSDK.initSDK(this);
+//        ShareSDK.initSDK(this);
         user = BaseApplication.getInstance().getUser();
         // 获取图片的缓存
         long size1 = XtomImageCache.getInstance(mContext).getCacheSize();

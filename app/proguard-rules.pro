@@ -31,3 +31,12 @@
 -keep class com.autonavi.aps.amapapi.model.**{*;}
 -keep class com.amap.api.navi.**{*;}
 -keep class com.autonavi.**{*;}
+
+-keep class cn.sharesdk.**{*;}
+-keep class com.sina.**{*;}
+-keep class **.R$* {*;}
+-keep class **.R{*;}
+-keep class com.mob.**{*;}
+-dontwarn com.mob.**
+-dontwarn cn.sharesdk.**
+-dontwarn **.R$*

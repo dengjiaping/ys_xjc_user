@@ -101,11 +101,12 @@ public class GeTuiIntentService extends GTIntentService {
                 msg_nickname = "-10";
                 msg_avatar = "-10";
             }
-            pushModel = new PushModel(keyType, keyId, msg,msg_nickname,msg_avatar);
+            pushModel = new PushModel(keyType, keyId, msg, msg_nickname, msg_avatar);
             EventBus.getDefault().post(new EventBusModel(NEW_MESSAGE));
-            EventBus.getDefault().post(new EventBusModel(REFRESH_BLOG_LIST));
-            if (keyType.equals("12"))
+            if (keyType.equals("12"))//优惠券
                 EventBus.getDefault().post(new EventBusModel(REFRESH_CUSTOMER_INFO));
+            else
+                EventBus.getDefault().post(new EventBusModel(REFRESH_BLOG_LIST));
             mynotify(context);
             PushUtils.savemsgreadflag(context, true, keyType);
 
@@ -183,7 +184,7 @@ public class GeTuiIntentService extends GTIntentService {
 
         if (isAppRunning(context)) {//已经运行
             BaseApplication application = BaseApplication.getInstance();
-          //  application.setPushModel(pushModel);//在application中保存推送数据
+            //  application.setPushModel(pushModel);//在application中保存推送数据
             switch (pushModel.getKeyType()) {//1系统通知
                 case "1"://消息通知
                     intent = new Intent(context, NoticeListActivity.class);
@@ -191,23 +192,17 @@ public class GeTuiIntentService extends GTIntentService {
                     break;
                 case "2"://司机确认上车
                     intent = new Intent(context, MainNewMapActivity.class);
-                    intent.putExtra("pagerPosition", 0);
                     break;
                 case "3"://
-//                    intent = new Intent(context, LeaveActivity.class);
-//                    intent.putExtra("pagerPosition", 1);
                     break;
                 case "4"://司机确认送达
                     intent = new Intent(context, MainNewMapActivity.class);
-                    intent.putExtra("pagerPosition", 0);
                     break;
                 case "7"://司机已代付
                     intent = new Intent(context, MainNewMapActivity.class);
-                    intent.putExtra("pagerPosition", 0);
                     break;
                 default:
                     intent = new Intent(context, MainNewMapActivity.class);
-                    intent.putExtra("pagerPosition", 0);
                     break;
             }
         } else {//未运行
@@ -240,6 +235,7 @@ public class GeTuiIntentService extends GTIntentService {
         }
         return false;
     }
+
     private boolean isForeground(Context context, String className) {
         if (context == null || TextUtils.isEmpty(className)) {
             return false;

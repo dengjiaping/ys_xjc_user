@@ -16,12 +16,12 @@ public class BaseConfig {
 	/**
 	 * 是否打印信息开关
 	 */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	/**
 	 * 后台服务接口根路径
 	 */
-//	public static final String SYS_ROOT = "http://app.qwicar.com/";
-	public static final String SYS_ROOT = "http://123.232.20.98:8008/yscx_xjc/";
+	public static final String SYS_ROOT = "http://app.qwicar.com/";
+	//public static final String SYS_ROOT = "http://123.232.20.98:8008/yscx_xjc/";
 
 	/**
 	 * 图片压缩的最大宽度

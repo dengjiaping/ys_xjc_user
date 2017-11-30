@@ -106,6 +106,7 @@ import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.AndroidBug5497Workaround;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
+import com.hemaapp.wcpc_user.util.NotificationsUtils;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
 import com.igexin.sdk.PushManager;
@@ -125,7 +126,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
@@ -320,7 +320,7 @@ public class MainNewMapActivity extends BaseActivity implements
     private Marker sendStartMarker = null, sendEndMarker = null, driverMarker = null;
     private ArrayList<Polygon> polygons = new ArrayList<>();
     private ArrayList<String> prices = new ArrayList<>();
-    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false,canSend=true;
+    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false, canSend = true;
     private GeocodeSearch geocoderSearch;
     private LatLng latlng, loclatlng, driver_latlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
@@ -366,7 +366,6 @@ public class MainNewMapActivity extends BaseActivity implements
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         AndroidBug5497Workaround.assistActivity(this);
-        ShareSDK.initSDK(this);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         EventBus.getDefault().register(this);
 
@@ -396,8 +395,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (!BaseUtil.isOPen(mContext)) {
                     GpsTip();
                 }
-//                if (!NotificationsUtils.isNotificationEnabled(mContext)){
-//                   // NotifiTip();
+//                if (!NotificationsUtils.isNotificationEnabled(mContext)) {
+//                    NotifiTip();
 //                }
             }
         }, 800);
@@ -484,14 +483,17 @@ public class MainNewMapActivity extends BaseActivity implements
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
-        if (infor == null) {
-            lvSend0.setVisibility(View.VISIBLE);
-            lvSend1.setVisibility(View.GONE);
-            often = (Often) intent.getSerializableExtra("often");
-            getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
-            getNetWorker().canTrips(user.getToken());
-        } else {
-            XtomToastUtil.showShortToast(mContext, "当前行程未结束！");
+        boolean isNotice = intent.getBooleanExtra("isNotice", false);
+        if (!isNotice) {
+            if (infor == null) {
+                lvSend0.setVisibility(View.VISIBLE);
+                lvSend1.setVisibility(View.GONE);
+                often = (Often) intent.getSerializableExtra("often");
+                getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
+                getNetWorker().canTrips(user.getToken());
+            } else {
+                XtomToastUtil.showShortToast(mContext, "当前行程未结束！");
+            }
         }
         super.onNewIntent(intent);
     }
@@ -730,7 +732,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 } else if ("2".equals(keytype)) {
                     CanNotTip();
                 } else {
-                    canSend=false;
+                    canSend = false;
                     String start = BaseUtil.TransTimeHour(user.getOrder_start(), "HH:mm");
                     String end = BaseUtil.TransTimeHour(user.getOrder_end(), "HH:mm");
                     if (isNull(start)) {
@@ -825,7 +827,6 @@ public class MainNewMapActivity extends BaseActivity implements
                         aMap.setInfoWindowAdapter(null);
                     }
                     getNetWorker().canTrips(user.getToken());
-
                     endCity = null;
                     start_address = "";
                     end_address = "";
@@ -869,7 +870,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (cs != null && cs.size() > 0) {
                     coupon_id = cs.get(0).getId();
                     coupon_vavle = cs.get(0).getValue();
-                    tvSendCoupon.setText(coupon_vavle + "元");
+                    tvSendCoupon.setText("-"+coupon_vavle + "元");
                     coupon = Integer.parseInt(coupon_vavle);
                 }
                 break;
@@ -877,6 +878,18 @@ public class MainNewMapActivity extends BaseActivity implements
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                 showTextDialog("发布成功");
                 tvSearch.setText("");
+                count=1;
+                tvSendCount.setText("1人");
+                pinFlag = "1";
+                tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.mipmap.img_agree_s, 0);
+                tvSendBao.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.mipmap.img_agree_n, 0);
+                timetype = "1";
+                tvAppointment.setTextColor(getResources().getColor(R.color.yellow));
+                tvNow.setTextColor(getResources().getColor(R.color.word_black));
+                begintime="";
+                tvSendTime.setText("");
                 //如果之前画过圈，清一下
                 hasCircle = false;
                 for (Polygon p : polygons) {
@@ -1406,8 +1419,8 @@ public class MainNewMapActivity extends BaseActivity implements
             @Override
             public void onClick(View v) {
                 mWindow.dismiss();
-                Intent it = new Intent(mContext, MyCurrentTrip2Activity.class);
-                startActivity(it);
+//                Intent it = new Intent(mContext, MyCurrentTrip2Activity.class);
+//                startActivity(it);
             }
         });
     }
@@ -1458,7 +1471,7 @@ public class MainNewMapActivity extends BaseActivity implements
             R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next,
             R.id.tv_sendtwo_cancel, R.id.tv_send_pin, R.id.tv_send_bao, R.id.tv_send_time,
             R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button,
-            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0,R.id.tv_cannot_button})
+            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0, R.id.tv_cannot_button})
     public void onClick(View view) {
         user = BaseApplication.getInstance().getUser();
         Intent it;
@@ -1935,7 +1948,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case 5:
                 coupon_id = data.getStringExtra("id");
                 coupon_vavle = data.getStringExtra("money");
-                tvSendCoupon.setText(coupon_vavle + "元");
+                tvSendCoupon.setText("-"+coupon_vavle + "元");
                 coupon = Integer.parseInt(coupon_vavle);
                 resetPrice();
                 break;
@@ -1984,7 +1997,7 @@ public class MainNewMapActivity extends BaseActivity implements
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
             return;
         }
-        if (!canSend){//当前时间不可发布
+        if (!canSend) {//当前时间不可发布
             return;
         }
         log_e("onCameraChange-------------------------------------------------------------");
@@ -1998,7 +2011,7 @@ public class MainNewMapActivity extends BaseActivity implements
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
             return;
         }
-        if (!canSend){//当前时间不可发布
+        if (!canSend) {//当前时间不可发布
             lvSearch.setVisibility(View.GONE);
             return;
         }
@@ -2081,7 +2094,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             progressBar.setVisibility(View.GONE);
-                            if (infor == null&&canSend)
+                            if (infor == null && canSend)
                                 CircularAnim.show(lvSearch).go();
                         }
                     }, 400);

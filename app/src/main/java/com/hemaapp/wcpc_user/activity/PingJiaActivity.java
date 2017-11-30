@@ -91,7 +91,7 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_pingjia);
         super.onCreate(savedInstanceState);
-        ShareSDK.initSDK(this);
+//        ShareSDK.initSDK(this);
         user = BaseApplication.getInstance().getUser();
         SysInitInfo initInfo = getApplicationContext()
                 .getSysInitInfo();

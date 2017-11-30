@@ -140,6 +140,17 @@
 
         <!-- shareSDK相关 -->
         <activity
+            android:name="cn.sharesdk.tencent.qq.ReceiveActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent1106525636" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -157,13 +168,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <intent-filter>
-                <data android:scheme="tencent1106525636" />
-                <action android:name="android.intent.action.VIEW" />
+            <!--<intent-filter>-->
+                <!--<data android:scheme="tencent1106525636" />-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <meta-data
@@ -176,10 +187,10 @@
         <!-- 微信分享回调 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

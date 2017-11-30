@@ -11,6 +11,7 @@ import com.hemaapp.hm_FrameWork.orm.extra.Extra;
 import com.hemaapp.wcpc_user.db.SysInfoDBHelper;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
+import com.mob.MobSDK;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -56,6 +57,7 @@ public class BaseApplication extends HemaApplication {
         sqliteUtilityBuilder.configVersion(BaseConfig.DATA_BASE_VERSION).build(this);
         super.onCreate();
         initImageLoader();
+        MobSDK.init(this,"22208d6b7ef70","3153dc341931b39ed4e521aff81a54a4");
     }
 
 
