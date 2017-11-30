@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lv_cannot_send"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_margin="0dp"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+
+    <LinearLayout
+        android:id="@+id/lv_cannot_send_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pop_button"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_cannot_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_5"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp"
+            android:text="当前时间段不支持手机下单，\n如有需要请联系客服400-111-0900"
+            android:textColor="#5e5e5e"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_cannot_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_5"
+            android:gravity="center_horizontal"
+            android:paddingBottom="20dp"
+            android:paddingTop="10dp"
+            android:text="可下单时间段为5:00-20:00"
+            android:textColor="@color/cl_9c9c9c"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_driver"
+            android:contentDescription="@string/contentdescription"
+            android:src="@color/xian" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_cannot_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/margin_25"
+                android:text="拨打电话"
+                android:textColor="#f49400"
+                android:textSize="@dimen/textsize_7" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

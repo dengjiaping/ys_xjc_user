@@ -57,7 +57,6 @@ import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.animation.Animation;
 import com.amap.api.maps.model.animation.TranslateAnimation;
-import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
@@ -291,6 +290,16 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvSend1Bottom;
     @BindView(R.id.lv_cur_tip)
     LinearLayout lvCurTip;
+    @BindView(R.id.tv_cannot_title)
+    TextView tvCannotTitle;
+    @BindView(R.id.tv_cannot_time)
+    TextView tvCannotTime;
+    @BindView(R.id.tv_cannot_button)
+    TextView tvCannotButton;
+    @BindView(R.id.lv_cannot_send_bottom)
+    LinearLayout lvCannotSendBottom;
+    @BindView(R.id.lv_cannot_send)
+    LinearLayout lvCannotSend;
 
     private User user;
     private int msgcount;
@@ -311,7 +320,7 @@ public class MainNewMapActivity extends BaseActivity implements
     private Marker sendStartMarker = null, sendEndMarker = null, driverMarker = null;
     private ArrayList<Polygon> polygons = new ArrayList<>();
     private ArrayList<String> prices = new ArrayList<>();
-    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false;
+    private boolean inArea = false, isFirstLoc = true, hasCircle = false, isSend2 = false, moveDriver = true, isSearch = false,canSend=true;
     private GeocodeSearch geocoderSearch;
     private LatLng latlng, loclatlng, driver_latlng;
     private ArrayList<Area> areas = new ArrayList<>();//开通区域
@@ -409,6 +418,15 @@ public class MainNewMapActivity extends BaseActivity implements
                 .offsetRight(dip2px(mContext, 5))
                 .create();
         CanShadowDrawable.Builder.on(lvSend1Bottom)//发布加阴影效果
+                .radius(dip2px(mContext, 2))
+                .shadowColor(Color.parseColor("#d9d9d9"))
+                .shadowRange(dip2px(mContext, 5))
+                .offsetTop(dip2px(mContext, 5))
+                .offsetBottom(dip2px(mContext, 5))
+                .offsetLeft(dip2px(mContext, 5))
+                .offsetRight(dip2px(mContext, 5))
+                .create();
+        CanShadowDrawable.Builder.on(lvCannotSendBottom)//发布加阴影效果
                 .radius(dip2px(mContext, 2))
                 .shadowColor(Color.parseColor("#d9d9d9"))
                 .shadowRange(dip2px(mContext, 5))
@@ -712,6 +730,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 } else if ("2".equals(keytype)) {
                     CanNotTip();
                 } else {
+                    canSend=false;
                     String start = BaseUtil.TransTimeHour(user.getOrder_start(), "HH:mm");
                     String end = BaseUtil.TransTimeHour(user.getOrder_end(), "HH:mm");
                     if (isNull(start)) {
@@ -719,7 +738,14 @@ public class MainNewMapActivity extends BaseActivity implements
                         end = "20:30";
                     }
                     lvSend0.setVisibility(View.GONE);
-                    TimeTip(start, end);
+                    lvSearch.setVisibility(View.GONE);
+                    if (screenMarker != null) {
+                        screenMarker.setVisible(false);
+                    }
+//                    TimeTip(start, end);
+                    lvCannotSend.setVisibility(View.VISIBLE);
+                    tvCannotTitle.setText("当前时间段不支持手机下单，\n如有需要请联系客服" + BaseApplication.getInstance().getSysInitInfo().getSys_service_phone());
+                    tvCannotTime.setText("可下单时间段为" + start + "-" + end);
                 }
                 break;
             case CITY_LIST:
@@ -1432,7 +1458,7 @@ public class MainNewMapActivity extends BaseActivity implements
             R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next,
             R.id.tv_sendtwo_cancel, R.id.tv_send_pin, R.id.tv_send_bao, R.id.tv_send_time,
             R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button,
-            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0})
+            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0,R.id.tv_cannot_button})
     public void onClick(View view) {
         user = BaseApplication.getInstance().getUser();
         Intent it;
@@ -1796,6 +1822,11 @@ public class MainNewMapActivity extends BaseActivity implements
                     }
                 }
                 break;
+            case R.id.tv_cannot_button:
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+                        + BaseApplication.getInstance().getSysInitInfo().getSys_service_phone()));
+                startActivity(intent);
+                break;
         }
     }
 
@@ -1953,6 +1984,9 @@ public class MainNewMapActivity extends BaseActivity implements
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
             return;
         }
+        if (!canSend){//当前时间不可发布
+            return;
+        }
         log_e("onCameraChange-------------------------------------------------------------");
     }
 
@@ -1962,6 +1996,10 @@ public class MainNewMapActivity extends BaseActivity implements
             return;
         }
         if (isSend2) {//发布第二步，地图滑动选址功能屏蔽
+            return;
+        }
+        if (!canSend){//当前时间不可发布
+            lvSearch.setVisibility(View.GONE);
             return;
         }
         log_e("onCameraChangeFinish-------------------------------------------------------------");
@@ -2043,7 +2081,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             progressBar.setVisibility(View.GONE);
-                            if (infor == null)
+                            if (infor == null&&canSend)
                                 CircularAnim.show(lvSearch).go();
                         }
                     }, 400);
