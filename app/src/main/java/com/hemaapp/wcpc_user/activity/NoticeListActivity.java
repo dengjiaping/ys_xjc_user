@@ -23,6 +23,7 @@ import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
+import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.adapter.OrderListAdapter;
@@ -353,6 +354,7 @@ public class NoticeListActivity extends BaseActivity {
         ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,8 +386,10 @@ public class NoticeListActivity extends BaseActivity {
         TextView boy = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView girl = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         boy.setText("清空");
         girl.setText("全部已读");
         boy.setOnClickListener(new View.OnClickListener() {

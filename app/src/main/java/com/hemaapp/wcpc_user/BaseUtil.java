@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amap.api.maps.model.LatLng;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -758,6 +760,19 @@ public class BaseUtil {
             imagePath = null;
         }
         return imagePath;
+    }
+    public static void fitPopupWindowOverStatusBar(PopupWindow pop, boolean needFullScreen) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                Field mLayoutInScreen = PopupWindow.class.getDeclaredField("mLayoutInScreen");
+                mLayoutInScreen.setAccessible(true);
+                mLayoutInScreen.set(pop, needFullScreen);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

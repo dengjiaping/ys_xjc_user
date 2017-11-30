@@ -29,6 +29,7 @@ import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseConfig;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
 import com.hemaapp.wcpc_user.BaseImageWay;
+import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.EventBusConfig;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
@@ -426,8 +427,10 @@ public class PersonInforActivity extends BaseActivity {
         boy = (TextView) mViewGroup.findViewById(R.id.textview);
         girl = (TextView) mViewGroup.findViewById(R.id.textview_0);
         cancel = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         if (type == 0) {
             boy.setText("男");
             girl.setText("女");

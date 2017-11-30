@@ -1441,6 +1441,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         title1.setText("请打开GPS定位");
@@ -2219,8 +2220,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView bt_ok = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
         TextView bt_cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
         RecyclerView recyclerView = (RecyclerView) mViewGroup_exit.findViewById(R.id.recyclerView);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow_exit.setContentView(mViewGroup_exit);
         mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+
         bt_cancel.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -2273,6 +2276,7 @@ public class MainNewMapActivity extends BaseActivity implements
         timePop.setBackgroundDrawable(new BitmapDrawable());
         timePop.setFocusable(true);
         timePop.setAnimationStyle(R.style.PopupAnimation);
+        BaseUtil.fitPopupWindowOverStatusBar(timePop,true);
         timeViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
                 R.layout.pop_time3, null);
         dayListView = (WheelView) timeViewGroup
@@ -2535,6 +2539,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         mWindow.setContentView(mViewGroup);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         if (infor.getStatus().equals("0"))
             content1.setText("拨打客服电话");
@@ -2576,8 +2581,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         pop_content.setText("为了保障您的出行，请谨慎操作。\n确定到达目的地吗？");
         cancel.setText("取消");
         exit.setText("确定");
@@ -2611,8 +2618,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         pop_content.setText("为保障您的出行，请谨慎操作。\n确定已上车吗？");
         cancel.setText("取消");
         exit.setText("确定");
@@ -2648,8 +2657,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         if (user.getToday_cancel_count().equals("3")) {
             title1.setText("您今天已取消3次订单！");
         } else
@@ -2700,8 +2711,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+
         title1.setText("请打开通知状态");
         title2.setText("打开通知状态才能正常接收系统消息");
         cancel.setText("取消");
@@ -2972,6 +2985,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView content2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         content1.setText("拨打客服电话");
@@ -3086,8 +3100,10 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
         TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
         View all = mViewGroup_exit.findViewById(R.id.allitem);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow_exit,true);
         mWindow_exit.setContentView(mViewGroup_exit);
         mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+
         cancel.setOnClickListener(new View.OnClickListener() {
 
             @Override
