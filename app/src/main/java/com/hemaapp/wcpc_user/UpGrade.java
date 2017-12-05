@@ -150,7 +150,7 @@ public abstract class UpGrade extends XtomObject {
                 + sysInitInfo.getAndroid_last_version() + ".apk";
         XtomFileDownLoader downLoader = new XtomFileDownLoader(mContext,
                 downPath, savePath);
-        downLoader.setThreadCount(3);
+        downLoader.setThreadCount(5);
         downLoader.setXtomDownLoadListener(new DownLoadListener());
         downLoader.start();
     }
@@ -184,10 +184,16 @@ public abstract class UpGrade extends XtomObject {
         }
 
         void install() {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(savePath)),
-                    "application/vnd.android.package-archive");
-            mContext.startActivity(intent);
+
+            BaseUtil.installApk(mContext, new File(savePath));
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(new File(savePath)),
+                "application/vnd.android.package-archive");
+        mContext.startActivity(intent);
+//            Intent intent = new Intent(Intent.ACTION_VIEW);
+//            intent.setDataAndType(Uri.fromFile(new File(savePath)),
+//                    "application/vnd.android.package-archive");
+//            mContext.startActivity(intent);
         }
 
         @Override

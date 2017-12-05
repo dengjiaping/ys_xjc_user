@@ -109,8 +109,8 @@ public class MainNewActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void run() {
                 if (isFirst.equals("true")){
-                    Intent it=new Intent(mContext,IntroductionActivity.class);
-                    startActivity(it, R.anim.bottom_in, R.anim.bottom_in);
+//                    Intent it=new Intent(mContext,IntroductionActivity.class);
+//                    startActivity(it, R.anim.bottom_in, R.anim.bottom_in);
                 }
             }
         },900);

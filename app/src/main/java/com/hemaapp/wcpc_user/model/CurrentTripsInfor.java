@@ -14,34 +14,34 @@ import xtom.frame.exception.DataParseException;
  */
 public class CurrentTripsInfor extends XtomObject {
 
-    private String  id	; //主键id
-    private String  startaddress; //	出发地
-    private String  endaddress	; //目的地
-    private String  startcity; //	出发城市名称
-    private String  startcity_id; //	出发城市id
-    private String endcity	; //目的地城市名称
-    private String  endcity_id	; //目的地城市id
-    private String  lng_start; //	出发地经度
-    private String  lat_start	; //出发地纬度
-    private String  lng_end	; //目的地经度
-    private String  lat_end	; //目的地纬度
+    private String id; //主键id
+    private String startaddress; //	出发地
+    private String endaddress; //目的地
+    private String startcity; //	出发城市名称
+    private String startcity_id; //	出发城市id
+    private String endcity; //目的地城市名称
+    private String endcity_id; //目的地城市id
+    private String lng_start; //	出发地经度
+    private String lat_start; //出发地纬度
+    private String lng_end; //目的地经度
+    private String lat_end; //目的地纬度
     private String begintime; //	出发时间
-    private String  numbers; //	乘车人数
-    private String  client_id	; //发布用户id
-    private String  driver_id; //	接单司机id	0表示未接单
-    private String carpoolflag	; //是否拼车	0-否 1-是
-    private String  avatar; //	乘客头像
-    private String  sex	; //乘客性别
-    private String  nickname; //	乘客昵称
+    private String numbers; //	乘车人数
+    private String client_id; //发布用户id
+    private String driver_id; //	接单司机id	0表示未接单
+    private String carpoolflag; //是否拼车	0-否 1-是
+    private String avatar; //	乘客头像
+    private String sex; //乘客性别
+    private String nickname; //	乘客昵称
     private String takecount; //	乘客乘坐次数
-    private String  username; //	乘客电话
-    private String   realname; //	司机姓名
-    private String   driver_avatar; //	司机头像
-    private String  servicecount	; //司机服务次数
-    private String driver_username	; //司机电话
-    private String carbrand	; //车品牌
-    private String carnumber	; //车牌号
-    private String  status; //	行程状态	0：待派单
+    private String username; //	乘客电话
+    private String realname; //	司机姓名
+    private String driver_avatar; //	司机头像
+    private String servicecount; //司机服务次数
+    private String driver_username; //司机电话
+    private String carbrand; //车品牌
+    private String carnumber; //车牌号
+    private String status; //	行程状态	0：待派单
     private String cancel_reason; //	乘客取消原因
     private String total_fee;
     private String coupon_fee;
@@ -50,17 +50,23 @@ public class CurrentTripsInfor extends XtomObject {
     private String replyflag1;//乘客是否评价	1：是，0：否
     private String remarks;
     private String driver_sex;
-    private ArrayList<Client> clients=new ArrayList<>();
-    private String  timetype; //	预约or实时	1：预约，2：实时
+    private ArrayList<Client> clients = new ArrayList<>();
+    private String timetype; //	预约or实时	1：预约，2：实时
     private String is_helpcall; //	是否代人叫车	1：是，0：否
-    private String  helpcallname; //	代人叫车	姓名，默认空字符串
-    private String  helpcallmobile; //	代人叫车	电话，默认空字符串
-    private String  current_time; //
-    private String  regdate; //
+    private String helpcallname; //	代人叫车	姓名，默认空字符串
+    private String helpcallmobile; //	代人叫车	电话，默认空字符串
+    private String current_time; //
+    private String regdate; //
+    private String totalpoint; //	总星级	平均星级=总星级/评价次数
+    private String replycount; //	被评价次数	平均星级=总星级/评价次数
+    private String driver_reply_arr; //
+    private ArrayList<DataInfor> replys = new ArrayList<>();
 
     public CurrentTripsInfor(JSONObject jsonObject) throws DataParseException {
-        if(jsonObject != null){
+        if (jsonObject != null) {
             try {
+                totalpoint = get(jsonObject, "totalpoint");
+                replycount = get(jsonObject, "replycount");
                 current_time = get(jsonObject, "current_time");
                 regdate = get(jsonObject, "regdate");
                 timetype = get(jsonObject, "timetype");
@@ -110,6 +116,14 @@ public class CurrentTripsInfor extends XtomObject {
                     int size = jsonList.length();
                     for (int i = 0; i < size; i++) {
                         clients.add(new Client(jsonList.getJSONObject(i)));
+                    }
+                }
+                if (!jsonObject.isNull("driver_reply_arr")
+                        && !isNull(jsonObject.getString("driver_reply_arr"))) {
+                    JSONArray jsonList = jsonObject.getJSONArray("driver_reply_arr");
+                    int size = jsonList.length();
+                    for (int i = 0; i < size; i++) {
+                        replys.add(new DataInfor(jsonList.getJSONObject(i)));
                     }
                 }
                 log_i(toString());
@@ -165,6 +179,10 @@ public class CurrentTripsInfor extends XtomObject {
                 ", helpcallmobile='" + helpcallmobile + '\'' +
                 ", current_time='" + current_time + '\'' +
                 ", regdate='" + regdate + '\'' +
+                ", totalpoint='" + totalpoint + '\'' +
+                ", replycount='" + replycount + '\'' +
+                ", driver_reply_arr='" + driver_reply_arr + '\'' +
+                ", replys=" + replys +
                 '}';
     }
 
@@ -187,7 +205,7 @@ public class CurrentTripsInfor extends XtomObject {
 
     public String getDriver_sex() {
         if (isNull(driver_sex))
-            driver_sex="男";
+            driver_sex = "男";
         return driver_sex;
     }
 
@@ -205,6 +223,26 @@ public class CurrentTripsInfor extends XtomObject {
 
     public String getHelpcallname() {
         return helpcallname;
+    }
+
+    public String getTotalpoint() {
+        if (isNull(totalpoint))
+            totalpoint = "0";
+        return totalpoint;
+    }
+
+    public String getReplycount() {
+        if (isNull(replycount))
+            replycount = "0";
+        return replycount;
+    }
+
+    public String getDriver_reply_arr() {
+        return driver_reply_arr;
+    }
+
+    public ArrayList<DataInfor> getReplys() {
+        return replys;
     }
 
     public String getHelpcallmobile() {

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/contentdescription"
+        android:src="#60000000" />
+
+    <LinearLayout
+        android:id="@+id/father"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/margin_60"
+        android:layout_marginRight="@dimen/margin_60"
+        android:layout_marginTop="@dimen/margin_60"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_driver_top"
+            android:padding="15dp">
+
+            <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                android:id="@+id/iv_together_avatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/default_driver"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingTop="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tv_together_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="司机名称"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_together_sex"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="5dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/img_sex_boy" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_together_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:text="乘车次数: 0"
+                    android:textColor="@color/shenhui"
+                    android:textSize="@dimen/textsize_6" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingTop="0dp"
+                        android:src="@mipmap/img_startposition" />
+
+                    <TextView
+                        android:id="@+id/tv_together_start"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:paddingLeft="10dp"
+                        android:text="出发地出发地出发地出发地出发地出发地"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="0dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingTop="0dp"
+                        android:src="@mipmap/img_endposition" />
+
+                    <TextView
+                        android:id="@+id/tv_together_end"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:paddingLeft="10dp"
+                        android:text="出发地出发地出发地出发地出发地出发地出"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginTop="0dp"
+                android:paddingLeft="3dp"
+                android:src="@mipmap/img_xian" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/bg_together_bottom"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/together_wei" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="未上车"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_7" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:src="@mipmap/pop_cancel" />
+    </LinearLayout>
+</FrameLayout>

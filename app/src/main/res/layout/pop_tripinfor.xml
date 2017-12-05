@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/contentdescription"
+        android:src="#60000000" />
+
+    <LinearLayout
+        android:id="@+id/father"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/margin_60"
+        android:layout_marginRight="@dimen/margin_60"
+        android:layout_marginTop="@dimen/margin_60"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/lv_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_driver_top"
+            android:padding="15dp">
+
+            <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                android:id="@+id/iv_driver_avatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/default_driver"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingTop="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tv_driver_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="司机名称"
+                        android:textColor="@color/cl_3f3f3f"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_driver_sex"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="5dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/img_sex_boy" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_car_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="6dp"
+                    android:text="红色 宝马"
+                    android:textColor="@color/shenhui"
+                    android:textSize="@dimen/textsize_6" />
+
+                <TextView
+                    android:id="@+id/tv_car_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="鲁A 1111"
+                    android:textColor="@color/shenhui"
+                    android:textSize="@dimen/textsize_6" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/lv_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_driver_bottom"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+                android:id="@+id/lv_bang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/iv_trip_bang" />
+
+                <TextView
+                    android:id="@+id/tv_bang_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="张延山"
+                    android:textColor="@color/word_black"
+                    android:textSize="@dimen/textsize_7" />
+
+                <TextView
+                    android:id="@+id/tv_bang_tel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="18800000000"
+                    android:textColor="#1BAAEC"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lv_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_bao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:src="@mipmap/iv_trip_bao" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="0dp"
+                        android:text="乘车人数：1"
+                        android:textColor="#6E6E6E"
+                        android:textSize="@dimen/textsize_7"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="0dp"
+                        android:text="乘车费用：1"
+                        android:textColor="#6E6E6E"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingTop="8dp"
+                android:text="备注"
+                android:textColor="#9A9A9A"
+                android:textSize="@dimen/textsize_7" />
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_trip_content"
+                android:minLines="1"
+                android:padding="3dp"
+                android:text=""
+                android:textColor="#6E6E6E"
+                android:textSize="@dimen/textsize_7" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:src="@mipmap/pop_cancel" />
+    </LinearLayout>
+</FrameLayout>

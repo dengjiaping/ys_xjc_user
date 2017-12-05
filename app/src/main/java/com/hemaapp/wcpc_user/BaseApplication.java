@@ -2,6 +2,8 @@ package com.hemaapp.wcpc_user;
 
 import android.content.Context;
 import android.graphics.Bitmap.Config;
+import android.os.Build;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
 import com.hemaapp.hm_FrameWork.HemaApplication;
@@ -58,6 +60,7 @@ public class BaseApplication extends HemaApplication {
         super.onCreate();
         initImageLoader();
         MobSDK.init(this,"22208d6b7ef70","3153dc341931b39ed4e521aff81a54a4");
+
     }
 
 

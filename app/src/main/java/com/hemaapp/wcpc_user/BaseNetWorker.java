@@ -25,6 +25,7 @@ import com.hemaapp.wcpc_user.model.Often;
 import com.hemaapp.wcpc_user.model.OrderDetailInfor;
 import com.hemaapp.wcpc_user.model.Recomm;
 import com.hemaapp.wcpc_user.model.ReplyListInfor;
+import com.hemaapp.wcpc_user.model.SoftContent;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.TimeRule;
 import com.hemaapp.wcpc_user.model.Token;
@@ -927,6 +928,12 @@ public class BaseNetWorker extends HemaNetWorker {
         HashMap<String, String> params = new HashMap<>();
         params.put("city_id", city_id);
         ExecuteNetTask<Recomm> task = new ExecuteNetTask<>(information, params, Recomm.class);
+        executeTask(task);
+    }
+    public void softContentList() {
+        BaseHttpInformation information = BaseHttpInformation.SOFT_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        ExecuteNetTask<SoftContent> task = new ExecuteNetTask<>(information, params, SoftContent.class);
         executeTask(task);
     }
 }

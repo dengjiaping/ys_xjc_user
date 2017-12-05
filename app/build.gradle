@@ -7,8 +7,8 @@ android {
         applicationId "com.hemaapp.wcpc_user"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 106
-        versionName "1.0.6"
+        versionCode 107
+        versionName "1.0.7"
         multiDexEnabled true
         manifestPlaceholders = [
                 GETUI_APP_ID    : "3f3iFCbmVu8PI7VMth7tQ1",
@@ -27,27 +27,27 @@ android {
         }
     }
 
-signingConfigs {
-    // your debug keystore
-    debug {
-        keyAlias 'hm_wcpc_user'
-        keyPassword '123456Aa'
-        storePassword '123456Aa'
-        storeFile file("hm_wcpc_user.jks")
+    signingConfigs {
+        // your debug keystore
+        debug {
+            keyAlias 'hm_wcpc_user'
+            keyPassword '123456Aa'
+            storePassword '123456Aa'
+            storeFile file("hm_wcpc_user.jks")
+        }
     }
-}
-lintOptions {
-    checkReleaseBuilds false
-    abortOnError false
-}
-dexOptions {
-    javaMaxHeapSize "4g"
-}
-sourceSets {
-    main {
-        jniLibs.srcDirs = ['libs']
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
-}
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

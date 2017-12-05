@@ -223,6 +223,7 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
     CLIENT_ROUTE_SAVE(7, "client_route_save", "常用行程增改接口", false),
     CLIENT_ROUTE_OPEARATE(7, "client_route_saveoperate", "常用行程操作接口", false),
     RECOM_ADDRESS_LIST(7, "recom_address_list", "推荐地点列表", false),
+    SOFT_LIST(7, "soft_explain_list", "软件使用说明列表", false),
     ;
 
     private int id;// 对应NetTask的id

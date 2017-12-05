@@ -36,20 +36,14 @@ public class TogetherAdapter extends BaseRecycleAdapter<Client> {
                 .getOptions(R.mipmap.default_user));
         imageView.setCornerRadius(100);
         ((TextView)holder.getView(R.id.tv_num)).setText(" "+infor.getNumbers()+"人 ");
-        (holder.getView(R.id.iv_image)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mView = new ShowLargeImageView((Activity) mContext, rootView);
-                mView.show();
-                mView.setImageURL(infor.getAvatar());
-            }
-        });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        (holder.getView(R.id.iv_image)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                mView = new ShowLargeImageView((Activity) mContext, rootView);
+////                mView.show();
+////                mView.setImageURL(infor.getAvatar());
+//            }
+//        });
     }
     private ShowLargeImageView mView;
     @Override

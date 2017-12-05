@@ -14,13 +14,13 @@ public class DataInfor extends XtomObject {
     private String id; //主键ID
     private String name; //名称
     private boolean isChecked =false;
-
+    private String choice_con; //名称
     public DataInfor(JSONObject jsonObject) throws DataParseException {
         if(jsonObject != null){
             try {
                 id = get(jsonObject, "id");
                 name = get(jsonObject, "name");
-
+                choice_con = get(jsonObject, "choice_con");
                 log_i(toString());
             } catch (JSONException e) {
                 throw new DataParseException(e);
@@ -35,6 +35,10 @@ public class DataInfor extends XtomObject {
                 ", name='" + name + '\'' +
                 ", isChecked=" + isChecked +
                 '}';
+    }
+
+    public String getChoice_con() {
+        return choice_con;
     }
 
     public String getId() {

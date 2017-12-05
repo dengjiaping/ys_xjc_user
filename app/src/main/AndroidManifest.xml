@@ -398,10 +398,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.IntroductionActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+        <!--<activity-->
+            <!--android:name=".activity.IntroductionActivity"-->
+            <!--android:configChanges="orientation|keyboardHidden|screenSize"-->
+            <!--android:screenOrientation="portrait" />-->
         <activity
             android:name=".activity.AlbumActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -420,6 +420,12 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.OftenAddActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.SoftContentListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

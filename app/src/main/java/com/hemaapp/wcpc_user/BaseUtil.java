@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.text.SpannableString;
 import android.view.MotionEvent;
 import android.view.View;
@@ -773,6 +774,21 @@ public class BaseUtil {
                 e.printStackTrace();
             }
         }
+    }
+    public static void installApk(Context context, File file) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri uri;
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
+            uri= FileProvider.getUriForFile(context,context.getPackageName()+".versionProvider",file);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }else{
+            uri=Uri.fromFile(file);
+        }
+        intent.setDataAndType(uri,
+                "application/vnd.android.package-archive");
+        context.startActivity(intent);
     }
 
 }

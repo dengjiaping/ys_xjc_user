@@ -78,6 +78,7 @@ import com.hemaapp.wcpc_user.AmapTTSController;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
+import com.hemaapp.wcpc_user.BaseRecycleAdapter;
 import com.hemaapp.wcpc_user.BaseUtil;
 import com.hemaapp.wcpc_user.CircularAnim;
 import com.hemaapp.wcpc_user.EventBusConfig;
@@ -88,6 +89,7 @@ import com.hemaapp.wcpc_user.ToLogin;
 import com.hemaapp.wcpc_user.UpGrade;
 import com.hemaapp.wcpc_user.adapter.PersonCountAdapter;
 import com.hemaapp.wcpc_user.adapter.PopTimeAdapter;
+import com.hemaapp.wcpc_user.adapter.TagReplyAdapter;
 import com.hemaapp.wcpc_user.adapter.TogetherAdapter;
 import com.hemaapp.wcpc_user.keepappalive.ScreenManager;
 import com.hemaapp.wcpc_user.keepappalive.ScreenReceiverUtil;
@@ -106,7 +108,7 @@ import com.hemaapp.wcpc_user.newgetui.GeTuiIntentService;
 import com.hemaapp.wcpc_user.newgetui.PushUtils;
 import com.hemaapp.wcpc_user.util.AndroidBug5497Workaround;
 import com.hemaapp.wcpc_user.util.HiddenAnimUtils;
-import com.hemaapp.wcpc_user.util.NotificationsUtils;
+import com.hemaapp.wcpc_user.view.FlowLayout.TagFlowLayout;
 import com.hemaapp.wcpc_user.view.wheelview.OnWheelScrollListener;
 import com.hemaapp.wcpc_user.view.wheelview.WheelView;
 import com.igexin.sdk.PushManager;
@@ -300,6 +302,8 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvCannotSendBottom;
     @BindView(R.id.lv_cannot_send)
     LinearLayout lvCannotSend;
+    @BindView(R.id.tv_now_tip)
+    TextView tvNowTip;
 
     private User user;
     private int msgcount;
@@ -330,7 +334,7 @@ public class MainNewMapActivity extends BaseActivity implements
     AlphaAnimation appearAnimation, disappearAnimation;
     private DistrictInfor startCity, endCity, myCity;
     private String start_address = "", end_address, start_lng, start_lat, end_lat, end_lng, begintime, coupon_vavle, coupon_id, bangFlag, pinFlag = "1",
-            timetype = "1";
+            timetype = "1", sendContent = "";
     private String begin;//和可拼车时间去比较的出发时间
     private int count = 1, coupon = 0;
     private float totleFee = 0, price = 0, addstart = 0, addend = 0;
@@ -800,6 +804,12 @@ public class MainNewMapActivity extends BaseActivity implements
                     togetherAdapter = new TogetherAdapter(mContext, clients, navView);
                     RecycleUtils.initHorizontalRecyle(rvCurList);
                     rvCurList.setAdapter(togetherAdapter);
+                    togetherAdapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+                        @Override
+                        public void onClick(int position) {
+                            togetherInfor(clients.get(position));
+                        }
+                    });
                 } else {
                     infor = null;
                 }
@@ -870,7 +880,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (cs != null && cs.size() > 0) {
                     coupon_id = cs.get(0).getId();
                     coupon_vavle = cs.get(0).getValue();
-                    tvSendCoupon.setText("-"+coupon_vavle + "元");
+                    tvSendCoupon.setText("-" + coupon_vavle + "元");
                     coupon = Integer.parseInt(coupon_vavle);
                 }
                 break;
@@ -878,7 +888,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
                 showTextDialog("发布成功");
                 tvSearch.setText("");
-                count=1;
+                count = 1;
                 tvSendCount.setText("1人");
                 pinFlag = "1";
                 tvSendPin.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -887,9 +897,14 @@ public class MainNewMapActivity extends BaseActivity implements
                         R.mipmap.img_agree_n, 0);
                 timetype = "1";
                 tvAppointment.setTextColor(getResources().getColor(R.color.yellow));
-                tvNow.setTextColor(getResources().getColor(R.color.word_black));
-                begintime="";
+                tvNow.setTextColor(0xff9A9A9A);
+                tvAppointment.setBackgroundResource(R.drawable.bg_nowselect);
+                tvNow.setBackgroundResource(R.drawable.bg_nowselect_n);
+                tvNowTip.setText("预约用车提供2小时后用车服务,请您提前下单!");
+                begintime = "";
                 tvSendTime.setText("");
+                sendContent = "";
+                tvSendContent.setText("");
                 //如果之前画过圈，清一下
                 hasCircle = false;
                 for (Polygon p : polygons) {
@@ -1441,7 +1456,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         title1.setText("请打开GPS定位");
@@ -1520,12 +1535,18 @@ public class MainNewMapActivity extends BaseActivity implements
             case R.id.tv_now://实时
                 timetype = "2";
                 tvNow.setTextColor(getResources().getColor(R.color.yellow));
-                tvAppointment.setTextColor(getResources().getColor(R.color.word_black));
+                tvAppointment.setTextColor(0xff9A9A9A);
+                tvNow.setBackgroundResource(R.drawable.bg_nowselect);
+                tvAppointment.setBackgroundResource(R.drawable.bg_nowselect_n);
+                tvNowTip.setText("现在用车只提供包车服务!");
                 break;
             case R.id.tv_appointment://预约
                 timetype = "1";
                 tvAppointment.setTextColor(getResources().getColor(R.color.yellow));
-                tvNow.setTextColor(getResources().getColor(R.color.word_black));
+                tvNow.setTextColor(0xff9A9A9A);
+                tvAppointment.setBackgroundResource(R.drawable.bg_nowselect);
+                tvNow.setBackgroundResource(R.drawable.bg_nowselect_n);
+                tvNowTip.setText("预约用车提供2小时后用车服务,请您提前下单!");
                 break;
             case R.id.tv_often:
                 it = new Intent(mContext, OftenListActivity.class);
@@ -1725,7 +1746,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case R.id.tv_send_content:
                 it = new Intent(mContext, EditContentActivity.class);
-                it.putExtra("content", tvSendContent.getText().toString());
+                it.putExtra("content", sendContent);
                 startActivityForResult(it, 6);
                 break;
             case R.id.tv_send_feeinfor:
@@ -1746,7 +1767,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 break;
             case R.id.tv_send_button://发布
                 String helpcallname = "", helpcallmobile = "", content;
-                content = tvSendContent.getText().toString();
+                content = sendContent;
                 float allfee = totleFee + coupon;
                 if (bangFlag.equals("1")) {//代人叫车
                     helpcallname = evSendBangName.getText().toString();
@@ -1799,9 +1820,10 @@ public class MainNewMapActivity extends BaseActivity implements
                 HiddenAnimUtils.newInstance(mContext, lvCurrentBottom, ivCurrentTop, bottomHeight).toggle();
                 break;
             case R.id.iv_cur_avatar://司机头像
-                mView = new ShowLargeImageView(mContext, navView);
-                mView.show();
-                mView.setImageURL(infor.getDriver_avatar());
+//                mView = new ShowLargeImageView(mContext, navView);
+//                mView.show();
+//                mView.setImageURL(infor.getDriver_avatar());
+                driverInfor();
                 break;
             case R.id.iv_cur_tel://电话
                 if (infor != null) {
@@ -1949,13 +1971,16 @@ public class MainNewMapActivity extends BaseActivity implements
             case 5:
                 coupon_id = data.getStringExtra("id");
                 coupon_vavle = data.getStringExtra("money");
-                tvSendCoupon.setText("-"+coupon_vavle + "元");
+                tvSendCoupon.setText("-" + coupon_vavle + "元");
                 coupon = Integer.parseInt(coupon_vavle);
                 resetPrice();
                 break;
             case 6:
-                String content = data.getStringExtra("content");
-                tvSendContent.setText(content);
+                sendContent = data.getStringExtra("content");
+                if (!isNull(sendContent))
+                    tvSendContent.setText("已填写");
+                else
+                    tvSendContent.setText("");
                 break;
             case 7://取消订单
             case R.id.layout:
@@ -2220,7 +2245,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView bt_ok = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
         TextView bt_cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
         RecyclerView recyclerView = (RecyclerView) mViewGroup_exit.findViewById(R.id.recyclerView);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow_exit.setContentView(mViewGroup_exit);
         mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
 
@@ -2276,7 +2301,7 @@ public class MainNewMapActivity extends BaseActivity implements
         timePop.setBackgroundDrawable(new BitmapDrawable());
         timePop.setFocusable(true);
         timePop.setAnimationStyle(R.style.PopupAnimation);
-        BaseUtil.fitPopupWindowOverStatusBar(timePop,true);
+        BaseUtil.fitPopupWindowOverStatusBar(timePop, true);
         timeViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
                 R.layout.pop_time3, null);
         dayListView = (WheelView) timeViewGroup
@@ -2539,7 +2564,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         mWindow.setContentView(mViewGroup);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         if (infor.getStatus().equals("0"))
             content1.setText("拨打客服电话");
@@ -2581,7 +2606,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
 
@@ -2618,7 +2643,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
 
@@ -2657,7 +2682,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
 
@@ -2711,7 +2736,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         TextView title1 = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView title2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
 
@@ -2985,7 +3010,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView content2 = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
         TextView ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         content1.setText("拨打客服电话");
@@ -3100,7 +3125,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
         TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
         View all = mViewGroup_exit.findViewById(R.id.allitem);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow_exit,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow_exit, true);
         mWindow_exit.setContentView(mViewGroup_exit);
         mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
 
@@ -3175,5 +3200,120 @@ public class MainNewMapActivity extends BaseActivity implements
         }
         oks.setPlatform(platform);
         oks.show(mContext);
+    }
+    private void driverInfor() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_driver, null);
+        TextView tv_driver_name = (TextView) mViewGroup.findViewById(R.id.tv_driver_name);
+        TextView tv_driver_level = (TextView) mViewGroup.findViewById(R.id.tv_driver_level);
+        TextView tv_driver_count = (TextView) mViewGroup.findViewById(R.id.tv_driver_count);
+        RoundedImageView iv_driver_avatar = (RoundedImageView) mViewGroup.findViewById(R.id.iv_driver_avatar);
+        ImageView iv_driver_sex = (ImageView) mViewGroup.findViewById(R.id.iv_driver_sex);
+        ImageView iv_cancel = (ImageView) mViewGroup.findViewById(R.id.iv_cancel);
+        TagFlowLayout tfv_tag = (TagFlowLayout) mViewGroup.findViewById(R.id.tfv_tag);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        tv_driver_name.setText(infor.getRealname());
+        tv_driver_count.setText("总接单: "+infor.getServicecount()+"单");
+        ImageLoader.getInstance().displayImage(infor.getDriver_avatar(), iv_driver_avatar, BaseApplication.getInstance()
+                .getOptions(R.mipmap.default_driver));
+        iv_driver_avatar.setCornerRadius(100);
+        int count = Integer.parseInt(infor.getReplycount());
+        float point = 0;
+        if (count > 0) {
+            point = Float.parseFloat(BaseUtil.divide(infor.getTotalpoint(), infor.getReplycount(), 0));
+        }
+        tv_driver_level.setText("星级: "+point + "分");
+        if ("男".equals(infor.getDriver_sex()))
+            iv_driver_sex.setImageResource(R.mipmap.img_sex_boy);
+        else
+            iv_driver_sex.setImageResource(R.mipmap.img_sex_girl);
+        TagReplyAdapter tagReplyAdapter = new TagReplyAdapter(mContext, infor.getReplys());
+        tfv_tag.setAdapter(tagReplyAdapter);
+        iv_driver_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mView = new ShowLargeImageView(mContext, navView);
+                mView.show();
+                mView.setImageURL(infor.getDriver_avatar());
+            }
+        });
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+    }
+    private void togetherInfor(Client c) {
+        final Client client=c;
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_together, null);
+        TextView tv_together_name = (TextView) mViewGroup.findViewById(R.id.tv_together_name);
+        TextView tv_together_count = (TextView) mViewGroup.findViewById(R.id.tv_together_count);
+        TextView tv_together_start = (TextView) mViewGroup.findViewById(R.id.tv_together_start);
+        TextView tv_together_end = (TextView) mViewGroup.findViewById(R.id.tv_together_end);
+        RoundedImageView iv_together_avatar = (RoundedImageView) mViewGroup.findViewById(R.id.iv_together_avatar);
+        ImageView iv_together_sex = (ImageView) mViewGroup.findViewById(R.id.iv_together_sex);
+        ImageView iv_status = (ImageView) mViewGroup.findViewById(R.id.iv_status);
+        TextView tv_status = (TextView) mViewGroup.findViewById(R.id.tv_status);
+        ImageView iv_cancel = (ImageView) mViewGroup.findViewById(R.id.iv_cancel);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        tv_together_name.setText(client.getRealname());
+        tv_together_start.setText(client.getStartaddress());
+        tv_together_end.setText(client.getEndaddress());
+        tv_together_count.setText("乘车次数: "+client.getTakecount());
+        ImageLoader.getInstance().displayImage(client.getAvatar(), iv_together_avatar, BaseApplication.getInstance()
+                .getOptions(R.mipmap.default_user));
+        iv_together_avatar.setCornerRadius(100);
+        if (client.getStatus().equals("1")){
+            tv_status.setText("未上车");
+            iv_status.setImageResource(R.mipmap.together_wei);
+        }else if (client.getStatus().equals("2")){
+            tv_status.setText("已上车");
+            iv_status.setImageResource(R.mipmap.together_yi);
+        }else {
+            tv_status.setText("已送达");
+            iv_status.setImageResource(R.mipmap.together_da);
+        }
+        if ("男".equals(client.getSex()))
+            iv_together_sex.setImageResource(R.mipmap.img_sex_boy);
+        else
+            iv_together_sex.setImageResource(R.mipmap.img_sex_girl);
+        iv_together_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mView = new ShowLargeImageView(mContext, navView);
+                mView.show();
+                mView.setImageURL(client.getAvatar());
+            }
+        });
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
     }
 }

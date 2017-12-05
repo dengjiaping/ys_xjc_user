@@ -225,11 +225,13 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
                 startActivity(it);
                 break;
             case R.id.tv_shuoming:
-                it = new Intent(mContext, ShowInternetPageActivity.class);
-                it.putExtra("name", "软件使用说明");
-                sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
-                path = sysInitInfo.getSys_web_service() + "webview/parm/useinstruction";
-                it.putExtra("path", path);
+//                it = new Intent(mContext, ShowInternetPageActivity.class);
+//                it.putExtra("name", "软件使用说明");
+//                sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
+//                path = sysInitInfo.getSys_web_service() + "webview/parm/useinstruction";
+//                it.putExtra("path", path);
+//                startActivity(it);
+                it = new Intent(mContext, SoftContentListActivity.class);
                 startActivity(it);
                 break;
             case R.id.tv_xieyi:

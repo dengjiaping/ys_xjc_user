@@ -22,6 +22,7 @@ import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.RecycleUtils;
 import com.hemaapp.wcpc_user.ToLogin;
 import com.hemaapp.wcpc_user.adapter.MytripAdapter;
+import com.hemaapp.wcpc_user.adapter.MytripNewAdapter;
 import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.User;
 
@@ -59,7 +60,7 @@ public class MListActivity extends BaseActivity {
     ImageView imageView;
     private User user;
     private String token = "", TITLE, keytype = "1";
-    private MytripAdapter adapter;
+    private MytripNewAdapter adapter;
     private ArrayList<CurrentTripsInfor> blogs = new ArrayList<>();
     private Integer currentPage = 0;
     private String keyid = "0";
@@ -76,7 +77,7 @@ public class MListActivity extends BaseActivity {
             token = "";
         else
             token = user.getToken();
-        adapter = new MytripAdapter(mContext, blogs, getNetWorker());
+        adapter = new MytripNewAdapter(mContext, blogs, getNetWorker());
         RecycleUtils.initVerticalRecyle(rvList);
         rvList.setAdapter(adapter);
         getList(currentPage);
