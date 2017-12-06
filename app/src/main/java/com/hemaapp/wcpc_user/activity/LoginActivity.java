@@ -34,6 +34,7 @@ import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.Token;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.view.ClearEditText;
+import com.umeng.analytics.MobclickAgent;
 
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
@@ -160,6 +161,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 HemaArrayParse<User> uResult = (HemaArrayParse<User>) baseResult;
                 User user = uResult.getObjects().get(0);
                 BaseApplication.getInstance().setUser(user);
+                MobclickAgent.onProfileSignIn(username);
                 XtomSharedPreferencesUtil.save(mContext, "login_type", "1");
                 XtomSharedPreferencesUtil.save(mContext, "username", username);
                 XtomSharedPreferencesUtil.save(mContext, "password", password);
@@ -186,6 +188,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 HemaArrayParse<User> cResult = (HemaArrayParse<User>) baseResult;
                 User user1 = cResult.getObjects().get(0);
                 BaseApplication.getInstance().setUser(user1);
+                MobclickAgent.onProfileSignIn(username2);
                 XtomSharedPreferencesUtil.save(mContext, "login_type", "2");
                 XtomSharedPreferencesUtil.save(mContext, "username", username2);
                 XtomSharedPreferencesUtil.save(mContext, "password", user1.getPassword());

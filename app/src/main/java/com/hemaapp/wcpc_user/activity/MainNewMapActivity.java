@@ -114,6 +114,7 @@ import com.hemaapp.wcpc_user.view.wheelview.WheelView;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -439,6 +440,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 .offsetRight(dip2px(mContext, 5))
                 .create();
         initPXActivity();
+        MobclickAgent.openActivityDurationTrack(false);
+//        MobclickAgent.setScenarioType(mContext, MobclickAgent.EScenarioType.E_DUM_NORMAL);
     }
 
     /**
@@ -485,7 +488,12 @@ public class MainNewMapActivity extends BaseActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+            titleBtnLeft.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
+            }, 300);
         }
         boolean isNotice = intent.getBooleanExtra("isNotice", false);
         if (!isNotice) {
@@ -496,7 +504,13 @@ public class MainNewMapActivity extends BaseActivity implements
                 getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
                 getNetWorker().canTrips(user.getToken());
             } else {
-                XtomToastUtil.showShortToast(mContext, "当前行程未结束！");
+                titleBtnLeft.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        XtomToastUtil.showShortToast(mContext, "当前行程未结束！");
+                    }
+                }, 1000);
+
             }
         }
         super.onNewIntent(intent);
@@ -652,6 +666,8 @@ public class MainNewMapActivity extends BaseActivity implements
         checkPermission();
         upGrade.check();
         mapView.onResume();
+        MobclickAgent.onPageStart("MainActivity");
+        MobclickAgent.onResume(mContext);
     }
 
     /**
@@ -661,6 +677,8 @@ public class MainNewMapActivity extends BaseActivity implements
     protected void onPause() {
         super.onPause();
         mapView.onPause();
+        MobclickAgent.onPageEnd("MainActivity");
+        MobclickAgent.onPause(mContext);
     }
 
     private void realseTimeTask() {
@@ -991,6 +1009,9 @@ public class MainNewMapActivity extends BaseActivity implements
         selectAddress = "2";//选择出发地
         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(end_lat),
                 Double.parseDouble(end_lng)), 15));
+        progressBar.setVisibility(View.GONE);
+        lvSearch.setVisibility(View.VISIBLE);
+        tvSearch.setText(end_address);
     }
 
     private void setData() {
@@ -3201,6 +3222,7 @@ public class MainNewMapActivity extends BaseActivity implements
         oks.setPlatform(platform);
         oks.show(mContext);
     }
+
     private void driverInfor() {
         if (mWindow != null) {
             mWindow.dismiss();
@@ -3224,7 +3246,7 @@ public class MainNewMapActivity extends BaseActivity implements
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         tv_driver_name.setText(infor.getRealname());
-        tv_driver_count.setText("总接单: "+infor.getServicecount()+"单");
+        tv_driver_count.setText("总接单: " + infor.getServicecount() + "单");
         ImageLoader.getInstance().displayImage(infor.getDriver_avatar(), iv_driver_avatar, BaseApplication.getInstance()
                 .getOptions(R.mipmap.default_driver));
         iv_driver_avatar.setCornerRadius(100);
@@ -3233,7 +3255,7 @@ public class MainNewMapActivity extends BaseActivity implements
         if (count > 0) {
             point = Float.parseFloat(BaseUtil.divide(infor.getTotalpoint(), infor.getReplycount(), 0));
         }
-        tv_driver_level.setText("星级: "+point + "分");
+        tv_driver_level.setText("星级: " + point + "分");
         if ("男".equals(infor.getDriver_sex()))
             iv_driver_sex.setImageResource(R.mipmap.img_sex_boy);
         else
@@ -3255,8 +3277,9 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         });
     }
+
     private void togetherInfor(Client c) {
-        final Client client=c;
+        final Client client = c;
         if (mWindow != null) {
             mWindow.dismiss();
         }
@@ -3283,17 +3306,17 @@ public class MainNewMapActivity extends BaseActivity implements
         tv_together_name.setText(client.getRealname());
         tv_together_start.setText(client.getStartaddress());
         tv_together_end.setText(client.getEndaddress());
-        tv_together_count.setText("乘车次数: "+client.getTakecount());
+        tv_together_count.setText("乘车次数: " + client.getTakecount());
         ImageLoader.getInstance().displayImage(client.getAvatar(), iv_together_avatar, BaseApplication.getInstance()
                 .getOptions(R.mipmap.default_user));
         iv_together_avatar.setCornerRadius(100);
-        if (client.getStatus().equals("1")){
+        if (client.getStatus().equals("1")) {
             tv_status.setText("未上车");
             iv_status.setImageResource(R.mipmap.together_wei);
-        }else if (client.getStatus().equals("2")){
+        } else if (client.getStatus().equals("2")) {
             tv_status.setText("已上车");
             iv_status.setImageResource(R.mipmap.together_yi);
-        }else {
+        } else {
             tv_status.setText("已送达");
             iv_status.setImageResource(R.mipmap.together_da);
         }

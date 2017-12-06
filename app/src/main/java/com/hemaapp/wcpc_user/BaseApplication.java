@@ -25,6 +25,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.umeng.commonsdk.UMConfigure;
 
 import java.io.File;
 import java.util.List;
@@ -59,8 +60,8 @@ public class BaseApplication extends HemaApplication {
         sqliteUtilityBuilder.configVersion(BaseConfig.DATA_BASE_VERSION).build(this);
         super.onCreate();
         initImageLoader();
-        MobSDK.init(this,"22208d6b7ef70","3153dc341931b39ed4e521aff81a54a4");
-
+        MobSDK.init(this, "22208d6b7ef70", "3153dc341931b39ed4e521aff81a54a4");
+        UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, "");
     }
 
 
@@ -83,7 +84,7 @@ public class BaseApplication extends HemaApplication {
             try {
                 listUser = SqliteUtility.getInstance().select(new Extra(), User.class);
             } catch (Exception e) {
-                listUser=null;
+                listUser = null;
             }
             if (listUser != null && listUser.size() > 0)
                 user = listUser.get(0);
@@ -103,6 +104,7 @@ public class BaseApplication extends HemaApplication {
             SqliteUtility.getInstance().insert(new Extra(), user);
         }
     }
+
     /**
      * @return 系统初始化信息
      */

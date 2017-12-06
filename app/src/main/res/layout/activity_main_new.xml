@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@mipmap/img_firstpage" />
+            android:src="@color/yellow" />
 
         <!--<ImageView-->
             <!--android:id="@+id/title_btn_left"-->

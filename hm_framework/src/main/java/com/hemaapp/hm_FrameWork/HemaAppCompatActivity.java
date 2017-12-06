@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +14,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 
-import com.hemaapp.HemaConfig;
 import com.hemaapp.hm_FrameWork.dialog.HemaProgressDialog;
 import com.hemaapp.hm_FrameWork.dialog.HemaTextDialog;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
-import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -485,15 +482,11 @@ public abstract class HemaAppCompatActivity extends AppCompatActivity {
     protected void onResume() {
         isStop = false;
         super.onResume();
-        if (HemaConfig.UMENG_ENABLE)
-            MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (HemaConfig.UMENG_ENABLE)
-            MobclickAgent.onPause(this);
     }
 
     // 友盟相关end

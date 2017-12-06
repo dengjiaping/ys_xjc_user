@@ -32,6 +32,7 @@ import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.UpGrade;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -164,6 +165,7 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
                 }
                 break;
             case CLIENT_LOGINOUT:
+                MobclickAgent.onProfileSignOff();
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "false");
                 XtomActivityManager.finishAll();
                 BaseApplication.getInstance().setUser(null);

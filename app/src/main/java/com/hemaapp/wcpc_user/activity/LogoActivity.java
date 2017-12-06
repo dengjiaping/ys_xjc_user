@@ -31,6 +31,7 @@ import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.util.LocationUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
@@ -208,6 +209,8 @@ public class LogoActivity extends BaseActivity implements AMapLocationListener {
     }
 
     private void toMain() {
+        MobclickAgent.onProfileSignIn(XtomSharedPreferencesUtil.get(this,
+                "username"));
         Intent it = new Intent(mContext, MainNewMapActivity.class);
         startActivity(it);
         finish();
