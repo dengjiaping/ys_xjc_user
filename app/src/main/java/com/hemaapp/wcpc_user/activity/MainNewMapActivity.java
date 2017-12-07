@@ -1095,6 +1095,17 @@ public class MainNewMapActivity extends BaseActivity implements
                 tvCurButton1.setTextColor(0xffffffff);
                 tvCurButton1.setBackgroundResource(R.drawable.bt_qiangdan);
                 tvCurButton0.setBackgroundColor(0xffffffff);
+                titleBtnLeft.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent it = new Intent(mContext, ToPayActivity.class);
+                        it.putExtra("id", infor.getId());
+                        it.putExtra("total_fee", infor.getTotal_fee());
+                        it.putExtra("driver_id", infor.getDriver_id());
+                        startActivityForResult(it, R.id.layout);
+                    }
+                },500);
+
             }
             if (infor.getIs_helpcall().equals("1")) {//帮人叫车
                 lvCurBang.setVisibility(View.VISIBLE);

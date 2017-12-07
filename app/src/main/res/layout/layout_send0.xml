@@ -17,15 +17,15 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:background="@drawable/bg_nowandappoint"
-            android:padding="4dp">
+            android:padding="3dp">
 
             <TextView
                 android:id="@+id/tv_appointment"
-                android:layout_width="58dp"
+                android:layout_width="56dp"
                 android:layout_height="match_parent"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="3dp"
                 android:background="@drawable/bg_nowselect"
                 android:gravity="center"
                 android:text="预约"
@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/tv_now"
-                android:layout_width="58dp"
+                android:layout_width="56dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_nowselect_n"
                 android:gravity="center"
@@ -52,13 +52,13 @@
         <TextView
             android:id="@+id/tv_often"
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
+            android:layout_height="34dp"
             android:layout_gravity="right|bottom"
             android:background="@drawable/bg_first_often"
             android:drawableLeft="@mipmap/first_often"
             android:gravity="center"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
             android:text=" 常用行程"
             android:textColor="@color/white"
             android:textSize="@dimen/textsize_7" />
