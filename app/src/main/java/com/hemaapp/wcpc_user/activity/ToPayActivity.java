@@ -317,17 +317,7 @@ public class ToPayActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-//                if (checkBox_feeaccount.isChecked()) {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                } else {
-//                    checkBox_feeaccount.setChecked(true);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                }
+                user=BaseApplication.getInstance().getUser();
                 String feeaccount = user.getFeeaccount();
                 double fee = Double.parseDouble(feeaccount);
 
@@ -335,7 +325,6 @@ public class ToPayActivity extends BaseActivity {
                     showTextDialog("抱歉，您的余额不足，无法支付");
                     return;
                 }
-                user = BaseApplication.getInstance().getUser();
                 if (isNull(user.getPaypassword())) {
                     showsetPDDialog();
                     return;
@@ -358,17 +347,6 @@ public class ToPayActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-//                if (checkBox_alipay.isChecked()) {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                } else {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(true);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                }
                 getNetWorker().alipay(user.getToken(), "2", order_id, total_fee);
             }
         });
@@ -387,17 +365,6 @@ public class ToPayActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-//                if (checkBox_weixin.isChecked()) {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                } else {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(true);
-//                    checkBox_unipay.setChecked(false);
-//                }
                 getNetWorker().weixin(user.getToken(), "2", order_id, total_fee);
             }
         });
@@ -416,17 +383,6 @@ public class ToPayActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-//                if (checkBox_unipay.isChecked()) {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(false);
-//                } else {
-//                    checkBox_feeaccount.setChecked(false);
-//                    checkBox_alipay.setChecked(false);
-//                    checkBox_weixin.setChecked(false);
-//                    checkBox_unipay.setChecked(true);
-//                }
                 getNetWorker().unionpay(user.getToken(), "2", order_id, total_fee);
             }
         });

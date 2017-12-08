@@ -1104,7 +1104,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         it.putExtra("driver_id", infor.getDriver_id());
                         startActivityForResult(it, R.id.layout);
                     }
-                },500);
+                }, 500);
 
             }
             if (infor.getIs_helpcall().equals("1")) {//帮人叫车
@@ -2277,7 +2277,7 @@ public class MainNewMapActivity extends BaseActivity implements
         TextView bt_ok = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
         TextView bt_cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
         RecyclerView recyclerView = (RecyclerView) mViewGroup_exit.findViewById(R.id.recyclerView);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow_exit, true);
         mWindow_exit.setContentView(mViewGroup_exit);
         mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
 

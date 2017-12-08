@@ -89,7 +89,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="#F4F4F4">
+            android:background="#ffffff">
 
             <TextView
                 android:id="@+id/tv_start_city"
@@ -100,8 +100,8 @@
                 android:hint="出发城市"
                 android:text=""
                 android:textColor="@color/black"
-                android:textColorHint="#70A0A0A0"
-                android:textSize="@dimen/textsize_7.5" />
+                android:textColorHint="#30A0A0A0"
+                android:textSize="@dimen/textsize_8" />
 
             <ImageView
                 android:id="@+id/iv_change"
@@ -119,8 +119,8 @@
                 android:hint="到达城市"
                 android:text=""
                 android:textColor="@color/black"
-                android:textColorHint="#70A0A0A0"
-                android:textSize="@dimen/textsize_7.5" />
+                android:textColorHint="#30A0A0A0"
+                android:textSize="@dimen/textsize_8" />
         </LinearLayout>
 
         <RelativeLayout

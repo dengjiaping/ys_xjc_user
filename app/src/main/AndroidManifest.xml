@@ -57,7 +57,7 @@
         <!-- 友盟相关 -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="5a27897df29d9845e3000022" />
+            android:value="5a278540b27b0a1c17000066" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
