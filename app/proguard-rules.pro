@@ -40,3 +40,7 @@
 -dontwarn com.mob.**
 -dontwarn cn.sharesdk.**
 -dontwarn **.R$*
+
+-dontwarn com.fm.openinstall.**
+#避免混淆
+-keep public class com.fm.openinstall.* {*; }

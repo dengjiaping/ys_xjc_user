@@ -668,6 +668,9 @@ public class MainNewMapActivity extends BaseActivity implements
         mapView.onResume();
         MobclickAgent.onPageStart("MainActivity");
         MobclickAgent.onResume(mContext);
+        if (infor==null){
+
+        }
     }
 
     /**
@@ -751,6 +754,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 String keytype = sResult.getObjects().get(0).getKeytype();
                 if ("1".equals(keytype)) {
                     getNetWorker().couponsList(user.getToken(), "2", 0);
+                    canSend = true;
                 } else if ("2".equals(keytype)) {
                     CanNotTip();
                 } else {
@@ -1542,6 +1546,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.lv_search:
+                BaseUtil.saveImage(mContext,lvSend0);
                 if (startCity == null) {
                     showTextDialog("请先选择出发城市");
                     return;

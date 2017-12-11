@@ -54,6 +54,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="name,icon,label,theme,hardwareAccelerated">
+        <!-- openinstall相关 -->
+        <meta-data
+            android:name="com.openinstall.APP_KEY"
+            android:value="qvklr6"/>
         <!-- 友盟相关 -->
         <meta-data
             android:name="UMENG_APPKEY"

@@ -22,9 +22,9 @@ import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.fm.openinstall.OpenInstall;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
-import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
@@ -194,6 +194,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 XtomSharedPreferencesUtil.save(mContext, "password", user1.getPassword());
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
                 if (user1.getIs_reg().equals("1")) {
+                    OpenInstall.reportRegister();
                     showCouponWindow();
                 } else {
                     Intent it1 = new Intent(this, MainNewMapActivity.class);

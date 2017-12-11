@@ -6,58 +6,51 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amap.api.maps.model.LatLng;
-import com.hemaapp.wcpc_user.activity.LoginActivity;
 import com.hemaapp.hm_FrameWork.emoji.EmojiParser;
 import com.hemaapp.hm_FrameWork.emoji.ParseEmojiMsgUtil;
+import com.hemaapp.wcpc_user.activity.LoginActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import xtom.frame.XtomActivityManager;
-import xtom.frame.util.XtomBaseUtil;
 import xtom.frame.util.XtomFileUtil;
-import xtom.frame.util.XtomImageUtil;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 import xtom.frame.util.XtomTimeUtil;
-import xtom.frame.util.XtomToastUtil;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 
 /**
@@ -762,6 +755,7 @@ public class BaseUtil {
         }
         return imagePath;
     }
+
     public static void fitPopupWindowOverStatusBar(PopupWindow pop, boolean needFullScreen) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             try {
@@ -775,20 +769,77 @@ public class BaseUtil {
             }
         }
     }
+
     public static void installApk(Context context, File file) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_VIEW);
         Uri uri;
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
-            uri= FileProvider.getUriForFile(context,context.getPackageName()+".versionProvider",file);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(context, context.getPackageName() + ".versionProvider", file);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }else{
-            uri=Uri.fromFile(file);
+        } else {
+            uri = Uri.fromFile(file);
         }
         intent.setDataAndType(uri,
                 "application/vnd.android.package-archive");
         context.startActivity(intent);
+    }
+
+    /**
+     * 生成视图的预览
+     *
+     * @param activity
+     * @param v
+     * @return 视图生成失败返回null
+     * 视图生成成功返回视图的绝对路径
+     */
+    public static String saveImage(Activity activity, View v) {
+        Bitmap bitmap;
+        String path = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES) + "/";
+        //String path = XtomFileUtil.getFileDir(activity) + "preview.png";
+        File dirFile = new File(path);
+        if (!dirFile.exists()) {
+            dirFile.mkdirs();
+        }
+
+        View view = activity.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        bitmap = view.getDrawingCache();
+        Rect frame = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int[] location = new int[2];
+        v.getLocationOnScreen(location);
+        path = path + "preview.png";
+        File file = new File(path);
+
+        try {
+            if (file.exists())
+                file.delete();
+            file.createNewFile();
+            bitmap = Bitmap.createBitmap(bitmap, location[0], location[1], v.getWidth(), v.getHeight());
+            FileOutputStream fout = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+            fout.flush();
+            fout.close();
+            // }
+            activity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            Log.e("png", "生成预览图片成功：" + path);
+            return path;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e("png", "生成预览图片失败：" + e);
+        } catch (IllegalArgumentException e) {
+            Log.e("png", "width is <= 0, or height is <= 0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 清理缓存
+            view.destroyDrawingCache();
+        }
+        return null;
+
     }
 
 }

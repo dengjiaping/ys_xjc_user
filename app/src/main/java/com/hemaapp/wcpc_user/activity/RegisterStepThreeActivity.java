@@ -18,9 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.fm.openinstall.OpenInstall;
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
-import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RoundedImageView;
 import com.hemaapp.wcpc_user.BaseActivity;
@@ -229,6 +229,7 @@ public class RegisterStepThreeActivity extends BaseActivity {
                 .getHttpInformation();
         switch (information) {
             case CLIENT_ADD:
+                OpenInstall.reportRegister();
                 HemaArrayParse<ClientAdd> sResult = (HemaArrayParse<ClientAdd>) baseResult;
                 clientAdd = sResult.getObjects().get(0);
                 String token = clientAdd.getToken();

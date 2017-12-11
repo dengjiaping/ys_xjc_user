@@ -1,11 +1,11 @@
 package com.hemaapp.wcpc_user;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap.Config;
-import android.os.Build;
-import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
+import com.fm.openinstall.OpenInstall;
 import com.hemaapp.hm_FrameWork.HemaApplication;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtility;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtilityBuilder;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 
 import xtom.frame.XtomConfig;
-import xtom.frame.util.XtomLogger;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
 /**
@@ -62,9 +61,21 @@ public class BaseApplication extends HemaApplication {
         initImageLoader();
         MobSDK.init(this, "22208d6b7ef70", "3153dc341931b39ed4e521aff81a54a4");
         UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, "");
+        if (isMainProcess()) {
+            OpenInstall.init(this);
+        }
     }
 
-
+    public boolean isMainProcess() {
+        int pid = android.os.Process.myPid();
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager.getRunningAppProcesses()) {
+            if (appProcess.pid == pid) {
+                return getApplicationInfo().packageName.equals(appProcess.processName);
+            }
+        }
+        return false;
+    }
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
