@@ -1,8 +1,6 @@
 package com.hemaapp.wcpc_user.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,13 +32,10 @@ import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.umeng.analytics.MobclickAgent;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
@@ -49,7 +44,6 @@ import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.image.cache.XtomImageCache;
-import xtom.frame.util.XtomFileUtil;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
 import static com.hemaapp.hm_FrameWork.HemaUtil.getAppVersionForSever;
@@ -88,7 +82,6 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_set);
         super.onCreate(savedInstanceState);
-//        ShareSDK.initSDK(this);
         user = BaseApplication.getInstance().getUser();
         // 获取图片的缓存
         long size1 = XtomImageCache.getInstance(mContext).getCacheSize();
@@ -461,53 +454,24 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
     }
 
     private void showShare(String platform) {
+        String pathWX = BaseApplication.getInstance().getSysInitInfo().getSys_plugins() + "share/sdk.php?invitecode=" + user.getInvitecode() + "&keyid=0" + "&type=1";
+        String imageurl = BaseUtil.initImagePath(mContext);
+        String sharecontent = BaseApplication.getInstance().getSysInitInfo().getSharecontent();
+        sharecontent = sharecontent.replace("\\n", "\n");
+        String sharetitle = BaseApplication.getInstance().getSysInitInfo().getSharetitle();
+        sharetitle = sharetitle.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
-            oks.setTitle("念念不忘想起你，只想送你份好礼，注册即得50元代金券！");
+            oks.setTitle(sharetitle);
             oks.setTitleUrl(pathWX); // 标题的超链接
-            oks.setText("莱芜 ⇌ 济南25元；\n" +
-                    "莱芜 ⇌ 泰安15元。");
-            imageurl = initImagePath();
+            oks.setText(sharecontent);
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
             oks.setSiteUrl(pathWX);
             oks.setCallback(this);
-
         }
         oks.setPlatform(platform);
         oks.show(mContext);
-    }
-
-    private String initImagePath() {
-        String imagePath;
-        try {
-
-            String cachePath_internal = XtomFileUtil.getCacheDir(mContext)
-                    + "images/";// 获取缓存路径
-            File dirFile = new File(cachePath_internal);
-            if (!dirFile.exists()) {
-                dirFile.mkdirs();
-            }
-            imagePath = cachePath_internal + "share.png";
-            File file = new File(imagePath);
-            if (!file.exists()) {
-                file.createNewFile();
-                Bitmap pic;
-
-                pic = BitmapFactory.decodeResource(mContext.getResources(),
-                        R.mipmap.ic_launcher);
-
-                FileOutputStream fos = new FileOutputStream(file);
-                pic.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.flush();
-                fos.close();
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            imagePath = null;
-        }
-        log_i("imagePath:" + imagePath);
-        return imagePath;
     }
 
     @Override
@@ -550,19 +514,19 @@ public class SetActivity extends BaseActivity implements View.OnClickListener, P
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    getNetWorker().shareCallback(user.getToken(),"1","0","1");
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "1");
                     Toast.makeText(getApplicationContext(), "微信分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    getNetWorker().shareCallback(user.getToken(),"1","0","2");
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "2");
                     Toast.makeText(getApplicationContext(), "朋友圈分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 3:
-                    getNetWorker().shareCallback(user.getToken(),"1","0","3");
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "3");
                     Toast.makeText(getApplicationContext(), "QQ分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 4:
-                    getNetWorker().shareCallback(user.getToken(),"1","0","4");
+                    getNetWorker().shareCallback(user.getToken(), "1", "0", "4");
                     Toast.makeText(getApplicationContext(), "QQ空间分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 5:

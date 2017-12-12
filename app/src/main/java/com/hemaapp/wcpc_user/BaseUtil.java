@@ -48,6 +48,7 @@ import xtom.frame.XtomActivityManager;
 import xtom.frame.util.XtomFileUtil;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 import xtom.frame.util.XtomTimeUtil;
+import xtom.frame.util.XtomToastUtil;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.os.Environment.DIRECTORY_PICTURES;
@@ -825,6 +826,7 @@ public class BaseUtil {
             fout.close();
             // }
             activity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            XtomToastUtil.showShortToast(activity, "已保存图片到手机");
             Log.e("png", "生成预览图片成功：" + path);
             return path;
         } catch (FileNotFoundException e) {

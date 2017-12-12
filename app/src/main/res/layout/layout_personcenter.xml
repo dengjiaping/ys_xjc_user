@@ -235,6 +235,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:visibility="gone"
                     android:padding="10dp">
 
                     <ImageView
@@ -252,6 +253,39 @@
                         android:text="  软件分享"
                         android:textColor="@color/cl_525158"
                         android:textSize="15sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/lv_invite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="center"
+                        android:src="@mipmap/img_invite" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="  邀请好友"
+                        android:textColor="@color/cl_525158"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_invite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="10dp"
+                        android:drawableRight="@mipmap/triangle"
+                        android:text="推荐有奖金"
+                        android:textColor="@color/cl_a0a0a0"
+                        android:textSize="12sp" />
+
                 </LinearLayout>
             </LinearLayout>
 

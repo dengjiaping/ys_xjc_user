@@ -80,7 +80,7 @@
                         android:text="@string/tv_share"
                         android:textColor="@color/cl_5e5e5e"
                         android:textSize="14sp"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                     <ImageView
                         android:layout_width="match_parent"

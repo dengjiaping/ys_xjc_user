@@ -533,13 +533,13 @@ public class BaseNetWorker extends HemaNetWorker {
     /**
      * 支付宝信息保存接口
      */
-    public void alipaySave(String token, String alipay_no) {
+    public void alipaySave(String token, String alipay_no, String alipay_name) {
         BaseHttpInformation information = BaseHttpInformation.ALIPAY_SAVE;
         HashMap<String, String> params = new HashMap<>();
         params.put("token", token);// 登陆令牌
         params.put("clienttype", "1");
         params.put("alipay_no", alipay_no);
-
+        params.put("alipay_name", alipay_name);
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
     }

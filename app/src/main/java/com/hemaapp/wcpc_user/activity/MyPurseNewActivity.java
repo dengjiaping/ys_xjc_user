@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
-import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
@@ -44,6 +43,8 @@ public class MyPurseNewActivity extends BaseActivity {
     TextView textview1;
     @BindView(R.id.button)
     TextView button;
+    @BindView(R.id.tv_cashadd)
+    TextView tvCashadd;
     private User user;
 
     @Override
@@ -218,7 +219,7 @@ public class MyPurseNewActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.button})
+    @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.button,R.id.tv_cashadd})
     public void onViewClicked(View view) {
         Intent it;
         switch (view.getId()) {
@@ -233,6 +234,50 @@ public class MyPurseNewActivity extends BaseActivity {
                 it = new Intent(mContext, ChargeMoneyActivity.class);
                 startActivity(it);
                 break;
+            case R.id.tv_cashadd:
+                if (isNull(user.getPaypassword())){
+                    showsetPDDialog();
+                    break;
+                }
+                it = new Intent(mContext, CashAddByAlipayActivity.class);
+                startActivity(it);
+                break;
         }
+    }
+    private PopupWindow pwdWindow;
+    private void showsetPDDialog() {
+        if (pwdWindow != null) {
+            pwdWindow.dismiss();
+        }
+        pwdWindow = new PopupWindow(mContext);
+        pwdWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        pwdWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        pwdWindow.setBackgroundDrawable(new BitmapDrawable());
+        pwdWindow.setFocusable(true);
+        pwdWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_exit, null);
+        TextView exit = (TextView) mViewGroup.findViewById(R.id.textview_1);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_0);
+        TextView pop_content = (TextView) mViewGroup.findViewById(R.id.textview);
+        pwdWindow.setContentView(mViewGroup);
+        pwdWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        pop_content.setText("您还未设置支付密码，前去设置？");
+        cancel.setText("取消");
+        exit.setText("去设置");
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pwdWindow.dismiss();
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pwdWindow.dismiss();
+                Intent it = new Intent(mContext, ResetPayPasswordActivity.class);
+                startActivity(it);
+            }
+        });
     }
 }

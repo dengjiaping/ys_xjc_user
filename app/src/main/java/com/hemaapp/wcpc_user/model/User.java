@@ -58,6 +58,10 @@ public class User extends HemaUser {
     private String pin_start;//
     private String current_time;//
     private String couponcount;
+    private String alipay_name;
+    private String invitecount;//	邀请注册人数
+    private String invitepaycount;//	邀请完成首单人数
+    private String qrcodeurl;//	个人邀请二维码地址
     public User() {
         super("");
     }
@@ -65,6 +69,10 @@ public class User extends HemaUser {
     public User(JSONObject jsonObject) throws DataParseException {
         super(jsonObject);
         try {
+            invitecount= get(jsonObject, "invitecount");
+            invitepaycount= get(jsonObject, "invitepaycount");
+            qrcodeurl= get(jsonObject, "qrcodeurl");
+            alipay_name= get(jsonObject, "alipay_name");
             couponcount = get(jsonObject, "couponcount");
             order_start = get(jsonObject, "time1_begin");
             order_end = get(jsonObject, "time1_end");
@@ -206,6 +214,10 @@ public class User extends HemaUser {
                 ", pin_start='" + pin_start + '\'' +
                 ", current_time='" + current_time + '\'' +
                 ", couponcount='" + couponcount + '\'' +
+                ", alipay_name='" + alipay_name + '\'' +
+                ", invitecount='" + invitecount + '\'' +
+                ", invitepaycount='" + invitepaycount + '\'' +
+                ", qrcodeurl='" + qrcodeurl + '\'' +
                 '}';
     }
 
@@ -231,6 +243,18 @@ public class User extends HemaUser {
 
     public String getInvitecode() {
         return invitecode;
+    }
+
+    public String getInvitecount() {
+        return invitecount;
+    }
+
+    public String getInvitepaycount() {
+        return invitepaycount;
+    }
+
+    public String getQrcodeurl() {
+        return qrcodeurl;
     }
 
     public String getPassword() {
@@ -387,6 +411,14 @@ public class User extends HemaUser {
 
     public String getCouponcount() {
         return couponcount;
+    }
+
+    public String getAlipay_name() {
+        return alipay_name;
+    }
+
+    public void setAlipay_name(String alipay_name) {
+        this.alipay_name = alipay_name;
     }
 
     public String getTakecount() {

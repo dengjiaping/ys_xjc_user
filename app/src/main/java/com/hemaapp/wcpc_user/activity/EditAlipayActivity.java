@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
+import com.hemaapp.hm_FrameWork.dialog.HemaButtonDialog;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
@@ -27,25 +28,31 @@ public class EditAlipayActivity extends BaseActivity {
 
     private EditText editText;
     private ImageView img_clear;
+    private EditText ev_name;
+    private ImageView img_clear2;
 
     private User user;
-    private String account;
+    private String account, name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_editalipay);
         super.onCreate(savedInstanceState);
         user = BaseApplication.getInstance().getUser();
-        if(!isNull(account)){
+        if (!isNull(account)) {
             editText.setText(account);
             editText.setSelection(account.length());
+        }
+        if (!isNull(name)) {
+            ev_name.setText(name);
+            ev_name.setSelection(name.length());
         }
     }
 
     @Override
     protected void callBeforeDataBack(HemaNetTask hemaNetTask) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
-        switch (information){
+        switch (information) {
             case ALIPAY_SAVE:
                 showProgressDialog("请稍后...");
                 break;
@@ -55,7 +62,7 @@ public class EditAlipayActivity extends BaseActivity {
     @Override
     protected void callAfterDataBack(HemaNetTask hemaNetTask) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
-        switch (information){
+        switch (information) {
             case ALIPAY_SAVE:
                 cancelProgressDialog();
                 break;
@@ -65,13 +72,14 @@ public class EditAlipayActivity extends BaseActivity {
     @Override
     protected void callBackForServerSuccess(HemaNetTask hemaNetTask, HemaBaseResult hemaBaseResult) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
-        switch (information){
+        switch (information) {
             case ALIPAY_SAVE:
                 showTextDialog("提交成功");
                 title.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mIntent.putExtra("data", account);
+                        mIntent.putExtra("name", name);
                         setResult(RESULT_OK, mIntent);
                         finish();
                     }
@@ -83,7 +91,7 @@ public class EditAlipayActivity extends BaseActivity {
     @Override
     protected void callBackForGetDataFailed(HemaNetTask hemaNetTask, int i) {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask.getHttpInformation();
-        switch (information){
+        switch (information) {
             case ALIPAY_SAVE:
                 showTextDialog("提交失败，请稍后重试");
                 break;
@@ -93,7 +101,7 @@ public class EditAlipayActivity extends BaseActivity {
     @Override
     protected void callBackForServerFailed(HemaNetTask netTask, HemaBaseResult baseResult) {
         BaseHttpInformation information = (BaseHttpInformation) netTask.getHttpInformation();
-        switch (information){
+        switch (information) {
             case ALIPAY_SAVE:
                 showTextDialog(baseResult.getMsg());
                 break;
@@ -107,11 +115,14 @@ public class EditAlipayActivity extends BaseActivity {
         title = (TextView) findViewById(R.id.title_text);
         editText = (EditText) findViewById(R.id.edittext);
         img_clear = (ImageView) findViewById(R.id.imageview);
+        ev_name = (EditText) findViewById(R.id.ev_name);
+        img_clear2 = (ImageView) findViewById(R.id.imageview2);
     }
 
     @Override
     protected void getExras() {
         account = mIntent.getStringExtra("data");
+        name = mIntent.getStringExtra("name");
     }
 
     @Override
@@ -129,12 +140,16 @@ public class EditAlipayActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 account = editText.getText().toString();
-                if(isNull(account)){
+                if (isNull(account)) {
                     showTextDialog("请输入支付宝账号");
                     return;
                 }
-
-                getNetWorker().alipaySave(user.getToken(), account);
+                name = ev_name.getText().toString();
+                if (isNull(name)) {
+                    showTextDialog("请输入姓名");
+                    return;
+                }
+                tip();
             }
         });
 
@@ -145,7 +160,7 @@ public class EditAlipayActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(charSequence.toString().length() > 0)
+                if (charSequence.toString().length() > 0)
                     img_clear.setVisibility(View.VISIBLE);
                 else
                     img_clear.setVisibility(View.GONE);
@@ -162,5 +177,56 @@ public class EditAlipayActivity extends BaseActivity {
                 editText.setText("");
             }
         });
+        ev_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().length() > 0)
+                    img_clear2.setVisibility(View.VISIBLE);
+                else
+                    img_clear2.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        img_clear2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ev_name.setText("");
+            }
+        });
     }
+    private HemaButtonDialog mDialog;
+    public void tip() {
+        if (mDialog == null) {
+            mDialog = new HemaButtonDialog(mContext);
+            mDialog.setLeftButtonText("取消");
+            mDialog.setRightButtonText("确定");
+            mDialog.setText("账号一旦绑定不可修改,\n请确定账号无误！");
+            mDialog.setButtonListener(new ButtonListener());
+            mDialog.setRightButtonTextColor(mContext.getResources().getColor(R.color.yellow));
+        }
+        mDialog.show();
+    }
+
+    private class ButtonListener implements HemaButtonDialog.OnButtonListener {
+
+        @Override
+        public void onLeftButtonClick(HemaButtonDialog dialog) {
+            dialog.cancel();
+        }
+
+        @Override
+        public void onRightButtonClick(HemaButtonDialog dialog) {
+            dialog.cancel();
+            User user = BaseApplication.getInstance().getUser();
+            getNetWorker().alipaySave(user.getToken(), account, name);
+        }
+    }
+
 }

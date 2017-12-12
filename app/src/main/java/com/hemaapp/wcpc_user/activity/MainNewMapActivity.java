@@ -668,7 +668,7 @@ public class MainNewMapActivity extends BaseActivity implements
         mapView.onResume();
         MobclickAgent.onPageStart("MainActivity");
         MobclickAgent.onResume(mContext);
-        if (infor==null){
+        if (infor == null) {
 
         }
     }
@@ -1546,7 +1546,6 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 break;
             case R.id.lv_search:
-                BaseUtil.saveImage(mContext,lvSend0);
                 if (startCity == null) {
                     showTextDialog("请先选择出发城市");
                     return;
@@ -1953,8 +1952,12 @@ public class MainNewMapActivity extends BaseActivity implements
             count = 4;
             begintime = "";
         }
-
         resetPrice();
+        if (end_address.contains("机场") || end_address.contains("车站") || end_address.contains("高铁")|| end_address.contains("西站")
+                || end_address.contains("东站")|| end_address.contains("南站")|| end_address.contains("北站")|| end_address.contains("总站")
+                || end_address.contains("客运站")) {
+            chezhanTip();
+        }
     }
 
     @Override
@@ -2939,6 +2942,8 @@ public class MainNewMapActivity extends BaseActivity implements
     TextView share;
     TextView tvPhone;
     LinearLayout lvPhone;
+    LinearLayout lvInvite;
+    TextView tvInvite;
 
     public void findCenter() {
         View centerView = navView.inflateHeaderView(R.layout.layout_personcenter);
@@ -2956,6 +2961,8 @@ public class MainNewMapActivity extends BaseActivity implements
         share = (TextView) centerView.findViewById(R.id.share);
         tvPhone = (TextView) centerView.findViewById(R.id.tv_phone);
         lvPhone = (LinearLayout) centerView.findViewById(R.id.lv_phone);
+        lvInvite = (LinearLayout) centerView.findViewById(R.id.lv_invite);
+        tvInvite = (TextView) centerView.findViewById(R.id.tv_invite);
     }
 
     private ShowLargeImageView mView;
@@ -3027,6 +3034,13 @@ public class MainNewMapActivity extends BaseActivity implements
             @Override
             public void onClick(View v) {
                 share();
+            }
+        });
+        lvInvite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, InviteActivity.class);
+                startActivity(it);
             }
         });
     }
@@ -3223,11 +3237,8 @@ public class MainNewMapActivity extends BaseActivity implements
         sharetitle = sharetitle.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
-            //oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
             oks.setTitle(sharetitle);
             oks.setTitleUrl(pathWX); // 标题的超链接
-//            oks.setText("莱芜 ⇌ 济南25元；\n" +
-//                    "莱芜 ⇌ 泰安15元。");
             oks.setText(sharecontent);
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
@@ -3349,6 +3360,30 @@ public class MainNewMapActivity extends BaseActivity implements
             }
         });
         iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+    }
+
+    private void chezhanTip() {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_first_chezhan, null);
+        TextView cancel = (TextView) mViewGroup.findViewById(R.id.tv_button);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWindow.dismiss();

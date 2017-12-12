@@ -57,7 +57,7 @@
         <!-- openinstall相关 -->
         <meta-data
             android:name="com.openinstall.APP_KEY"
-            android:value="qvklr6"/>
+            android:value="sh6ynp"/>
         <!-- 友盟相关 -->
         <meta-data
             android:name="UMENG_APPKEY"
@@ -329,6 +329,7 @@
         <activity
             android:name=".activity.CashAddByAlipayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.EditAlipayActivity"
@@ -458,6 +459,18 @@
         <activity
             android:name="com.amap.api.navi.AmapRouteActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".activity.InviteActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.InviteListActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
 </manifest>
