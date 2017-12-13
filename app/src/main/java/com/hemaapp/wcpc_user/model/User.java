@@ -4,8 +4,11 @@ import com.hemaapp.hm_FrameWork.HemaUser;
 import com.hemaapp.hm_FrameWork.orm.annotation.PrimaryKey;
 import com.hemaapp.hm_FrameWork.orm.annotation.TableName;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import xtom.frame.exception.DataParseException;
 
@@ -62,6 +65,8 @@ public class User extends HemaUser {
     private String invitecount;//	邀请注册人数
     private String invitepaycount;//	邀请完成首单人数
     private String qrcodeurl;//	个人邀请二维码地址
+    private String coupon_arr;//	注册获得的代金券列表	子列表，is_reg=1时有效，默认为空数组
+    private ArrayList<ClientAddCoupon> coupons = new ArrayList<>();
     public User() {
         super("");
     }
@@ -117,7 +122,14 @@ public class User extends HemaUser {
             coupon_value = get(jsonObject, "coupon_value");
             coupon_dateline = get(jsonObject, "coupon_dateline");
             is_reg = get(jsonObject, "is_reg");
-
+            if (!jsonObject.isNull("coupon_arr")
+                    && !isNull(jsonObject.getString("coupon_arr"))) {
+                JSONArray jsonList = jsonObject.getJSONArray("coupon_arr");
+                int size = jsonList.length();
+                for (int i = 0; i < size; i++) {
+                    coupons.add(new ClientAddCoupon(jsonList.getJSONObject(i)));
+                }
+            }
             log_i(toString());
         } catch (JSONException e) {
             throw new DataParseException(e);
@@ -218,6 +230,8 @@ public class User extends HemaUser {
                 ", invitecount='" + invitecount + '\'' +
                 ", invitepaycount='" + invitepaycount + '\'' +
                 ", qrcodeurl='" + qrcodeurl + '\'' +
+                ", coupon_arr='" + coupon_arr + '\'' +
+                ", coupons=" + coupons +
                 '}';
     }
 
@@ -419,6 +433,10 @@ public class User extends HemaUser {
 
     public void setAlipay_name(String alipay_name) {
         this.alipay_name = alipay_name;
+    }
+
+    public ArrayList<ClientAddCoupon> getCoupons() {
+        return coupons;
     }
 
     public String getTakecount() {

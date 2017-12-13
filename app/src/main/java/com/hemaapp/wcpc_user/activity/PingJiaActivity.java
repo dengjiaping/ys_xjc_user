@@ -31,6 +31,7 @@ import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.adapter.TagListAdapter;
 import com.hemaapp.wcpc_user.model.DataInfor;
+import com.hemaapp.wcpc_user.model.ID;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.view.FlowLayout.TagFlowLayout;
@@ -42,7 +43,6 @@ import java.util.HashMap;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
@@ -102,15 +102,15 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     @Override
     protected void onResume() {
         super.onResume();
-        if (flag==1){
-            title.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setResult(RESULT_OK, mIntent);
-                    finish();
-                }
-            }, 500);
-        }
+//        if (flag == 1) {
+//            title.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    setResult(RESULT_OK, mIntent);
+//                    finish();
+//                }
+//            }, 500);
+//        }
     }
 
     private void getKinds() {
@@ -180,6 +180,14 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_BLOG_LIST));
                 toShare();
                 break;
+            case SHARE_CALLBACK:
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_CUSTOMER_INFO));
+                HemaArrayParse<ID> IResult = (HemaArrayParse<ID>) baseResult;
+                String money = IResult.getObjects().get(0).getFee();
+                if (!money.equals("0")) {
+                    jiangli(money);
+                }
+                break;
         }
     }
 
@@ -237,14 +245,14 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     protected void getExras() {
         order_Id = mIntent.getStringExtra("id");
         driver_id = mIntent.getStringExtra("driver_id");
-        log_e("driver_id===="+driver_id);
+        log_e("driver_id====" + driver_id);
     }
 
     @Override
     protected void setListener() {
         title.setText("评价");
         right.setText("投诉");
-        editText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(100) });
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,7 +262,7 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseUtil.hideInput(mContext,text_submit);
+                BaseUtil.hideInput(mContext, text_submit);
                 Intent it = new Intent(mContext, TouSuActivity.class);
                 it.putExtra("driver_id", driver_id);
                 it.putExtra("order_Id", order_Id);
@@ -270,7 +278,7 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         text_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseUtil.hideInput(mContext,text_submit);
+                BaseUtil.hideInput(mContext, text_submit);
                 if ("0".equals(point)) {
                     showTextDialog("请对本次服务进行评分");
                     return;
@@ -449,8 +457,8 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     private void showShare(String platform) {
         if (isNull(imageurl))
             imageurl = initImagePath();
-        String sharecontent=BaseApplication.getInstance().getSysInitInfo().getSharecontent();
-        sharecontent= sharecontent.replace("\\n", "\n");
+        String sharecontent = BaseApplication.getInstance().getSysInitInfo().getSharecontent();
+        sharecontent = sharecontent.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
             oks.setTitle(BaseApplication.getInstance().getSysInitInfo().getSharetitle());
@@ -542,19 +550,19 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    getNetWorker().shareCallback(user.getToken(),"2",order_Id,"1");
+                    getNetWorker().shareCallback(user.getToken(), "2", order_Id, "1");
                     Toast.makeText(getApplicationContext(), "微信分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    getNetWorker().shareCallback(user.getToken(),"2",order_Id,"2");
+                    getNetWorker().shareCallback(user.getToken(), "2", order_Id, "2");
                     Toast.makeText(getApplicationContext(), "朋友圈分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 3:
-                    getNetWorker().shareCallback(user.getToken(),"2",order_Id,"3");
+                    getNetWorker().shareCallback(user.getToken(), "2", order_Id, "3");
                     Toast.makeText(getApplicationContext(), "QQ分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 4:
-                    getNetWorker().shareCallback(user.getToken(),"2",order_Id,"4");
+                    getNetWorker().shareCallback(user.getToken(), "2", order_Id, "4");
                     Toast.makeText(getApplicationContext(), "QQ空间分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 5:
@@ -572,4 +580,34 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         }
 
     };
+
+    @SuppressWarnings("deprecation")
+    private void jiangli(String money) {
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(mContext);
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_jiangli, null);
+        TextView tv_price = (TextView) mViewGroup_exit.findViewById(R.id.tv_price);
+        TextView tv_button = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        tv_price.setText(money + "元");
+        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+        tv_button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+                Intent it = new Intent(mContext, MyPurseNewActivity.class);
+                startActivity(it);
+                finish();
+            }
+        });
+    }
 }

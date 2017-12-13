@@ -6,9 +6,11 @@ import com.hemaapp.hm_FrameWork.HemaNetWorker;
 import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.task.CurrentTask;
 import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
+import com.hemaapp.wcpc_user.model.Adv;
 import com.hemaapp.wcpc_user.model.AlipayTrade;
 import com.hemaapp.wcpc_user.model.Bank;
 import com.hemaapp.wcpc_user.model.ClientAdd;
+import com.hemaapp.wcpc_user.model.ClientAddCoupon;
 import com.hemaapp.wcpc_user.model.CouponListInfor;
 import com.hemaapp.wcpc_user.model.CurrentTripsInfor;
 import com.hemaapp.wcpc_user.model.DataInfor;
@@ -878,7 +880,7 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keyid", keyid);
         params.put("sharetype", sharetype);
 
-        CurrentTask task = new CurrentTask(information, params);
+        ExecuteNetTask<ID> task = new ExecuteNetTask<>(information, params, ID.class);
         executeTask(task);
     }
 
@@ -930,10 +932,27 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<Recomm> task = new ExecuteNetTask<>(information, params, Recomm.class);
         executeTask(task);
     }
+
     public void softContentList() {
         BaseHttpInformation information = BaseHttpInformation.SOFT_LIST;
         HashMap<String, String> params = new HashMap<>();
         ExecuteNetTask<SoftContent> task = new ExecuteNetTask<>(information, params, SoftContent.class);
+        executeTask(task);
+    }
+
+    public void getCoupon(String token, String code) {
+        BaseHttpInformation information = BaseHttpInformation.GET_COUPON_BYCODE;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("code", code);
+        ExecuteNetTask<ClientAddCoupon> task = new ExecuteNetTask<>(information, params, ClientAddCoupon.class);
+        executeTask(task);
+    }
+
+    public void advGet() {
+        BaseHttpInformation information = BaseHttpInformation.ADV_GET;
+        HashMap<String, String> params = new HashMap<>();
+        ExecuteNetTask<Adv> task = new ExecuteNetTask<>(information, params, Adv.class);
         executeTask(task);
     }
 }

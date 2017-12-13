@@ -93,6 +93,7 @@ import com.hemaapp.wcpc_user.adapter.TagReplyAdapter;
 import com.hemaapp.wcpc_user.adapter.TogetherAdapter;
 import com.hemaapp.wcpc_user.keepappalive.ScreenManager;
 import com.hemaapp.wcpc_user.keepappalive.ScreenReceiverUtil;
+import com.hemaapp.wcpc_user.model.Adv;
 import com.hemaapp.wcpc_user.model.Area;
 import com.hemaapp.wcpc_user.model.Client;
 import com.hemaapp.wcpc_user.model.CouponListInfor;
@@ -305,6 +306,8 @@ public class MainNewMapActivity extends BaseActivity implements
     LinearLayout lvCannotSend;
     @BindView(R.id.tv_now_tip)
     TextView tvNowTip;
+    @BindView(R.id.iv_hongbao)
+    ImageView ivHongbao;
 
     private User user;
     private int msgcount;
@@ -363,6 +366,8 @@ public class MainNewMapActivity extends BaseActivity implements
     private OnekeyShare oks;
     private ScreenManager manager;
     private ScreenReceiverUtil screenReceiverUtil;
+    ArrayList<CouponListInfor> couponListInfors = new ArrayList<>();
+    Adv adv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,7 +446,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 .create();
         initPXActivity();
         MobclickAgent.openActivityDurationTrack(false);
-//        MobclickAgent.setScenarioType(mContext, MobclickAgent.EScenarioType.E_DUM_NORMAL);
+        getNetWorker().advGet();
     }
 
     /**
@@ -899,9 +904,20 @@ public class MainNewMapActivity extends BaseActivity implements
             case COUPONS_LIST:
                 HemaArrayParse<CouponListInfor> couResult = (HemaArrayParse<CouponListInfor>) baseResult;
                 ArrayList<CouponListInfor> cs = couResult.getObjects();
+                couponListInfors.clear();
+                couponListInfors.addAll(cs);
                 if (cs != null && cs.size() > 0) {
+                    if (cs.get(0).getKeytype().equals("2")) {//免单1人
+                        if (cs.get(0).getIs_active().equals("1")) {
+                            //coupon_vavle = (price + addend + addstart) + "";
+                            coupon_vavle = "0";
+                        } else {
+                            coupon_vavle = "0";
+                        }
+                    } else {
+                        coupon_vavle = cs.get(0).getValue();
+                    }
                     coupon_id = cs.get(0).getId();
-                    coupon_vavle = cs.get(0).getValue();
                     tvSendCoupon.setText("-" + coupon_vavle + "元");
                     coupon = Integer.parseInt(coupon_vavle);
                 }
@@ -966,6 +982,16 @@ public class MainNewMapActivity extends BaseActivity implements
                         dis = BaseUtil.divide(dis, "100", 1) + "m";
                     }
                     tvCurDistance.setText("距您" + dis);
+                }
+                break;
+            case ADV_GET:
+                HemaArrayParse<Adv> aResult = (HemaArrayParse<Adv>) baseResult;
+                if (aResult.getObjects() != null && aResult.getObjects().size() > 0) {
+                    adv = aResult.getObjects().get(0);
+                    ivHongbao.setVisibility(View.VISIBLE);
+                    advPop(adv);
+                } else {
+                    ivHongbao.setVisibility(View.INVISIBLE);
                 }
                 break;
         }
@@ -1523,7 +1549,8 @@ public class MainNewMapActivity extends BaseActivity implements
             R.id.tv_end_city, R.id.tv_start, R.id.tv_end, R.id.lv_bang, R.id.lv_one_next,
             R.id.tv_sendtwo_cancel, R.id.tv_send_pin, R.id.tv_send_bao, R.id.tv_send_time,
             R.id.tv_send_count, R.id.tv_send_coupon, R.id.tv_send_content, R.id.tv_send_feeinfor, R.id.tv_send_button,
-            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1, R.id.lv_current0, R.id.tv_cannot_button})
+            R.id.iv_daohang, R.id.fv_current_top, R.id.iv_cur_avatar, R.id.iv_cur_tel, R.id.tv_cur_button0, R.id.tv_cur_button1,
+            R.id.lv_current0, R.id.tv_cannot_button, R.id.iv_hongbao})
     public void onClick(View view) {
         user = BaseApplication.getInstance().getUser();
         Intent it;
@@ -1776,7 +1803,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 countDialog();
                 break;
             case R.id.tv_send_coupon:
-                it = new Intent(mContext, MyCouponListActivity.class);
+                it = new Intent(mContext, CouponListActivity.class);
                 it.putExtra("keytype", "2");
                 startActivityForResult(it, 5);
                 break;
@@ -1899,6 +1926,13 @@ public class MainNewMapActivity extends BaseActivity implements
                         + BaseApplication.getInstance().getSysInitInfo().getSys_service_phone()));
                 startActivity(intent);
                 break;
+            case R.id.iv_hongbao:
+                it = new Intent(mContext, ShowInternetPageActivity.class);
+                it.putExtra("name", "活动详情");
+                String path = BaseApplication.getInstance().getSysInitInfo().getSys_web_service() + "webview/parm/activity/id/" + adv.getId();
+                it.putExtra("path", path);
+                startActivity(it);
+                break;
         }
     }
 
@@ -1952,9 +1986,19 @@ public class MainNewMapActivity extends BaseActivity implements
             count = 4;
             begintime = "";
         }
+        if (couponListInfors.get(0).getKeytype().equals("2")) {//免单1人
+            if (couponListInfors.get(0).getIs_active().equals("1")) {
+                coupon_vavle = (price + addend + addstart) + "";
+            } else {
+                coupon_vavle = "0";
+            }
+            coupon_id = couponListInfors.get(0).getId();
+            tvSendCoupon.setText("-" + coupon_vavle + "元");
+            coupon = (int) Float.parseFloat(coupon_vavle);
+        }
         resetPrice();
-        if (end_address.contains("机场") || end_address.contains("车站") || end_address.contains("高铁")|| end_address.contains("西站")
-                || end_address.contains("东站")|| end_address.contains("南站")|| end_address.contains("北站")|| end_address.contains("总站")
+        if (end_address.contains("机场") || end_address.contains("车站") || end_address.contains("高铁") || end_address.contains("西站")
+                || end_address.contains("东站") || end_address.contains("南站") || end_address.contains("北站") || end_address.contains("总站")
                 || end_address.contains("客运站")) {
             chezhanTip();
         }
@@ -2009,8 +2053,13 @@ public class MainNewMapActivity extends BaseActivity implements
             case 4:
                 break;
             case 5:
+                String keytype = data.getStringExtra("keytype");
+                if (keytype.equals("2")) {//免单1人
+                    coupon_vavle = (price + addend + addstart) + "";
+                } else {
+                    coupon_vavle = data.getStringExtra("money");
+                }
                 coupon_id = data.getStringExtra("id");
-                coupon_vavle = data.getStringExtra("money");
                 tvSendCoupon.setText("-" + coupon_vavle + "元");
                 coupon = Integer.parseInt(coupon_vavle);
                 resetPrice();
@@ -2998,7 +3047,7 @@ public class MainNewMapActivity extends BaseActivity implements
         lvMycouple.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(mContext, MyCouponListActivity.class);
+                Intent it = new Intent(mContext, CouponListActivity.class);
                 it.putExtra("keytype", "1");
                 startActivity(it);
             }
@@ -3387,6 +3436,44 @@ public class MainNewMapActivity extends BaseActivity implements
             @Override
             public void onClick(View v) {
                 mWindow.dismiss();
+            }
+        });
+    }
+
+    private void advPop(final Adv adv) {
+        if (mWindow != null) {
+            mWindow.dismiss();
+        }
+        mWindow = new PopupWindow(mContext);
+        mWindow.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow.setBackgroundDrawable(new BitmapDrawable());
+        mWindow.setFocusable(true);
+        mWindow.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_adv, null);
+        ImageView img = (ImageView) mViewGroup.findViewById(R.id.iv_adv);
+        ImageView cancel = (ImageView) mViewGroup.findViewById(R.id.iv_cancel);
+        ImageLoader.getInstance().displayImage(adv.getAlertimgurl(), img, BaseApplication.getInstance()
+                .getOptions(R.mipmap.default_image_big));
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
+        mWindow.setContentView(mViewGroup);
+        mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+            }
+        });
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+                Intent it = new Intent(mContext, ShowInternetPageActivity.class);
+                it.putExtra("name", "活动详情");
+                String path = BaseApplication.getInstance().getSysInitInfo().getSys_web_service() + "webview/parm/activity/id/" + adv.getId();
+                it.putExtra("path", path);
+                startActivity(it);
             }
         });
     }

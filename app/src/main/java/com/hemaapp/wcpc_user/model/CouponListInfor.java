@@ -7,7 +7,6 @@ import xtom.frame.XtomObject;
 import xtom.frame.exception.DataParseException;
 
 /**
- * Created by WangYuxia on 2016/5/17.
  */
 public class CouponListInfor extends XtomObject {
 
@@ -19,6 +18,8 @@ public class CouponListInfor extends XtomObject {
     private String dateflag; //是否过期
     private String regdate; //添加时间
 
+    private String   keytype;//			1-抵扣金额 2-免单一人
+    private String   is_active;//		是否激活	1：是，0：keytype=2有效
     public CouponListInfor(JSONObject jsonObject) throws DataParseException {
         if(jsonObject != null){
             try {
@@ -29,6 +30,8 @@ public class CouponListInfor extends XtomObject {
                 useflag =get(jsonObject, "useflag");
                 dateflag =get(jsonObject, "dateflag");
                 regdate =get(jsonObject, "regdate");
+                keytype =get(jsonObject, "keytype");
+                is_active =get(jsonObject, "is_active");
 
                 log_i(toString());
             } catch (JSONException e) {
@@ -40,13 +43,15 @@ public class CouponListInfor extends XtomObject {
     @Override
     public String toString() {
         return "CouponListInfor{" +
-                "client_id='" + client_id + '\'' +
-                ", id='" + id + '\'' +
+                "id='" + id + '\'' +
+                ", client_id='" + client_id + '\'' +
                 ", value='" + value + '\'' +
                 ", dateline='" + dateline + '\'' +
                 ", useflag='" + useflag + '\'' +
                 ", dateflag='" + dateflag + '\'' +
                 ", regdate='" + regdate + '\'' +
+                ", keytype='" + keytype + '\'' +
+                ", is_active='" + is_active + '\'' +
                 '}';
     }
 
@@ -72,6 +77,14 @@ public class CouponListInfor extends XtomObject {
 
     public String getUseflag() {
         return useflag;
+    }
+
+    public String getKeytype() {
+        return keytype;
+    }
+
+    public String getIs_active() {
+        return is_active;
     }
 
     public String getValue() {

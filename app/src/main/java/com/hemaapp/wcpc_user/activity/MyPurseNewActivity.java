@@ -145,7 +145,7 @@ public class MyPurseNewActivity extends BaseActivity {
                 Intent it;
                 switch (v.getId()) {
                     case R.id.textview_0: //优惠券列表
-                        it = new Intent(mContext, MyCouponListActivity.class);
+                        it = new Intent(mContext, CouponListActivity.class);
                         it.putExtra("keytype", "1");
                         startActivity(it);
                         break;

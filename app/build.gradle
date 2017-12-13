@@ -7,8 +7,8 @@ android {
         applicationId "com.hemaapp.wcpc_user"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 107
-        versionName "1.0.7"
+        versionCode 108
+        versionName "1.0.8"
         multiDexEnabled true
         manifestPlaceholders = [
                 GETUI_APP_ID    : "3f3iFCbmVu8PI7VMth7tQ1",
@@ -48,13 +48,13 @@ android {
     }
     productFlavors {
         xiaojiaoche {}
-        oppo {}
-        vivo {}
-        xiaomi {}
-        huawei {}
-        anzhi {}
-        baidu {}
-        wandoujia {}
+//        oppo {}
+//        vivo {}
+//        xiaomi {}
+//        huawei {}
+//        anzhi {}
+//        baidu {}
+//        wandoujia {}
     }
     productFlavors.all {
         flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]

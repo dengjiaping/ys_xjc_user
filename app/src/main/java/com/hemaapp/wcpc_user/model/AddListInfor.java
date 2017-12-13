@@ -7,7 +7,6 @@ import xtom.frame.XtomObject;
 import xtom.frame.exception.DataParseException;
 
 /**
- * Created by WangYuxia on 2016/5/6.
  */
 public class AddListInfor extends XtomObject {
     private String id; //主键ID

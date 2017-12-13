@@ -21,9 +21,7 @@ import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
-import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
-import com.hemaapp.hm_FrameWork.result.HemaPageArrayResult;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
@@ -440,7 +438,7 @@ public class SendActivity extends BaseActivity {
                     showTextDialog("抱歉，请先选择目的地");
                     return;
                 }
-                it = new Intent(mContext, MyCouponListActivity.class);
+                it = new Intent(mContext, CouponListActivity.class);
                 it.putExtra("keytype", "2");
                 startActivityForResult(it, 5);
                 break;

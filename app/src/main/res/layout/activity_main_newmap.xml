@@ -2,8 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/lv_main"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:orientation="vertical">
@@ -117,25 +117,30 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/iv_hongbao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:visibility="invisible"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="50dp"
+                android:src="@mipmap/img_hongbao" />
+
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:src="@drawable/line_shadow" />
+
             <include layout="@layout/layout_cannot_send" />
+
             <include layout="@layout/layout_send0" />
+
             <include layout="@layout/layout_send1" />
-            <!--<TextView-->
-                <!--android:id="@+id/tv_cur_tip"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="35dp"-->
-                <!--android:background="#FFD37A"-->
-                <!--android:gravity="center"-->
-                <!--android:visibility="gone"-->
-                <!--android:text="平台已受理，司机会在出发前1小时与您取得联系"-->
-                <!--android:textColor="@color/cl_3f3f3f"-->
-                <!--android:textSize="14sp" />-->
+
             <include layout="@layout/layout_current0" />
         </FrameLayout>
     </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar2"
         android:layout_width="wrap_content"

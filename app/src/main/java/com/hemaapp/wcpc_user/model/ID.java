@@ -24,9 +24,11 @@ public class ID extends XtomObject implements Serializable {
 	private String advice_id;
 	private String keytype;
 	private String complain_id;
+	private String fee;
 	public ID(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
 			try {
+				fee = get(jsonObject, "fee");
 				id = get(jsonObject, "id");
 				custom_id = get(jsonObject, "custom_id");
 				comment_id = get(jsonObject, "comment_id");
@@ -55,6 +57,7 @@ public class ID extends XtomObject implements Serializable {
 				", advice_id='" + advice_id + '\'' +
 				", keytype='" + keytype + '\'' +
 				", complain_id='" + complain_id + '\'' +
+				", fee='" + fee + '\'' +
 				'}';
 	}
 
@@ -92,6 +95,10 @@ public class ID extends XtomObject implements Serializable {
 
 	public String getKeytype() {
 		return keytype;
+	}
+
+	public String getFee() {
+		return fee;
 	}
 
 	public void setCount(String count) {

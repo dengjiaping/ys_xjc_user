@@ -326,7 +326,7 @@ public class PersonCenterNewActivity extends BaseActivity implements View.OnClic
                 startActivity(it);
                 break;
             case R.id.lv_mycouple:
-                it = new Intent(mContext, MyCouponListActivity.class);
+                it = new Intent(mContext, CouponListActivity.class);
                 it.putExtra("keytype", "1");
                 startActivity(it);
                 break;

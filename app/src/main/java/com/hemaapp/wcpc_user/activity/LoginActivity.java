@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -30,6 +31,9 @@ import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
 import com.hemaapp.wcpc_user.R;
+import com.hemaapp.wcpc_user.RecycleUtils;
+import com.hemaapp.wcpc_user.adapter.ClientAddCouponAdapter;
+import com.hemaapp.wcpc_user.model.ClientAddCoupon;
 import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.Token;
 import com.hemaapp.wcpc_user.model.User;
@@ -104,7 +108,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     edit_password.setText("");
                 }
             }
-        }else {
+        } else {
             if (!isNull(username)) {
                 ev_phone.setText(username);
             }
@@ -555,18 +559,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mWindow.setAnimationStyle(R.style.PopupAnimation);
         mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
                 R.layout.pop_couple, null);
+        RecyclerView recyclerView = (RecyclerView) mViewGroup.findViewById(R.id.rv_list);
         TextView count = (TextView) mViewGroup.findViewById(R.id.tv_count);
-        TextView price = (TextView) mViewGroup.findViewById(R.id.tv_price);
-        TextView price2 = (TextView) mViewGroup.findViewById(R.id.tv_price2);
-        TextView tv_time = (TextView) mViewGroup.findViewById(R.id.tv_time);
         TextView tv_button = (TextView) mViewGroup.findViewById(R.id.tv_button);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         User user = BaseApplication.getInstance().getUser();
-        count.setText("恭喜您获得" + user.getCoupon_count() + "张");
-        price.setText(user.getCoupon_value() + "元");
-        price2.setText(user.getCoupon_value());
-        tv_time.setText("有效期至 " + user.getCoupon_dateline());
+        String c = "";
+        for (ClientAddCoupon clientAddCoupon : user.getCoupons()) {
+            if (clientAddCoupon.getCoupon_type().equals("1")){
+                c=c+clientAddCoupon.getCoupon_count()+"张"+clientAddCoupon.getCoupon_value()+"元代金券";
+            }else {
+                c=c+clientAddCoupon.getCoupon_count()+"张免费乘车券";
+            }
+        }
+        count.setText(c);
+        ClientAddCouponAdapter adapter = new ClientAddCouponAdapter(mContext, user.getCoupons());
+        RecycleUtils.initVerticalRecyle(recyclerView);
+        recyclerView.setAdapter(adapter);
         tv_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -307,7 +307,7 @@ public class ToPayActivity extends BaseActivity {
         layout_selectcoupon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(mContext, MyCouponListActivity.class);
+                Intent it = new Intent(mContext, CouponListActivity.class);
                 it.putExtra("keytype", "2");
                 startActivityForResult(it, R.id.layout);
             }
