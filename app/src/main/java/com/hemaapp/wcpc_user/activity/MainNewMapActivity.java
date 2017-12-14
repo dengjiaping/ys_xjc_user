@@ -378,7 +378,6 @@ public class MainNewMapActivity extends BaseActivity implements
         AndroidBug5497Workaround.assistActivity(this);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         EventBus.getDefault().register(this);
-
         upGrade = new UpGrade(mContext) {
             @Override
             public void NoNeedUpdate() {
@@ -386,14 +385,8 @@ public class MainNewMapActivity extends BaseActivity implements
         };
         user = BaseApplication.getInstance().getUser();
         phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
-        if (user == null) {
-            titlePoint.setVisibility(View.INVISIBLE);
-        } else {
-            getNetWorker().noticeUnread(user.getToken(), "2", "1");
-        }
         amapTTSController = AmapTTSController.getInstance(mContext);
         amapTTSController.init();
-
         getNetWorker().cityList("0");//获取已开通城市
         appearAnimation = new AlphaAnimation(0, 1);
         appearAnimation.setDuration(500);
@@ -405,9 +398,6 @@ public class MainNewMapActivity extends BaseActivity implements
                 if (!BaseUtil.isOPen(mContext)) {
                     GpsTip();
                 }
-//                if (!NotificationsUtils.isNotificationEnabled(mContext)) {
-//                    NotifiTip();
-//                }
             }
         }, 800);
         init();
@@ -446,7 +436,6 @@ public class MainNewMapActivity extends BaseActivity implements
                 .create();
         initPXActivity();
         MobclickAgent.openActivityDurationTrack(false);
-        getNetWorker().advGet();
     }
 
     /**
@@ -827,6 +816,8 @@ public class MainNewMapActivity extends BaseActivity implements
                 setCenter();
                 break;
             case CURRENT_TRIPS://当前行程
+                getNetWorker().advGet();
+                getNetWorker().noticeUnread(user.getToken(), "2", "1");
                 HemaArrayParse<CurrentTripsInfor> llResult = (HemaArrayParse<CurrentTripsInfor>) baseResult;
                 if (llResult.getObjects() != null && llResult.getObjects().size() > 0) {
                     infor = llResult.getObjects().get(0);
