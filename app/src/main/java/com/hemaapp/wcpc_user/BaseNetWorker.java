@@ -9,6 +9,7 @@ import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
 import com.hemaapp.wcpc_user.model.Adv;
 import com.hemaapp.wcpc_user.model.AlipayTrade;
 import com.hemaapp.wcpc_user.model.Bank;
+import com.hemaapp.wcpc_user.model.Client;
 import com.hemaapp.wcpc_user.model.ClientAdd;
 import com.hemaapp.wcpc_user.model.ClientAddCoupon;
 import com.hemaapp.wcpc_user.model.CouponListInfor;
@@ -21,6 +22,7 @@ import com.hemaapp.wcpc_user.model.FeeRule;
 import com.hemaapp.wcpc_user.model.FeeRuleListInfor;
 import com.hemaapp.wcpc_user.model.FileUploadResult;
 import com.hemaapp.wcpc_user.model.ID;
+import com.hemaapp.wcpc_user.model.Invite;
 import com.hemaapp.wcpc_user.model.MyTripsInfor;
 import com.hemaapp.wcpc_user.model.NoticeListInfor;
 import com.hemaapp.wcpc_user.model.Often;
@@ -953,6 +955,23 @@ public class BaseNetWorker extends HemaNetWorker {
         BaseHttpInformation information = BaseHttpInformation.ADV_GET;
         HashMap<String, String> params = new HashMap<>();
         ExecuteNetTask<Adv> task = new ExecuteNetTask<>(information, params, Adv.class);
+        executeTask(task);
+    }
+
+    public void inviteList(String token, int page) {
+        BaseHttpInformation information = BaseHttpInformation.INVITE_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("page", String.valueOf(page));//
+        ExecuteNetTask<Invite> task = new ExecuteNetTask<>(information, params, Invite.class);
+        executeTask(task);
+    }
+    public void mobileList(String token, String mobile_list) {
+        BaseHttpInformation information = BaseHttpInformation.MOBILE_LIST;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("mobile_list", mobile_list);//
+        ExecuteNetTask<Client> task = new ExecuteNetTask<>(information, params, Client.class);
         executeTask(task);
     }
 }

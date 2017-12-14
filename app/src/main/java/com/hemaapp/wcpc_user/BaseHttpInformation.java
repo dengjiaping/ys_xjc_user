@@ -226,6 +226,8 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
     SOFT_LIST(7, "soft_explain_list", "软件使用说明列表", false),
     GET_COUPON_BYCODE(7, "get_coupon_bycode", "兑换代金券接口", false),
     ADV_GET(7, "activity_get", "获取首页活动接口", false),
+    INVITE_LIST(7, "invite_list", "我的邀请列表接口", false),
+    MOBILE_LIST(7, "mobile_list", "通讯录邀请接口", false),
     ;
 
     private int id;// 对应NetTask的id

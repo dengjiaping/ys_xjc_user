@@ -988,8 +988,16 @@ public class MainNewMapActivity extends BaseActivity implements
                 HemaArrayParse<Adv> aResult = (HemaArrayParse<Adv>) baseResult;
                 if (aResult.getObjects() != null && aResult.getObjects().size() > 0) {
                     adv = aResult.getObjects().get(0);
-                    ivHongbao.setVisibility(View.VISIBLE);
-                    advPop(adv);
+                    CircularAnim.show(ivHongbao).go();
+                    String showAdv = XtomSharedPreferencesUtil.get(mContext, "showAdv");
+                    Date dt = new Date();
+                    SimpleDateFormat matter1 = new SimpleDateFormat("yyyy-MM-dd");
+                    String today = matter1.format(dt);
+                    if (isNull(showAdv) || !showAdv.equals(today)) {
+                        advPop(adv);
+                        XtomSharedPreferencesUtil.save(mContext,"showAdv",today);
+                    }
+
                 } else {
                     ivHongbao.setVisibility(View.INVISIBLE);
                 }
@@ -1997,9 +2005,10 @@ public class MainNewMapActivity extends BaseActivity implements
             coupon = (int) Float.parseFloat(coupon_vavle);
         }
         resetPrice();
-        if (end_address.contains("机场") || end_address.contains("车站") || end_address.contains("高铁") || end_address.contains("西站")
+        if (end_address.contains("机场") || end_address.contains("济南站") || end_address.contains("高铁") || end_address.contains("西站")
                 || end_address.contains("东站") || end_address.contains("南站") || end_address.contains("北站") || end_address.contains("总站")
-                || end_address.contains("客运站")) {
+                || end_address.contains("客运站")|| end_address.contains("泰安站")|| end_address.contains("泰山站")|| end_address.contains("泰山站")
+                || end_address.contains("汽车站")) {
             chezhanTip();
         }
     }
@@ -2061,7 +2070,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 }
                 coupon_id = data.getStringExtra("id");
                 tvSendCoupon.setText("-" + coupon_vavle + "元");
-                coupon = Integer.parseInt(coupon_vavle);
+                coupon = (int) Float.parseFloat(coupon_vavle);
                 resetPrice();
                 break;
             case 6:

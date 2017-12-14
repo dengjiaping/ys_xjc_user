@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <include layout="@layout/title_noline" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout
+            android:id="@+id/refreshLoadmoreLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+            <xtom.frame.view.XtomListView
+                android:id="@+id/listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cacheColorHint="@color/transparent"
+                android:divider="@color/transparent"
+                android:dividerHeight="0dp"
+                android:listSelector="@color/transparent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:scrollbars="none" />
+        </com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout>
+
+        <com.hemaapp.wcpc_user.view.LetterListView
+            android:id="@+id/letterListView"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@color/transparent"
+            android:paddingBottom="5dp"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:src="@drawable/line_shadow" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/lv_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#F2C336"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:visibility="gone"
+        android:paddingRight="10dp">
+
+        <FrameLayout
+            android:layout_width="30dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/img_selectall_n" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="全选"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textsize_7" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_button"
+            android:layout_width="55dp"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_inviteall_button"
+            android:gravity="center"
+            android:text="邀请"
+            android:textColor="@color/word_black"
+            android:textSize="@dimen/textsize_7" />
+    </LinearLayout>
+</LinearLayout>

@@ -46,13 +46,13 @@ public class LetterListView extends View {
 		int width = getWidth();
 		int singleHeight = height / b.length;
 		for (int i = 0; i < b.length; i++) {
-			paint.setColor(0xfff49400);// R.color.new_b
+			paint.setColor(0xff6C6C6E);// R.color.new_b
 			paint.setTextSize(getResources().getDimensionPixelSize(
 					R.dimen.textsize_7));
 			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			paint.setAntiAlias(true);
 			if (i == choose) {
-				paint.setColor(Color.parseColor("#f49400"));
+				paint.setColor(Color.parseColor("#6C6C6E"));
 				paint.setFakeBoldText(true);
 			}
 			float xPos = width / 2 - paint.measureText(b[i]) / 2;

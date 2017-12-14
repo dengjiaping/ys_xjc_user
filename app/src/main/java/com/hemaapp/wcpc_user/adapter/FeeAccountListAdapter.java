@@ -26,7 +26,7 @@ public class FeeAccountListAdapter extends HemaAdapter {
 
     @Override
     public boolean isEmpty() {
-        if(infors == null || infors.size() == 0)
+        if (infors == null || infors.size() == 0)
             return true;
         return false;
     }
@@ -48,41 +48,35 @@ public class FeeAccountListAdapter extends HemaAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(isEmpty())
+        if (isEmpty())
             return getEmptyView(parent);
 
         ViewHolder holder;
-        if (convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.listtiem_feeaccount, null);
             holder = new ViewHolder();
-            holder.text_paykind = (TextView)convertView.findViewById(R.id.textview_0);
+            holder.text_paykind = (TextView) convertView.findViewById(R.id.textview_0);
             holder.text_time = (TextView) convertView.findViewById(R.id.textview_1);
             holder.text_money = (TextView) convertView.findViewById(R.id.textview_2);
             convertView.setTag(R.id.button_0, holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag(R.id.button_0);
         }
 
         FeeAccountInfor infor = infors.get(position);
-        if("1".equals(infor.getKeytype())){
-            holder.text_paykind.setText("充值");
+        holder.text_paykind.setText(infor.getName());
+        if (infor.getAmount().startsWith("-")){
+            holder.text_money.setTextColor(0xff35b87f);
+        }else {
             holder.text_money.setTextColor(0xffff8400);
-            holder.text_money.setText(infor.getAmount());
-        }else if("2".equals(infor.getKeytype())){
-            holder.text_paykind.setText("余额提现");
-            holder.text_money.setTextColor(0xff35b87f);
-            holder.text_money.setText(infor.getAmount());
-        }else if("3".equals(infor.getKeytype())){
-            holder.text_paykind.setText("车费支付");
-            holder.text_money.setTextColor(0xff35b87f);
-            holder.text_money.setText(infor.getAmount());
         }
+        holder.text_money.setText(infor.getAmount());
 
-        holder.text_time.setText(isNull(infor.getRegdate())?"时间错误":infor.getRegdate().substring(0, infor.getRegdate().length()-3));
+        holder.text_time.setText(isNull(infor.getRegdate()) ? "时间错误" : infor.getRegdate().substring(0, infor.getRegdate().length() - 3));
         return convertView;
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         TextView text_time;
         TextView text_paykind;
         TextView text_money;

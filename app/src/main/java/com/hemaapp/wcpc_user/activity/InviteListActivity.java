@@ -16,12 +16,11 @@ import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
 import com.hemaapp.wcpc_user.BaseHttpInformation;
-import com.hemaapp.wcpc_user.BaseRecycleAdapter;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.RecycleUtils;
-import com.hemaapp.wcpc_user.adapter.OftenAdapter;
-import com.hemaapp.wcpc_user.model.Often;
+import com.hemaapp.wcpc_user.adapter.InviteAdapter;
+import com.hemaapp.wcpc_user.model.Invite;
 import com.hemaapp.wcpc_user.model.User;
 
 import java.util.ArrayList;
@@ -58,8 +57,8 @@ public class InviteListActivity extends BaseActivity {
     LinearLayout empty;
     private User user;
     private String token = "";
-    private OftenAdapter adapter;
-    private ArrayList<Often> blogs = new ArrayList<>();
+    private InviteAdapter adapter;
+    private ArrayList<Invite> blogs = new ArrayList<>();
     private Integer currentPage = 0;
 
     @Override
@@ -68,28 +67,21 @@ public class InviteListActivity extends BaseActivity {
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        titleBtnRight.setVisibility(View.GONE);
         user = BaseApplication.getInstance().getUser();
         if (user == null)
             token = "";
         else
             token = user.getToken();
-        adapter = new OftenAdapter(mContext, blogs, getNetWorker());
+        tvCount.setText("累计邀请" + user.getInvitecount() + "人");
+        tvCountFirst.setText("其中首单奖励" + user.getInvitepaycount() + "人");
+        adapter = new InviteAdapter(mContext, blogs);
         RecycleUtils.initVerticalRecyle(rvList);
         rvList.setAdapter(adapter);
         getList(currentPage);
-        adapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(int position) {
-                mIntent.putExtra("often", blogs.get(position));
-                setResult(RESULT_OK, mIntent);
-                finish();
-            }
-        });
     }
 
     private void getList(int page) {
-        //getNetWorker().oftenList(token, page);
+        getNetWorker().inviteList(token, page);
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -123,7 +115,7 @@ public class InviteListActivity extends BaseActivity {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CLIENT_ROUTE_LIST:
+            case INVITE_LIST:
                 break;
             case CLIENT_ROUTE_OPEARATE:
                 showProgressDialog("请稍后");
@@ -139,7 +131,7 @@ public class InviteListActivity extends BaseActivity {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CLIENT_ROUTE_LIST:
+            case INVITE_LIST:
                 progressbar.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setVisibility(View.VISIBLE);
                 break;
@@ -158,11 +150,11 @@ public class InviteListActivity extends BaseActivity {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CLIENT_ROUTE_LIST:
+            case INVITE_LIST:
                 String page = netTask.getParams().get("page");
                 @SuppressWarnings("unchecked")
-                HemaArrayParse<Often> gResult = (HemaArrayParse<Often>) baseResult;
-                ArrayList<Often> goods = gResult.getObjects();
+                HemaArrayParse<Invite> gResult = (HemaArrayParse<Invite>) baseResult;
+                ArrayList<Invite> goods = gResult.getObjects();
                 if (page.equals("0")) {// 刷新
                     refreshLoadmoreLayout.refreshSuccess();
                     this.blogs.clear();
@@ -204,7 +196,7 @@ public class InviteListActivity extends BaseActivity {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CLIENT_ROUTE_LIST:
+            case INVITE_LIST:
             case CLIENT_ROUTE_OPEARATE:
                 showTextDialog(baseResult.getMsg());
                 break;
@@ -219,7 +211,7 @@ public class InviteListActivity extends BaseActivity {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CLIENT_ROUTE_LIST:
+            case INVITE_LIST:
                 showTextDialog("加载失败");
                 break;
             case CLIENT_ROUTE_OPEARATE:
@@ -241,7 +233,7 @@ public class InviteListActivity extends BaseActivity {
     @Override
     protected void setListener() {
         titleText.setText("我的邀请");
-        titleBtnRight.setVisibility(View.GONE);
+        titleBtnRight.setText("通讯录");
         refreshLoadmoreLayout.setOnStartListener(new XtomRefreshLoadmoreLayout.OnStartListener() {
 
             @Override
@@ -277,6 +269,8 @@ public class InviteListActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.title_btn_right:
+                Intent it = new Intent(mContext, InviteBookActivity.class);
+                startActivity(it);
                 break;
         }
     }
