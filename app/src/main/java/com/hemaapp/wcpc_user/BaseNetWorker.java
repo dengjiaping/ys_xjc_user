@@ -974,4 +974,12 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<Client> task = new ExecuteNetTask<>(information, params, Client.class);
         executeTask(task);
     }
+    public void getVirtualMobile(String token, String trip_id) {
+        BaseHttpInformation information = BaseHttpInformation.GET_VIRTUAL_MOBILE;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("trip_id", trip_id);//
+        ExecuteNetTask<ID> task = new ExecuteNetTask<>(information, params, ID.class);
+        executeTask(task);
+    }
 }

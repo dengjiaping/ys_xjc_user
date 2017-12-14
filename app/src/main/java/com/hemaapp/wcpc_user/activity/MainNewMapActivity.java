@@ -366,8 +366,8 @@ public class MainNewMapActivity extends BaseActivity implements
     private OnekeyShare oks;
     private ScreenManager manager;
     private ScreenReceiverUtil screenReceiverUtil;
-    ArrayList<CouponListInfor> couponListInfors = new ArrayList<>();
-    Adv adv;
+    ArrayList<CouponListInfor> couponListInfors = new ArrayList<>();//优惠券
+    Adv adv;//广告活动
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -721,6 +721,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 showProgressDialog("请稍后...");
                 break;
             case ORDER_OPERATE:
+            case GET_VIRTUAL_MOBILE:
                 showProgressDialog("请稍后...");
                 break;
         }
@@ -734,6 +735,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case CAN_TRIPS:
             case TRIPS_ADD:
             case ORDER_OPERATE:
+            case GET_VIRTUAL_MOBILE:
                 cancelProgressDialog();
                 break;
             case NOTICE_UNREAD:
@@ -938,7 +940,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 tvNow.setTextColor(0xff9A9A9A);
                 tvAppointment.setBackgroundResource(R.drawable.bg_nowselect);
                 tvNow.setBackgroundResource(R.drawable.bg_nowselect_n);
-                tvNowTip.setText("预约用车提供2小时后用车服务,请您提前下单!");
+                tvNowTip.setText("预约用车提供1.5小时后用车服务,请您提前下单!");
                 begintime = "";
                 tvSendTime.setText("");
                 sendContent = "";
@@ -995,11 +997,18 @@ public class MainNewMapActivity extends BaseActivity implements
                     String today = matter1.format(dt);
                     if (isNull(showAdv) || !showAdv.equals(today)) {
                         advPop(adv);
-                        XtomSharedPreferencesUtil.save(mContext,"showAdv",today);
+                        XtomSharedPreferencesUtil.save(mContext, "showAdv", today);
                     }
 
                 } else {
                     ivHongbao.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case GET_VIRTUAL_MOBILE:
+                HemaArrayParse<ID> IDResult = (HemaArrayParse<ID>) baseResult;
+                if (IDResult.getObjects() != null && IDResult.getObjects().size() > 0) {
+                    phone = IDResult.getObjects().get(0).getDriver_mobile();
+                    toMakePhone();
                 }
                 break;
         }
@@ -1297,6 +1306,9 @@ public class MainNewMapActivity extends BaseActivity implements
             case ORDER_OPERATE:
                 showTextDialog("抱歉，操作失败");
                 break;
+            case GET_VIRTUAL_MOBILE:
+                showTextDialog("抱歉，操作失败");
+                break;
         }
     }
 
@@ -1309,6 +1321,7 @@ public class MainNewMapActivity extends BaseActivity implements
             case TRIPS_ADD:
             case CAN_TRIPS:
             case ORDER_OPERATE:
+            case GET_VIRTUAL_MOBILE:
                 showTextDialog(baseResult.getMsg());
                 break;
         }
@@ -1617,7 +1630,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 tvNow.setTextColor(0xff9A9A9A);
                 tvAppointment.setBackgroundResource(R.drawable.bg_nowselect);
                 tvNow.setBackgroundResource(R.drawable.bg_nowselect_n);
-                tvNowTip.setText("预约用车提供2小时后用车服务,请您提前下单!");
+                tvNowTip.setText("预约用车提供1.5小时后用车服务,请您提前下单!");
                 break;
             case R.id.tv_often:
                 it = new Intent(mContext, OftenListActivity.class);
@@ -1746,8 +1759,8 @@ public class MainNewMapActivity extends BaseActivity implements
                         }
                         CameraPosition cameraPosition = new CameraPosition(new LatLng(Double.parseDouble(move_lat), Double.parseDouble(move_lng)), 0, 0, 0);//如果当前位置没有变化，是不会走onCameraChangeFinish方法的,所以强行调一下
                         onCameraChangeFinish(cameraPosition);
-                        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(move_lat),
-                                Double.parseDouble(move_lng)), 15));
+//                        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(move_lat),
+//                                Double.parseDouble(move_lng)), 15));
                     }
                 }
                 it = new Intent(mContext, SearchActivity.class);
@@ -1902,8 +1915,7 @@ public class MainNewMapActivity extends BaseActivity implements
                         phone = BaseApplication.getInstance().getSysInitInfo().getSys_service_phone();
                         toMakePhone();
                     } else {
-                        phone = infor.getDriver_username();
-                        toMakePhone();
+                        getNetWorker().getVirtualMobile(user.getToken(), infor.getId());
                     }
                 }
                 break;
@@ -1994,7 +2006,7 @@ public class MainNewMapActivity extends BaseActivity implements
             count = 4;
             begintime = "";
         }
-        if (couponListInfors.get(0).getKeytype().equals("2")) {//免单1人
+        if (couponListInfors.size() > 0 && couponListInfors.get(0).getKeytype().equals("2")) {//免单1人
             if (couponListInfors.get(0).getIs_active().equals("1")) {
                 coupon_vavle = (price + addend + addstart) + "";
             } else {
@@ -2007,7 +2019,7 @@ public class MainNewMapActivity extends BaseActivity implements
         resetPrice();
         if (end_address.contains("机场") || end_address.contains("济南站") || end_address.contains("高铁") || end_address.contains("西站")
                 || end_address.contains("东站") || end_address.contains("南站") || end_address.contains("北站") || end_address.contains("总站")
-                || end_address.contains("客运站")|| end_address.contains("泰安站")|| end_address.contains("泰山站")|| end_address.contains("泰山站")
+                || end_address.contains("客运站") || end_address.contains("泰安站") || end_address.contains("泰山站") || end_address.contains("泰山站")
                 || end_address.contains("汽车站")) {
             chezhanTip();
         }
@@ -2537,7 +2549,7 @@ public class MainNewMapActivity extends BaseActivity implements
         Calendar calendar = Calendar.getInstance();
         int min = calendar.get(Calendar.MINUTE);
         if (min > 30)
-            calendar.add(Calendar.MINUTE, 180);
+            calendar.add(Calendar.MINUTE, 120);
         else
             calendar.add(Calendar.MINUTE, 120); //将当前时间向后移动
         if (type == 0) {
@@ -2568,17 +2580,16 @@ public class MainNewMapActivity extends BaseActivity implements
         Calendar calendar = Calendar.getInstance();
         if (type == 0) {
             int min = calendar.get(Calendar.MINUTE); //
-            if (min > 0 && min <= 30)
-                seconds.add(0, "30分");
-            else {
+            if (min > 0 && min <= 30) {
                 seconds.add(0, "00分");
                 seconds.add(1, "30分");
+            } else {
+                seconds.add(0, "30分");
             }
         } else if (type == 1) {
             seconds.add(0, "00分");
             seconds.add(1, "30分");
         } else {
-            int min = calendar.get(Calendar.MINUTE); //
             seconds.add(0, "00分");
             seconds.add(1, "30分");
         }
@@ -2597,7 +2608,7 @@ public class MainNewMapActivity extends BaseActivity implements
         Calendar calendar = Calendar.getInstance();
         int min = calendar.get(Calendar.MINUTE);
         if (min > 30)
-            calendar.add(Calendar.MINUTE, 180);
+            calendar.add(Calendar.MINUTE, 120);
         else
             calendar.add(Calendar.MINUTE, 120); //将当前时间向后移动
         int hour = calendar.get(Calendar.HOUR_OF_DAY); //新的小时

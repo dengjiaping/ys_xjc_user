@@ -12,7 +12,7 @@
     <LinearLayout
         android:id="@+id/lv_bg"
         android:layout_width="match_parent"
-        android:layout_height="107dp"
+        android:layout_height="105dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@mipmap/bg_coupon_using"
@@ -28,7 +28,7 @@
                 android:id="@+id/tv_notice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="             仅限一人使用"
+                android:text="           仅抵扣一人费用"
                 android:textColor="@color/yellow"
                 android:textSize="11sp" />
         </LinearLayout>

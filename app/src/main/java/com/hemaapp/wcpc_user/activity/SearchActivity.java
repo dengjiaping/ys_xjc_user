@@ -93,7 +93,7 @@ public class SearchActivity extends BaseActivity implements PoiSearch.OnPoiSearc
                 InputMethodManager inputManager = (InputMethodManager)editText.getContext().getSystemService(mContext.INPUT_METHOD_SERVICE);
                 inputManager.showSoftInput(editText, 0);
             }
-        }, 998);
+        }, 500);
     }
 
     @Override

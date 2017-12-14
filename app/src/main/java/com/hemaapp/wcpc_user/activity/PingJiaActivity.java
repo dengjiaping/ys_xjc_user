@@ -343,9 +343,10 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         mWindow.setFocusable(true);
         mWindow.setAnimationStyle(R.style.PopupAnimation);
         mViewGroup = (ViewGroup) LayoutInflater.from(mContext).inflate(
-                R.layout.pop_toshare, null);
-        cancel = (TextView) mViewGroup.findViewById(R.id.textview_1);
-        ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
+                R.layout.pop_toshare2, null);
+        cancel = (TextView) mViewGroup.findViewById(R.id.tv_cancel);
+        ok = (TextView) mViewGroup.findViewById(R.id.tv_button);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         cancel.setOnClickListener(new View.OnClickListener() {

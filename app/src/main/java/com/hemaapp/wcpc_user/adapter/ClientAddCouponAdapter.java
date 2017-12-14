@@ -36,10 +36,12 @@ public class ClientAddCouponAdapter extends BaseRecycleAdapter<ClientAddCoupon> 
         ((TextView) holder.getView(R.id.tv_price)).setText(infor.getCoupon_value());
         ((TextView) holder.getView(R.id.tv_regdate)).setText("有效期至 " + infor.getCoupon_dateline());
         if (infor.getCoupon_type().equals("1")) {//抵扣
+            holder.getView(R.id.tv_notice).setVisibility(View.GONE);
             holder.getView(R.id.lv_price).setVisibility(View.VISIBLE);
             holder.getView(R.id.tv_free).setVisibility(View.GONE);
             holder.getView(R.id.lv_active).setVisibility(View.GONE);
         } else if (infor.getCoupon_type().equals("2")) {//免单一人
+            holder.getView(R.id.tv_notice).setVisibility(View.VISIBLE);
             holder.getView(R.id.lv_price).setVisibility(View.GONE);
             holder.getView(R.id.tv_free).setVisibility(View.VISIBLE);
             holder.getView(R.id.lv_active).setVisibility(View.VISIBLE);

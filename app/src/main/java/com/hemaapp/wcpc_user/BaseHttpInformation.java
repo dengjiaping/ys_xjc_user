@@ -228,6 +228,8 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
     ADV_GET(7, "activity_get", "获取首页活动接口", false),
     INVITE_LIST(7, "invite_list", "我的邀请列表接口", false),
     MOBILE_LIST(7, "mobile_list", "通讯录邀请接口", false),
+    GET_VIRTUAL_MOBILE(7, "get_virtual_mobile", "获取虚拟中间号接口", false),
+
     ;
 
     private int id;// 对应NetTask的id
