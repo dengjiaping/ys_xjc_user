@@ -90,6 +90,7 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
     private ViewGroup mViewGroup_exit;
     private OnekeyShare oks;
     private ArrayList<ClientAddCoupon> coupons = new ArrayList<>();//兑换
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_couponlist);
@@ -194,8 +195,10 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
                 break;
         }
     }
+
     private PopupWindow mWindow;
     private ViewGroup mViewGroup;
+
     private void showCouponWindow() {
         if (mWindow != null) {
             mWindow.dismiss();
@@ -211,16 +214,18 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
         RecyclerView recyclerView = (RecyclerView) mViewGroup.findViewById(R.id.rv_list);
         TextView count = (TextView) mViewGroup.findViewById(R.id.tv_count);
         TextView tv_button = (TextView) mViewGroup.findViewById(R.id.tv_button);
+        View v_all = mViewGroup.findViewById(R.id.all);
+        View v_father = mViewGroup.findViewById(R.id.father);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
         String c = "恭喜您获得";
         for (ClientAddCoupon clientAddCoupon : coupons) {
-            if (clientAddCoupon.getKeytype().equals("1")){
-                c=c+"1张"+clientAddCoupon.getValue()+"元代金券";
-                tv_button.setText("前去拼车");
-            }else {
-                c=c+"1张免费乘车券";
-                tv_button.setText("分享激活");
+            if (clientAddCoupon.getKeytype().equals("1")) {
+                c = c + "1张" + clientAddCoupon.getValue() + "元代金券";
+                tv_button.setText("马上领取");
+            } else {
+                c = c + "1张免费乘车券";
+                tv_button.setText("马上领取");
             }
         }
         count.setText(c);
@@ -234,7 +239,20 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
 
             }
         });
+        v_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWindow.dismiss();
+
+            }
+        });
+        v_father.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
+
     @Override
     protected void callBackForServerFailed(HemaNetTask netTask,
                                            HemaBaseResult baseResult) {
@@ -249,6 +267,9 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
                 } else {// 更多
                     refreshLoadmoreLayout.loadmoreFailed();
                 }
+                break;
+            case GET_COUPON_BYCODE:
+                showTextDialog(baseResult.getMsg());
                 break;
             default:
                 break;
@@ -268,6 +289,9 @@ public class CouponListActivity extends BaseActivity implements PlatformActionLi
                 } else {// 更多
                     refreshLoadmoreLayout.loadmoreFailed();
                 }
+                break;
+            case GET_COUPON_BYCODE:
+                showTextDialog("兑换失败");
                 break;
             default:
                 break;

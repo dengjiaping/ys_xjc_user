@@ -1,8 +1,6 @@
 package com.hemaapp.wcpc_user.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,8 +34,6 @@ import com.hemaapp.wcpc_user.model.SysInitInfo;
 import com.hemaapp.wcpc_user.model.User;
 import com.hemaapp.wcpc_user.view.FlowLayout.TagFlowLayout;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,7 +46,6 @@ import cn.sharesdk.wechat.favorite.WechatFavorite;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 import de.greenrobot.event.EventBus;
-import xtom.frame.util.XtomFileUtil;
 
 /**
  * 评价订单
@@ -456,20 +451,14 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
     }
 
     private void showShare(String platform) {
-        if (isNull(imageurl))
-            imageurl = initImagePath();
+        imageurl = BaseUtil.initImagePath(mContext);
         String sharecontent = BaseApplication.getInstance().getSysInitInfo().getSharecontent();
         sharecontent = sharecontent.replace("\\n", "\n");
         if (oks == null) {
             oks = new OnekeyShare();
             oks.setTitle(BaseApplication.getInstance().getSysInitInfo().getSharetitle());
-            //oks.setTitle("跨城出行就用小叫车，注册即得50元代金券！");
             oks.setTitleUrl(pathWX); // 标题的超链接
-//            oks.setText("莱芜 ⇌ 济南25元；\n" +
-//                    "莱芜 ⇌ 泰安15元。");
             oks.setText(sharecontent);
-            oks.setFilePath(imageurl);
-            imageurl = initImagePath();
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
             oks.setSiteUrl(pathWX);
@@ -479,37 +468,6 @@ public class PingJiaActivity extends BaseActivity implements PlatformActionListe
         oks.show(mContext);
     }
 
-    private String initImagePath() {
-        String imagePath;
-        try {
-
-            String cachePath_internal = XtomFileUtil.getCacheDir(mContext)
-                    + "images/";// 获取缓存路径
-            File dirFile = new File(cachePath_internal);
-            if (!dirFile.exists()) {
-                dirFile.mkdirs();
-            }
-            imagePath = cachePath_internal + "share.png";
-            File file = new File(imagePath);
-            if (!file.exists()) {
-                file.createNewFile();
-                Bitmap pic;
-
-                pic = BitmapFactory.decodeResource(mContext.getResources(),
-                        R.mipmap.ic_launcher);
-
-                FileOutputStream fos = new FileOutputStream(file);
-                pic.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.flush();
-                fos.close();
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            imagePath = null;
-        }
-        log_i("imagePath:" + imagePath);
-        return imagePath;
-    }
 
     @Override
     public void onComplete(Platform arg0, int arg1, HashMap<String, Object> hashMap) {

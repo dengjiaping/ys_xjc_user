@@ -91,8 +91,6 @@ import com.hemaapp.wcpc_user.adapter.PersonCountAdapter;
 import com.hemaapp.wcpc_user.adapter.PopTimeAdapter;
 import com.hemaapp.wcpc_user.adapter.TagReplyAdapter;
 import com.hemaapp.wcpc_user.adapter.TogetherAdapter;
-import com.hemaapp.wcpc_user.keepappalive.ScreenManager;
-import com.hemaapp.wcpc_user.keepappalive.ScreenReceiverUtil;
 import com.hemaapp.wcpc_user.model.Adv;
 import com.hemaapp.wcpc_user.model.Area;
 import com.hemaapp.wcpc_user.model.Client;
@@ -364,8 +362,8 @@ public class MainNewMapActivity extends BaseActivity implements
     Often often;//常用行程
     private boolean isDrawer = false;//侧滑
     private OnekeyShare oks;
-    private ScreenManager manager;
-    private ScreenReceiverUtil screenReceiverUtil;
+//    private ScreenManager manager;
+//    private ScreenReceiverUtil screenReceiverUtil;
     ArrayList<CouponListInfor> couponListInfors = new ArrayList<>();//优惠券
     Adv adv;//广告活动
 
@@ -376,6 +374,8 @@ public class MainNewMapActivity extends BaseActivity implements
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         AndroidBug5497Workaround.assistActivity(this);
+        loc_lat = XtomSharedPreferencesUtil.get(mContext, "lat");
+        loc_lng = XtomSharedPreferencesUtil.get(mContext, "lng");
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext) {
@@ -434,7 +434,7 @@ public class MainNewMapActivity extends BaseActivity implements
                 .offsetLeft(dip2px(mContext, 5))
                 .offsetRight(dip2px(mContext, 5))
                 .create();
-        initPXActivity();
+       // initPXActivity();
         MobclickAgent.openActivityDurationTrack(false);
     }
 
@@ -442,24 +442,24 @@ public class MainNewMapActivity extends BaseActivity implements
      * 初始化1px像素activity
      */
     private void initPXActivity() {
-        screenReceiverUtil = new ScreenReceiverUtil(this);
-        manager = ScreenManager.getScreenManager(this);
-        screenReceiverUtil.setScreenListener(new ScreenReceiverUtil.ScreenListener() {
-            @Override
-            public void screenOn() {
-                manager.finishActivity();
-            }
-
-            @Override
-            public void screenOff() {
-                manager.startSingleActivity();
-            }
-
-            @Override
-            public void onUserPresent() {
-                //锁屏按钮操作
-            }
-        });
+//        screenReceiverUtil = new ScreenReceiverUtil(this);
+//        manager = ScreenManager.getScreenManager(this);
+//        screenReceiverUtil.setScreenListener(new ScreenReceiverUtil.ScreenListener() {
+//            @Override
+//            public void screenOn() {
+//                manager.finishActivity();
+//            }
+//
+//            @Override
+//            public void screenOff() {
+//                manager.startSingleActivity();
+//            }
+//
+//            @Override
+//            public void onUserPresent() {
+//                //锁屏按钮操作
+//            }
+//        });
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -495,8 +495,10 @@ public class MainNewMapActivity extends BaseActivity implements
                 lvSend0.setVisibility(View.VISIBLE);
                 lvSend1.setVisibility(View.GONE);
                 often = (Often) intent.getSerializableExtra("often");
-                getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
-                getNetWorker().canTrips(user.getToken());
+                if (often != null) {
+                    getNetWorker().cityList(often.getStartcity_id(), often.getEndcity_id());
+                    getNetWorker().canTrips(user.getToken());
+                }
             } else {
                 titleBtnLeft.postDelayed(new Runnable() {
                     @Override
@@ -650,7 +652,7 @@ public class MainNewMapActivity extends BaseActivity implements
         mapView.onDestroy();
         amapTTSController.destroy();
         realseTimeTask();
-        screenReceiverUtil.unRegisterScreenListenr();
+        //screenReceiverUtil.unRegisterScreenListenr();
     }
 
     @Override
@@ -986,6 +988,14 @@ public class MainNewMapActivity extends BaseActivity implements
                     Date dt = new Date();
                     SimpleDateFormat matter1 = new SimpleDateFormat("yyyy-MM-dd");
                     String today = matter1.format(dt);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String dateString = formatter.format(dt);
+                    String hour = dateString.substring(11, 13);
+                    if (Integer.parseInt(hour) < 12) {
+                        today = today + " 0";//上午
+                    } else {
+                        today = today + " 1";//下午
+                    }
                     if (isNull(showAdv) || !showAdv.equals(today)) {
                         advPop(adv);
                         XtomSharedPreferencesUtil.save(mContext, "showAdv", today);
@@ -2921,9 +2931,6 @@ public class MainNewMapActivity extends BaseActivity implements
     static int second = -1;
     static int millisecond = -1;
     final int TimeGapMilliSecond = 1;
-    //final int TimeGapSecond = 1000;
-    // final int TimeGapMinute = 60 * 1000;
-    //boolean isTimer = true; //是否在计时
     private TextView tvMin, tvSec;
 
     @Override
@@ -2933,7 +2940,7 @@ public class MainNewMapActivity extends BaseActivity implements
     }
 
     private void handler() {
-        handler = new Handler() {
+          handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -3028,81 +3035,84 @@ public class MainNewMapActivity extends BaseActivity implements
     private ShowLargeImageView mView;
 
     public void setCenter() {
-        SysInitInfo sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
-        ImageLoader.getInstance().displayImage(user.getAvatar(), ivAvatar, BaseApplication.getInstance()
-                .getOptions(R.mipmap.default_user));
-        ivAvatar.setCornerRadius(100);
-        tvCenterName.setText(user.getRealname());
-        tvPhone.setText(sysInitInfo.getSys_service_phone());
-        if ("男".equals(user.getSex()))
-            ivSex.setImageResource(R.mipmap.img_sex_boy);
-        else
-            ivSex.setImageResource(R.mipmap.img_sex_girl);
-        tvCarCount.setText("乘车次数 " + (isNull(user.getTakecount()) ? "0" : user.getTakecount()));
-        tvFee.setText(user.getFeeaccount() + "元");
-        tvCouple.setText(user.getCouponcount() + "张");
-        ivAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, PersonInforActivity.class);
-                startActivityForResult(it, 20);
-            }
-        });
-        lvMywallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, MyPurseNewActivity.class);
-                startActivity(it);
-            }
-        });
-        lvMycouple.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, CouponListActivity.class);
-                it.putExtra("keytype", "1");
-                startActivity(it);
-            }
-        });
-        lvMyorder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, MListActivity.class);
-                startActivity(it);
-            }
-        });
-        tvPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, PassWord0Activity.class);
-                startActivity(it);
-            }
-        });
-        set.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, SetActivity.class);
-                startActivity(it);
-            }
-        });
-        lvPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toCenterPhone();
-            }
-        });
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                share();
-            }
-        });
-        lvInvite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(mContext, InviteActivity.class);
-                startActivity(it);
-            }
-        });
+        user = BaseApplication.getInstance().getUser();
+        if (user != null) {
+            SysInitInfo sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
+            ImageLoader.getInstance().displayImage(user.getAvatar(), ivAvatar, BaseApplication.getInstance()
+                    .getOptions(R.mipmap.default_user));
+            ivAvatar.setCornerRadius(100);
+            tvCenterName.setText(user.getRealname());
+            tvPhone.setText(sysInitInfo.getSys_service_phone());
+            if ("男".equals(user.getSex()))
+                ivSex.setImageResource(R.mipmap.img_sex_boy);
+            else
+                ivSex.setImageResource(R.mipmap.img_sex_girl);
+            tvCarCount.setText("乘车次数 " + (isNull(user.getTakecount()) ? "0" : user.getTakecount()));
+            tvFee.setText(user.getFeeaccount() + "元");
+            tvCouple.setText(user.getCouponcount() + "张");
+            ivAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, PersonInforActivity.class);
+                    startActivityForResult(it, 20);
+                }
+            });
+            lvMywallet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, MyPurseNewActivity.class);
+                    startActivity(it);
+                }
+            });
+            lvMycouple.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, CouponListActivity.class);
+                    it.putExtra("keytype", "1");
+                    startActivity(it);
+                }
+            });
+            lvMyorder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, MListActivity.class);
+                    startActivity(it);
+                }
+            });
+            tvPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, PassWord0Activity.class);
+                    startActivity(it);
+                }
+            });
+            set.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, SetActivity.class);
+                    startActivity(it);
+                }
+            });
+            lvPhone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toCenterPhone();
+                }
+            });
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    share();
+                }
+            });
+            lvInvite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, InviteActivity.class);
+                    startActivity(it);
+                }
+            });
+        }
     }
 
     private void toCenterPhone() {

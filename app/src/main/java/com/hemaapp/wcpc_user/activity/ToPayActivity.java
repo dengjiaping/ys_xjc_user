@@ -203,11 +203,6 @@ public class ToPayActivity extends BaseActivity {
                 goWeixin(wTrade);
                 break;
             case UNIONPAY:
-//                HemaArrayResult<UnionTrade> unResult = (HemaArrayResult<UnionTrade>) baseResult;
-//                UnionTrade uTrade = unResult.getObjects().get(0);
-//                String uInfo = uTrade.getTn();
-//                UPPayAssistEx.startPayByJAR(mContext, PayActivity.class, null,
-//                        null, uInfo, BaseConfig.UNIONPAY_TESTMODE);
                 HemaArrayParse<UnionTrade> uResult1 = (HemaArrayParse<UnionTrade>) baseResult;
                 UnionTrade uTrade = uResult1.getObjects().get(0);
                 String uInfo = uTrade.getTn();

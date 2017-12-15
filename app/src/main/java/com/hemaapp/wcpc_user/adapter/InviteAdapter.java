@@ -41,7 +41,7 @@ public class InviteAdapter extends BaseRecycleAdapter<Invite> {
         if (infor.getKeytype().equals("7"))
             ((TextView) holder.getView(R.id.tv_keytype)).setText("注册");
         if (infor.getKeytype().equals("8"))
-            ((TextView) holder.getView(R.id.tv_keytype)).setText("收单");
+            ((TextView) holder.getView(R.id.tv_keytype)).setText("首单");
         ((TextView) holder.getView(R.id.tv_amount)).setText(infor.getAmount()+"元");
     }
 

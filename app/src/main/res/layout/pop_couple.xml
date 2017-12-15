@@ -90,7 +90,7 @@
                 android:background="@drawable/bg_pop_button_yellow"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="查看代金券"
+                android:text="去发布行程"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/textsize_8" />
         </LinearLayout>

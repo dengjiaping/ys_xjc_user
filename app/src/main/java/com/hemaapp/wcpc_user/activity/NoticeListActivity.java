@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
-import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
-import com.hemaapp.hm_FrameWork.result.HemaPageArrayResult;
 import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.hemaapp.wcpc_user.BaseActivity;
 import com.hemaapp.wcpc_user.BaseApplication;
@@ -84,7 +82,8 @@ public class NoticeListActivity extends BaseActivity {
     }
 
     private void getNoticeUnread() {
-        getNetWorker().noticeUnread(user.getToken(), "2", "1");
+        if (user != null)
+            getNetWorker().noticeUnread(user.getToken(), "2", "1");
     }
 
     private void getNoticeList(int page) {
@@ -354,7 +353,7 @@ public class NoticeListActivity extends BaseActivity {
         ok = (TextView) mViewGroup.findViewById(R.id.textview_2);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -386,7 +385,7 @@ public class NoticeListActivity extends BaseActivity {
         TextView boy = (TextView) mViewGroup.findViewById(R.id.textview);
         TextView girl = (TextView) mViewGroup.findViewById(R.id.textview_0);
         TextView cancel = (TextView) mViewGroup.findViewById(R.id.textview_2);
-        BaseUtil.fitPopupWindowOverStatusBar(mWindow,true);
+        BaseUtil.fitPopupWindowOverStatusBar(mWindow, true);
         mWindow.setContentView(mViewGroup);
         mWindow.showAtLocation(mViewGroup, Gravity.CENTER, 0, 0);
 

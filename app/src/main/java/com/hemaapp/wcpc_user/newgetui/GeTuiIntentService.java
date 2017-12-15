@@ -16,7 +16,6 @@ import com.hemaapp.wcpc_user.EventBusConfig;
 import com.hemaapp.wcpc_user.EventBusModel;
 import com.hemaapp.wcpc_user.R;
 import com.hemaapp.wcpc_user.activity.MainNewMapActivity;
-import com.hemaapp.wcpc_user.activity.MainNewMapActivity;
 import com.hemaapp.wcpc_user.activity.NoticeListActivity;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushConsts;
@@ -192,17 +191,21 @@ public class GeTuiIntentService extends GTIntentService {
                     break;
                 case "2"://司机确认上车
                     intent = new Intent(context, MainNewMapActivity.class);
+                    intent.putExtra("isNotice",true);
                     break;
                 case "3"://
                     break;
                 case "4"://司机确认送达
                     intent = new Intent(context, MainNewMapActivity.class);
+                    intent.putExtra("isNotice",true);
                     break;
                 case "7"://司机已代付
                     intent = new Intent(context, MainNewMapActivity.class);
+                    intent.putExtra("isNotice",true);
                     break;
                 default:
                     intent = new Intent(context, MainNewMapActivity.class);
+                    intent.putExtra("isNotice",true);
                     break;
             }
         } else {//未运行
